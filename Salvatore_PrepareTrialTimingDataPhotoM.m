@@ -79,8 +79,8 @@ MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay = lag - 0.1;
 % end
 
 
-path2save =which ('savePhotoMCSV2mat');
-cd(path2save(1:end-20));
+path2save =which ('Salvatore_savePhotoMcsv2mat');
+cd(path2save(1:end-30));
 
 save('MiceExpInfoPhotoM.mat','MiceExpInfo')
 save('MiceExpInfoPhotoM_BackUP.mat','MiceExpInfo')
