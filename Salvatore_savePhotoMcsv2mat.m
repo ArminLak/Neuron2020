@@ -1,5 +1,6 @@
 function Salvatore_savePhotoMcsv2mat(animal_name, exp_date, exp_series)
 
+% Example : Salvatore_savePhotoMcsv2mat('ALK068', '2018-01-31', '1')
 % load csv photoM file, conevert them to .mat structre, and save it in the same folder of the csv file
 % Armin Lak 2018-02-01
 
