@@ -1,6 +1,6 @@
 function TrialTimingData = Salvatore_PrepareTrialTimingDataPhotoM (animal_name, exp_date, exp_series)
 
-% Example : TrialTimingData = Salvatore_PrepareTrialTimingDataPhotoM ('ALK068', '2018-01-29', '8');
+% 
 % Armin Lak , London Dec 2017
 
 
@@ -78,6 +78,7 @@ MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay = lag - 0.1;
 %     cd '/Users/Armin/Dropbox/Work/UCL/Science/Analysis Code'
 % end
 
+cd '../../photoManalysis'
 
 path2save =which ('savePhotoMCSV2mat');
 cd(path2save(1:end-20));

@@ -45,6 +45,7 @@ path2Beh= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp
 addpath (genpath(path2Beh))
 addpath (genpath(path2photoM))
 
+% load wheel data
 load([exp_date,'_',exp_series,'_',animal_name,'_Block.mat']);
 %--------------------------------------------------------------------------
 % find neuronal recording info about the session
@@ -59,22 +60,12 @@ end
 
 TargetSession = isession - 1;
 %--------------------------------------------------------------------------
-% load Beh data
+% load Beh data and photometry data
 TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData;
 TrialTimingData(TrialTimingData(:,3)==-1,3)=0; % define left choice as 0 (rather than -1)
 
 Stimz=unique(TrialTimingData(:,2))';
 StimzAbs=unique(abs(TrialTimingData(:,2)))';
-
-%------------------------------- plot psychoimetric curve------------------
-% psych curve:
-c = 1;
-for istim = Stimz
-    
-    performance(c) = nanmean (TrialTimingData(TrialTimingData(:,2)==istim,3));
-    
-    c=c+1; end
-%--------------------------------------------------------------------------
 
 % delay for wheel movement
 FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
@@ -85,12 +76,22 @@ photoMdata = readtable([path2photoM,'\',photoMFileName]);
 DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
 TimeStamps=photoMdata.Time_s_;
 
+    
+%------------------------------- plot psychoimetric curve------------------
+% psych curve:
+c = 1;
+for istim = Stimz
+    
+    performance(c) = nanmean (TrialTimingData(TrialTimingData(:,2)==istim,3));
+    
+    c=c+1; end
+%------------------------define event time for event-alinged responses--------------------------
 
-event_times = TrialTimingData(:,13); %
+event_times = TrialTimingData(:,13); % vis stimulus onset
 
 [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop);
 
-event_times = TrialTimingData(:,14); %
+event_times = TrialTimingData(:,14); %reward onset
 
 [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop);
 
@@ -121,9 +122,10 @@ tr = tr(1:block.numCompletedTrials);
 eventTimes = [tr.stimulusCueStartedTime];
 
 posRel = wheel.resetAtEvent(t, pos, eventTimes);
+%--------------------------------------------------------------------------
 
 
-% --------- plots --------------
+% --------- make plots --------------
 %%
 figure; hold on
 subplot(6,2,1); % psych curve
