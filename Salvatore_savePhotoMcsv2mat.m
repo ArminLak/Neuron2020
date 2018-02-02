@@ -28,14 +28,15 @@ TargetSession = isession - 1;
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile;
 photoM = readtable([path2photoM,'\',photoMFileName]);
 
-
+% create a matlab structure and store csv subfields into the strucutre: 
 photoMdata.AnalogIn_1=photoM.AnalogIn_1;
 photoMdata.AnalogIn_2=photoM.AnalogIn_2;
 photoMdata.AnalogIn_2_dF_F0=photoM.AnalogIn_2_dF_F0;
 photoMdata.Time_s_=photoM.Time_s_;
 photoMdata.TTL_1=photoM.TTL_1;
 
-cd(path2photoM)
+% find the path to the photoM data
+cd(path2photoM);
 
 filename = [photoMFileName(1:end-4),'.mat']
 
