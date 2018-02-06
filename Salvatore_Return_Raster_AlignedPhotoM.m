@@ -16,7 +16,7 @@ DeltaFoverF = downsample(DeltaFoverF,10);  % downsampling
 
 TimeStamps = downsample(TimeStamps,10);
 
-limit = (stop - start ) * 1200  ;   % 1200 comes because samplingRate =12000 and downsampling is 10
+limit = (stop - start ) * 1200 - 50;   % 1200 comes because samplingRate =12000 and downsampling is 10
 for ievent=event_times' %(sort_index)'
 
     index  = find(TimeStamps >  (ievent + start) & TimeStamps <  (ievent + stop));

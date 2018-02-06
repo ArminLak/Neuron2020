@@ -2,8 +2,8 @@ clear all
 close all
 
 animal_name = 'ALK068'
-exp_date   = '2017-12-19'
-exp_series ='2'
+exp_date   = '2018-01-31'
+exp_series ='1'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -13,8 +13,8 @@ exp_series ='2'
 % 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
-start = -1 % s
-stop=0.8     % s
+start = -2 % s
+stop=2     % s
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
@@ -200,8 +200,8 @@ end
 
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400])
-xticklabels({'-1','0','1'})
+xticks([0 1200 2400 3600 4800])
+xticklabels({'-2','-1','0','1','2'})
 
 
 
@@ -209,8 +209,8 @@ xticklabels({'-1','0','1'})
 subplot(6,2,11); hold on
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400])
-xticklabels({'-1','0','1'})
+xticks([0 1200 2400 3600 4800])
+xticklabels({'-2','-1','0','1','2'})
 title ('Outcome aligned ')
 
 c=1;
