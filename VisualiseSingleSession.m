@@ -2,8 +2,8 @@ clear all
 close all
 
 animal_name = 'ALK068'
-exp_date   = '2018-01-30'
-exp_series ='1'
+exp_date   = '2017-12-19'
+exp_series ='2'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -14,7 +14,7 @@ exp_series ='1'
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
 start = -1 % s
-stop=1     % s
+stop=0.8     % s
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
@@ -71,8 +71,9 @@ StimzAbs=unique(abs(TrialTimingData(:,2)))';
 FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 
 % load photoM data
-photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile;
-photoMdata = readtable([path2photoM,'\',photoMFileName]);
+photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
+%photoMdata = readtable([path2photoM,'\',photoMFileName]);
+load(photoMFileName);
 DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
 TimeStamps=photoMdata.Time_s_;
 
