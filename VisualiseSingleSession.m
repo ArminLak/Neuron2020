@@ -2,7 +2,7 @@ clear all
 close all
 
 animal_name = 'ALK068'
-exp_date   = '2018-01-31'
+exp_date   = '2018-01-17'
 exp_series ='1'
 
 %--------------- useful information --------------------------------------
