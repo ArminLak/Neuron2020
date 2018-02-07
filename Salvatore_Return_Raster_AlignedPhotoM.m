@@ -1,4 +1,4 @@
-function [Raster_Matrix]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop)
+function [Raster_Matrix]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale)
 
 % generate raster for photoM
 % Armin 2017-12-21, London
@@ -11,12 +11,12 @@ trace = 1;
 DeltaFoverF = DeltaFoverF(:);
 TimeStamps = TimeStamps(:);
 
-DeltaFoverF = smooth(DeltaFoverF,10); 
+DeltaFoverF = smooth(DeltaFoverF,downsampleScale); 
 DeltaFoverF = downsample(DeltaFoverF,10);  % downsampling
 
-TimeStamps = downsample(TimeStamps,10);
+TimeStamps = downsample(TimeStamps,downsampleScale);
 
-limit = (stop - start ) * 1200 - 50;   % 1200 comes because samplingRate =12000 and downsampling is 10
+limit = (stop - start ) * (12000/downsampleScale);   % 1200 comes because samplingRate =12000 and downsampling is 10
 for ievent=event_times' %(sort_index)'
 
     index  = find(TimeStamps >  (ievent + start) & TimeStamps <  (ievent + stop));
