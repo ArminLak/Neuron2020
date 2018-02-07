@@ -1,9 +1,9 @@
 clear all
-close all
+%close all
 
 animal_name = 'ALK068'
-exp_date   = '2018-02-07'
-exp_series ='4'
+exp_date   = '2018-02-05'
+exp_series ='3'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -90,11 +90,11 @@ for istim = Stimz
 
 event_times = TrialTimingData(:,13); % vis stimulus onset
 
-[Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop);
+[Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
 event_times = TrialTimingData(:,14); %reward onset
 
-[Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop);
+[Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
 % --------------- wheel movement ----------------
 
