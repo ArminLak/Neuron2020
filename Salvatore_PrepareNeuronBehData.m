@@ -38,6 +38,7 @@ function [TrialTimingData] = Salvatore_PrepareNeuronBehData(animal_name,exp_date
 % AL 02/08/2015 London
 % AL added Action_Onset_Time 2016-01-13
 % AL separately added Go_Cue_Time 2016-06-28
+% AL added feedbackdeliveryDelay to correctly comute reward time
 
 
 
@@ -125,7 +126,7 @@ for trial = 1 : size(block.trial,2)-1
     
     Stim_Onset_Time  (trial) = block.trial(trial).stimulusCueStartedTime;
     
-    Reward_Onset_Time (trial) = block.trial(trial).feedbackStartedTime;
+    Reward_Onset_Time (trial) = block.trial(trial).feedbackStartedTime + block.parameters.feedbackDeliveryDelay;
     
     
     

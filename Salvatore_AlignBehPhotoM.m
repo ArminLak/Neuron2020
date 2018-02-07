@@ -32,7 +32,7 @@ unacounted_lag = nanmean(reward_Times' - TrialTimingData_aligned(TrialTimingData
 
 % to here
 
-TrialTimingData_aligned(:,[10, 12:14,16]) = TrialTimingData_aligned(:,[10, 12:14,16]) - unacounted_lag;
+TrialTimingData_aligned(:,[10, 12:14,16]) = TrialTimingData_aligned(:,[10, 12:14,16]); % - unacounted_lag;
 
 TrialTimingData_aligned(:,[1:9 , 11]) = TrialTimingData(:,[1:9 , 11]);
 TrialTimingData_aligned(:,15) = TrialTimingData(:,15);

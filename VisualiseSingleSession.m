@@ -2,8 +2,13 @@ clear all
 close all
 
 animal_name = 'ALK068'
+<<<<<<< HEAD
 exp_date   = '2017-12-22'
 exp_series ='1'
+=======
+exp_date   = '2018-01-18'
+exp_series ='2'
+>>>>>>> 316422953bbd6a492cf2c815295302e48d6d91e3
 
 %--------------- useful information --------------------------------------
 % task event
@@ -13,8 +18,8 @@ exp_series ='1'
 % 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
-start = -2 % s
-stop=2     % s
+start = -1 % s
+stop=1     % s
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
@@ -90,11 +95,11 @@ for istim = Stimz
 
 event_times = TrialTimingData(:,13); % vis stimulus onset
 
-[Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop);
+[Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
 event_times = TrialTimingData(:,14); %reward onset
 
-[Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop);
+[Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
 % --------------- wheel movement ----------------
 
@@ -158,7 +163,7 @@ xlim([10 110])
 ylim([-2 5])
 
 subplot(4,1,3);
-plot(t(1:end-1)+FileAlignDelay-0.2, smooth(diff(posRel)./diff(t)),'k')
+plot(t(1:end-1)+FileAlignDelay, smooth(diff(posRel)./diff(t)),'k')
 
 xlabel ('Time (s)')
 title ('Wheel acceleration')
@@ -169,8 +174,13 @@ ylim([-200 200])
 subplot(6,2,9); hold on
 title ('Stimulus aligned ')
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
+<<<<<<< HEAD
 xticks([0 1200 2400 3600 4800])
 xticklabels({'-2','-1','0','1','2'})
+=======
+xticks([0 1200 2400 ])
+xticklabels({'-1','0','1'})
+>>>>>>> 316422953bbd6a492cf2c815295302e48d6d91e3
 
 c=1;
 for istim = StimzAbs
@@ -200,8 +210,8 @@ end
 
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400 3600 4800])
-xticklabels({'-2','-1','0','1','2'})
+xticks([0 1200 2400 ])
+xticklabels({'-1','0','1'})
 
 
 
@@ -209,8 +219,8 @@ xticklabels({'-2','-1','0','1','2'})
 subplot(6,2,11); hold on
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400 3600 4800])
-xticklabels({'-2','-1','0','1','2'})
+xticks([0 1200 2400 ])
+xticklabels({'-1','0','1'})
 title ('Outcome aligned ')
 
 c=1;
