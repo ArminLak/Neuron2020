@@ -1,14 +1,10 @@
 clear all
 close all
 
-animal_name = 'ALK068'
-<<<<<<< HEAD
-exp_date   = '2017-12-22'
-exp_series ='1'
-=======
-exp_date   = '2018-01-18'
+animal_name = 'ALK070'
+
+exp_date   = '2018-01-29'
 exp_series ='2'
->>>>>>> 316422953bbd6a492cf2c815295302e48d6d91e3
 
 %--------------- useful information --------------------------------------
 % task event
@@ -174,13 +170,9 @@ ylim([-200 200])
 subplot(6,2,9); hold on
 title ('Stimulus aligned ')
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-<<<<<<< HEAD
-xticks([0 1200 2400 3600 4800])
-xticklabels({'-2','-1','0','1','2'})
-=======
+
 xticks([0 1200 2400 ])
 xticklabels({'-1','0','1'})
->>>>>>> 316422953bbd6a492cf2c815295302e48d6d91e3
 
 c=1;
 for istim = StimzAbs
