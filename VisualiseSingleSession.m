@@ -3,7 +3,7 @@ close all
 
 animal_name = 'ALK070'
 
-exp_date   = '2018-01-29'
+exp_date   = '2018-02-13'
 exp_series ='2'
 
 %--------------- useful information --------------------------------------
@@ -65,6 +65,8 @@ TargetSession = isession - 1;
 TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData;
 TrialTimingData(TrialTimingData(:,3)==-1,3)=0; % define left choice as 0 (rather than -1)
 
+ReactionTime = TrialTimingData(:,10) -TrialTimingData(:,13);
+
 Stimz=unique(TrialTimingData(:,2))';
 StimzAbs=unique(abs(TrialTimingData(:,2)))';
 
@@ -85,6 +87,7 @@ c = 1;
 for istim = Stimz
     
     performance(c) = nanmean (TrialTimingData(TrialTimingData(:,2)==istim,3));
+    RT(c) = nanmean (ReactionTime(TrialTimingData(:,2)==istim));
     
     c=c+1; end
 %------------------------define event time for event-alinged responses--------------------------
@@ -132,7 +135,11 @@ posRel = wheel.resetAtEvent(t, pos, eventTimes);
 figure; hold on
 subplot(6,2,1); % psych curve
 
-plot(unique(TrialTimingData(:,2)'), performance,'k')
+plot(Stimz, performance,'k')
+
+subplot(6,2,2); % psych curve
+
+plot(Stimz, RT,'k')
 
 
 subplot(4,1,2); % snapshot of CA trace
@@ -155,15 +162,15 @@ xlim([0 a(end)])
 xlabel ('Time (s)')
 ylabel ('Response')
 title ('Ca responses')
-xlim([10 110])
-ylim([-2 5])
+xlim([10 210])
+ylim([-4 8])
 
 subplot(4,1,3);
 plot(t(1:end-1)+FileAlignDelay, smooth(diff(posRel)./diff(t)),'k')
 
 xlabel ('Time (s)')
 title ('Wheel acceleration')
-xlim([10 110])
+xlim([10 210])
 ylim([-200 200])
 
 
@@ -231,12 +238,62 @@ legend('no reward','reward','location','best')
 
 xlabel ('Time (s)')
 
-
+%%
+figure(2); hold on
 c=1;
 
 for istim = Stimz
-    AvResp(c) = nanmean(nanmean(Raster_MatrixStim((TrialTimingData(:,2))==istim,:)));
+    AvRespCue(c) = nanmean(nanmean(Raster_MatrixStim((TrialTimingData(:,2))==istim,1800:end)));
     c=c+1;
     
 end
+
+
+
+subplot(6,2,1); hold on
+
+plot(Stimz,AvRespCue)
+
+c=1;
+
+AvRespCueError = nan(1,length(Stimz));
+for istim = Stimz
+    AvRespCueCorrect(c) = nanmean(nanmean(Raster_MatrixStim((TrialTimingData(:,9))==1 & (TrialTimingData(:,2))==istim,1600:end)));
+    AvRespCueError(c) = nanmean(nanmean(Raster_MatrixStim((TrialTimingData(:,9))==0 & (TrialTimingData(:,2))==istim,1600:end)));
+    
+    c=c+1;
+    
+end
+
+
+
+subplot(6,2,2); hold on
+
+plot(Stimz,AvRespCueCorrect,'g')
+
+plot(Stimz,AvRespCueError,'r')
+
+c=1;
+AvNormRewRespError = nan(1,length(Stimz));
+for istim = Stimz
+    IndexCorrect = (TrialTimingData(:,9))==1 & (TrialTimingData(:,2))==istim;
+    IndexError = (TrialTimingData(:,9))==0 & (TrialTimingData(:,2))==istim;
+    
+    AvNormRewRespCorrect(c) = nanmean(...
+        nanmean(Raster_MatrixReward(IndexCorrect,1400:end),2)- nanmean( Raster_MatrixReward(IndexCorrect,200:1200),2));
+    
+     AvNormRewRespError(c) = nanmean(...
+        nanmean(Raster_MatrixReward(IndexError,1400:end),2)- nanmean( Raster_MatrixReward(IndexError,200:1200),2));
+       
+       
+    c=c+1;
+    
+end
+
+
+subplot(6,2,3); hold on
+title('reward response')
+plot(Stimz,AvNormRewRespCorrect,'g')
+plot(Stimz,AvNormRewRespError,'r')
+
 
