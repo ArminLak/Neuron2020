@@ -2,8 +2,8 @@ clear all
 %close all
 
 animal_name = 'ALK068'
-exp_date   = '2018-02-05'
-exp_series ='3'
+exp_date   = '2018-02-13'
+exp_series ='1'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -15,6 +15,10 @@ exp_series ='3'
 % start and stop of time axis for plot (in second before and after the event)
 start = -2 % s
 stop=2     % s
+
+% original data is sammple 12K per s. We downsample 10 times making it 1.2K
+% per s. We define 2 s before and 2 s after the event (4 * 1.2k) we stay
+% conservative by keeping 4700 of 4800 (so event is at 2320  sample)
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
@@ -88,6 +92,11 @@ for istim = Stimz
     c=c+1; end
 %------------------------define event time for event-alinged responses--------------------------
 
+event_times = TrialTimingData(:,12); % trial initiation/ onset beep
+
+[Raster_MatrixOnsetBeep]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+
+
 event_times = TrialTimingData(:,13); % vis stimulus onset
 
 [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
@@ -124,6 +133,9 @@ eventTimes = [tr.stimulusCueStartedTime];
 
 posRel = wheel.resetAtEvent(t, pos, eventTimes);
 %--------------------------------------------------------------------------
+
+
+
 
 
 % --------- make plots --------------
@@ -165,11 +177,49 @@ title ('Wheel acceleration')
 xlim([10 110])
 ylim([-200 200])
 
+%----------------------------- subplot for stumulus aligned normalised
+subplot(6,2,2); hold on
+title('Normalised post-stim response')
+%xlim([ 0 (stop-start)* sample_rate]/downsampleScale)
+%xticks([0 1200 2400 3600 4800])
+%xticklabels ({'-2', '-1', '0', '1', '2'})
 
+% normalise trial-by-trial stim responses by the activivty before stimulus 
+%col 1 = mean; col 2 = stim
+
+prepostmeandiff = nan(size(Raster_MatrixStim,1), 1); %pre-allocate
+
+for ievent = 1:size(Raster_MatrixStim,1)
+    
+    prepostmeandiff(ievent) = mean(Raster_MatrixStim(ievent, 2500:4500) - mean(Raster_MatrixStim(ievent, 1600:2320))); %difference between before and after; indicator of relative signal change 
+    
+end
+% next for each istim
+
+normalised = nan(size(unique(TrialTimingData(:,2)),1),1);
+c=1;
+for istim = unique(TrialTimingData(:,2))'
+    
+    normalised(c)= nanmean(prepostmeandiff(TrialTimingData(:,2)==istim, 1));
+    c=c+1;
+end
+
+
+
+ylim([min(normalised)*1.2 max(normalised)*1.2])
+xticks([Stimz])
+xticklabels([Stimz])
+plot (Stimz, normalised')
+xlabel('Contrast')
+ylabel('Rel response')
+
+% 
+% subplot for stimulus aligned, not normalised
 subplot(6,2,9); hold on
 title ('Stimulus aligned ')
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400 3600 4800])
+% xticks([0 1200 2400 3600 4800])
+xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
 xticklabels({'-2','-1','0','1','2'})
 
 c=1;
@@ -178,11 +228,15 @@ for istim = StimzAbs
     c=c+1;
     
 end
+
+
 if length(Stimz)==4
     legend(num2str(Stimz(1)), num2str(Stimz(2)), num2str(Stimz(3)),num2str(Stimz(4)),'location','best')
 elseif length(Stimz)==3
     legend(num2str(Stimz(1)), num2str(Stimz(2)), num2str(Stimz(3)),'location','best')
 end
+
+xlabel ('Time (s)')
 
 
 subplot(6,2,10); hold on
@@ -205,7 +259,6 @@ xticklabels({'-2','-1','0','1','2'})
 
 
 
-
 subplot(6,2,11); hold on
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
@@ -225,7 +278,7 @@ for istim = StimzAbs
 end
 
 
-legend('no reward','reward','location','best')
+legend('reward','no reward','location','best')
 
 xlabel ('Time (s)')
 
@@ -238,3 +291,21 @@ for istim = Stimz
     
 end
 
+subplot(6,2,12); hold on
+xlim([0 (stop-start)* sample_rate]/downsampleScale)
+xticks([0 1200 2400 3600 4800])
+xticklabels({'-2','-1','0','1','2'})
+ylim([-1 1])
+yticks([-1 0 1])
+title('Onset Beep Aligned')
+
+plot(nanmean(Raster_MatrixOnsetBeep), 'color', colorGray(1,:))
+
+
+
+% c=1;
+% for istim = StimzAbs
+%    plot(nanmean(Raster_MatrixOnsetBeep(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray(c,:));
+%    c=c+1;
+    
+% end
