@@ -86,4 +86,9 @@ elseif strcmp(animal_name,'ALK068')   % photometry,
     animal_ID  = 50;
      
     chan_order = chan_order  +1; 
+    elseif strcmp(animal_name,'ALK071')   % photometry,
+    chan_order = [];
+    animal_ID  = 51;
+     
+    chan_order = chan_order  +1; 
 end
