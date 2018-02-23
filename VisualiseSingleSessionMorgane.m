@@ -1,15 +1,15 @@
 clear all
 %close all
 
-animal_name = 'ALK068'
-exp_date   = '2018-02-13'
+animal_name = 'ALK071'
+exp_date   = '2018-02-23'
 exp_series ='1'
 
 %--------------- useful information --------------------------------------
 % task event
 % 10: action time
-% 12: beep
-% 13: stimulus
+% 12: beep 
+% 13: stimulus 
 % 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
@@ -147,17 +147,31 @@ plot(unique(TrialTimingData(:,2)'), performance,'k')
 
 
 subplot(4,1,2); % snapshot of CA trace
+
+% 12: onset beep(solid line)
+% 13: stimulus (dotted line)
+% 14: reward (green = reward, red = no reward)
+
+
 plot(downsample(TimeStamps,10),smooth(downsample(DeltaFoverF,10)),'k')
+hold on
+% line([90 90], [-2 4])
 
 ax = gca;
 for ievent = 1: size(TrialTimingData,1)
     
-    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1]);
+    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [201/255 171/255 161/255 0.3]);
+    
+    line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', 'c', 'LineStyle', '--', 'LineWidth', 1.5);
+    line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', 'c', 'LineWidth', 1.5);
+    rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);
     
     if TrialTimingData(ievent,9)==1
-        h.FaceColor = [0 .5 .5 0.3];
+        rl.Color = 'green';
+        
     else
-        h.FaceColor = [0.5 .1 0 0.3];
+        rl.Color = 'red';
+        
     end
 end
 
