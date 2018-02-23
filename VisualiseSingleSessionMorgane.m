@@ -77,9 +77,7 @@ FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 % load photoM data
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
 %photoMdata = readtable([path2photoM,'\',photoMFileName]);
-load(photoMFileName);
-DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
-TimeStamps=photoMdata.Time_s_;
+load(photoMFileName);DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;TimeStamps=photoMdata.Time_s_;
 
     
 %------------------------------- plot psychoimetric curve------------------
@@ -153,17 +151,17 @@ subplot(4,1,2); % snapshot of CA trace
 % 14: reward (green = reward, red = no reward)
 
 
-plot(downsample(TimeStamps,10),smooth(downsample(DeltaFoverF,10)),'k')
+plot(downsample(TimeStamps,10),smooth(downsample(DeltaFoverF,10)),'color', [0.25 0.25 0.25])
 hold on
 % line([90 90], [-2 4])
 
 ax = gca;
 for ievent = 1: size(TrialTimingData,1)
     
-    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [201/255 171/255 161/255 0.3]);
+    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [0 0 1 0.03]);
     
-    line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', 'c', 'LineStyle', '--', 'LineWidth', 1.5);
-    line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', 'c', 'LineWidth', 1.5);
+    line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', 'b', 'LineStyle', '--', 'LineWidth', 1.5);
+    line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', 'b', 'LineWidth', 1.5);
     rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);
     
     if TrialTimingData(ievent,9)==1
