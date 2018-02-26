@@ -1,8 +1,8 @@
 clear all
 %close all
 
-animal_name = 'ALK071'
-exp_date   = '2018-02-23'
+animal_name = 'ALK068'
+exp_date   = '2018-02-09'
 exp_series ='1'
 
 %--------------- useful information --------------------------------------
@@ -42,7 +42,7 @@ colorRed = [1 0 0
 % read animals' ID
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
 
-% find path to beh and photometry data
+% find path to beh and photometry data  
 path2photoM= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\photoM'];
 path2Beh= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series];
 
@@ -142,7 +142,11 @@ figure; hold on
 subplot(6,2,1); % psych curve
 
 plot(unique(TrialTimingData(:,2)'), performance,'k')
-
+xlabel('Contrast')
+xticks([min(Stimz) 0 max(Stimz)])
+title('Psych Curve')
+ylabel('% Right-ward')
+yticklabels({0 50 100})
 
 subplot(4,1,2); % snapshot of CA trace
 
@@ -158,17 +162,17 @@ hold on
 ax = gca;
 for ievent = 1: size(TrialTimingData,1)
     
-    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [0 0 1 0.03]);
+    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
     
-    line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', 'b', 'LineStyle', '--', 'LineWidth', 1.5);
-    line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', 'b', 'LineWidth', 1.5);
+    line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
+    line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
     rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);
     
     if TrialTimingData(ievent,9)==1
-        rl.Color = 'green';
+        rl.Color = [47/255 189/255 28/255];
         
     else
-        rl.Color = 'red';
+        rl.Color = [189/255 89/255 28/255];
         
     end
 end
@@ -223,7 +227,7 @@ xticks([Stimz])
 xticklabels([Stimz])
 plot (Stimz, normalised')
 xlabel('Contrast')
-ylabel('Rel response')
+ylabel('Rel')
 
 % 
 % subplot for stimulus aligned, not normalised
@@ -232,7 +236,8 @@ title ('Stimulus aligned ')
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
 % xticks([0 1200 2400 3600 4800])
 xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
-xticklabels({'-2','-1','0','1','2'})
+xticklabels([start:1:stop])
+%xticklabels({'-2','-1','0','1','2'})
 
 c=1;
 for istim = StimzAbs
@@ -266,16 +271,17 @@ end
 
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400 3600 4800])
-xticklabels({'-2','-1','0','1','2'})
+xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+% 0:((stop*start)*sample_rate)/downsampleScale):(sample_rate/downsampleScale)
+xticklabels([start:1:stop])
 
 
 
 subplot(6,2,11); hold on
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400 3600 4800])
-xticklabels({'-2','-1','0','1','2'})
+xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+xticklabels([start:1:stop])
 title ('Outcome aligned ')
 
 c=1;
@@ -305,8 +311,8 @@ end
 
 subplot(6,2,12); hold on
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
-xticks([0 1200 2400 3600 4800])
-xticklabels({'-2','-1','0','1','2'})
+xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+xticklabels([start:1:stop])
 ylim([-1 1])
 yticks([-1 0 1])
 title('Onset Beep Aligned')
