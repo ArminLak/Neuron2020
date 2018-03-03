@@ -1,9 +1,9 @@
 clear all
 %close all
 
-animal_name = 'ALK068'
-exp_date   = '2018-02-09'
-exp_series ='1'
+animal_name = 'ALK071'
+exp_date   = '2018-03-02'
+exp_series ='3'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -13,8 +13,8 @@ exp_series ='1'
 % 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
-start = -2 % s
-stop=2     % s
+start = -1 % s
+stop=3     % s
 
 % original data is sammple 12K per s. We downsample 10 times making it 1.2K
 % per s. We define 2 s before and 2 s after the event (4 * 1.2k) we stay
@@ -139,14 +139,15 @@ posRel = wheel.resetAtEvent(t, pos, eventTimes);
 % --------- make plots --------------
 %%
 figure; hold on
-subplot(6,2,1); % psych curve
+subplot(7,2,1); % psych curve
 
-plot(unique(TrialTimingData(:,2)'), performance,'k')
+plot(unique(TrialTimingData(:,2)'), performance,'k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',5)
 xlabel('Contrast')
 xticks([min(Stimz) 0 max(Stimz)])
 title('Psych Curve')
 ylabel('% Right-ward')
 yticklabels({0 50 100})
+
 
 subplot(4,1,2); % snapshot of CA trace
 
@@ -160,13 +161,16 @@ hold on
 % line([90 90], [-2 4])
 
 ax = gca;
-for ievent = 1: size(TrialTimingData,1)
+Visstart = 30; % visualise trace from this trial 
+Visstop  = 40;  % visualise trace up to this trial
+for ievent = Visstart: Visstop
     
     h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
     
     line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
     line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
     rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);
+    
     
     if TrialTimingData(ievent,9)==1
         rl.Color = [47/255 189/255 28/255];
@@ -177,37 +181,40 @@ for ievent = 1: size(TrialTimingData,1)
     end
 end
 
+ 
+
 a = downsample(TimeStamps,10);
 xlim([0 a(end)])
 xlabel ('Time (s)')
 ylabel ('Response')
 title ('Ca responses')
-xlim([10 110])
-ylim([-2 5])
+xlim([TrialTimingData(Visstart, 12) - 1  TrialTimingData(Visstop, 14) + 2])
 
-subplot(4,1,3);
-plot(t(1:end-1)+FileAlignDelay-0.2, smooth(diff(posRel)./diff(t)),'k')
+% find the max and min of signal: something like this:    
+%Max4Yaxis = max ( DeltaFoverF (TimeStamps (TrialTimingData(3, 12) - 1  TrialTimingData(ievent, 14) + 2)
 
-xlabel ('Time (s)')
-title ('Wheel acceleration')
-xlim([10 110])
-ylim([-200 200])
+ylim([-10 28])
+
+% subplot(4,1,3);
+% plot(t(1:end-1)+FileAlignDelay-0.2, smooth(diff(posRel)./diff(t)),'k')
+% 
+% xlabel ('Time (s)')
+% title ('Wheel acceleration')
+% xlim([10 110])
+% ylim([-200 200])
 
 %----------------------------- subplot for stumulus aligned normalised
-subplot(6,2,2); hold on
+subplot(7,2,2); hold on
 title('Normalised post-stim response')
 %xlim([ 0 (stop-start)* sample_rate]/downsampleScale)
-%xticks([0 1200 2400 3600 4800])
-%xticklabels ({'-2', '-1', '0', '1', '2'})
 
 % normalise trial-by-trial stim responses by the activivty before stimulus 
-%col 1 = mean; col 2 = stim
 
 prepostmeandiff = nan(size(Raster_MatrixStim,1), 1); %pre-allocate
 
 for ievent = 1:size(Raster_MatrixStim,1)
     
-    prepostmeandiff(ievent) = mean(Raster_MatrixStim(ievent, 2500:4500) - mean(Raster_MatrixStim(ievent, 1600:2320))); %difference between before and after; indicator of relative signal change 
+    prepostmeandiff(ievent) = mean(Raster_MatrixStim(ievent, 1600:3000) - mean(Raster_MatrixStim(ievent, 70:1100))); %difference between before and after; indicator of relative signal change 
     
 end
 % next for each istim
@@ -230,8 +237,8 @@ xlabel('Contrast')
 ylabel('Rel')
 
 % 
-% subplot for stimulus aligned, not normalised
-subplot(6,2,9); hold on
+% -------------------------------------------------subplot for stimulus aligned, not normalised
+subplot(7,2,9); hold on
 title ('Stimulus aligned ')
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
 % xticks([0 1200 2400 3600 4800])
@@ -256,7 +263,7 @@ end
 xlabel ('Time (s)')
 
 
-subplot(6,2,10); hold on
+subplot(7,2,10); hold on
 title ('Stimulus aligned')
 c=1;
 
@@ -277,7 +284,7 @@ xticklabels([start:1:stop])
 
 
 
-subplot(6,2,11); hold on
+subplot(7,2,11); hold on
 
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
 xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
@@ -309,16 +316,73 @@ for istim = Stimz
     
 end
 
-subplot(6,2,12); hold on
+subplot(7,2,12); hold on
 xlim([0 (stop-start)* sample_rate]/downsampleScale)
 xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
 xticklabels([start:1:stop])
-ylim([-1 1])
+% ylim([-1 1])
 yticks([-1 0 1])
 title('Onset Beep Aligned')
 
-plot(nanmean(Raster_MatrixOnsetBeep), 'color', colorGray(1,:))
+plot(nanmean(Raster_MatrixOnsetBeep), 'color', colorGray(1,:),'LineWidth',2)
 
+
+%------------------------------------------ post stim response by contrast for errors and correct trials-----
+subplot(7, 2, 13); hold on
+title('Normalised post stim response') %separate line for correct and error trials
+
+% pre-allocate; col 1 = correct, col 2 = error
+poststim = nan(length(normalised), 2);
+
+c = 1;
+
+for istim = unique(TrialTimingData(:,2))'
+    
+    poststim(c, 1)= nanmean(prepostmeandiff(TrialTimingData(:,2)==istim & TrialTimingData(:,9)==1, 1));
+    poststim(c, 2)= nanmean(prepostmeandiff(TrialTimingData(:,2)==istim & TrialTimingData(:,9)==0, 1));
+    c=c+1;
+end
+
+plot(Stimz, poststim(:,1), 'color', [47/255 189/255 28/255], 'LineWidth', 2)
+hold on;
+plot(Stimz, poststim(:,2), 'color', [189/255 89/255 28/255], 'LineWidth', 2)
+
+ylabel('Rel')
+xlabel('Contrast')
+xticks([Stimz])
+legend('Reward', 'No reward')
+
+%------------------------------- normalised post outcome response -------------
+
+subplot(7, 2, 14); hold on
+title('Normalised post outcome response')
+
+outcomediff = nan(size(Raster_MatrixReward,1), 1); %pre-allocate
+
+for ievent = 1:size(Raster_MatrixReward,1)
+    
+    outcomediff(ievent) = mean(Raster_MatrixReward(ievent, 1600:3000) - mean(Raster_MatrixReward(ievent, 70:1100))); %difference between before and after; indicator of relative signal change 
+    
+end
+
+postoutcome = nan(length(normalised), 2); %col 1 = correct, col 2 = error
+c=1;
+
+for istim = unique(TrialTimingData(:,2))'
+    
+    postoutcome(c, 1)= nanmean(outcomediff(TrialTimingData(:,2)==istim & TrialTimingData(:,9)==1, 1));
+    postoutcome(c, 2)= nanmean(outcomediff(TrialTimingData(:,2)==istim & TrialTimingData(:,9)==0, 1));
+    c=c+1;
+end
+
+plot(Stimz, postoutcome(:,1), 'color', [47/255 189/255 28/255], 'LineWidth', 2)
+hold on;
+plot(Stimz, postoutcome(:,2), 'color', [189/255 89/255 28/255], 'LineWidth', 2)
+
+ylabel('Rel')
+xlabel('Contrast')
+xticks([Stimz])
+legend('Reward', 'No reward')
 
 
 % c=1;
