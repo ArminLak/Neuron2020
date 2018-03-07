@@ -1,9 +1,9 @@
 clear all
 %close all
 
-animal_name = 'ALK070'
-exp_date   = '2018-02-28'
-exp_series ='1'
+animal_name = 'ALK071'
+exp_date   = '2018-03-06'
+exp_series ='6'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -14,7 +14,7 @@ exp_series ='1'
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
 start = -1 % s
-stop=2     % s
+stop=1     % s
 
 % original data is sammple 12K per s. We downsample 10 times making it 1.2K
 % per s. We define 2 s before and 2 s after the event (4 * 1.2k) we stay
@@ -94,12 +94,24 @@ load(photoMFileName);DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;TimeStamps=photoM
     
 %------------------------------- plot psychoimetric curve------------------
 % psych curve:
+Noutof = histc(TrialTimingData(:,2), Stimz)';
+Nhit = nan(1, size(Noutof, 2));
+Ncorrect = nan(1, size(Noutof, 2));
 c = 1;
 for istim = Stimz
-    
+    Nhit(c)=sum(TrialTimingData(TrialTimingData(:,2)==istim,3));
+    Ncorrect(c)=sum(TrialTimingData(TrialTimingData(:,2)==istim,9));
     performance(c) = nanmean (TrialTimingData(TrialTimingData(:,2)==istim,3));
     
     c=c+1; end
+
+% compute errorbars for psych function
+pR = Nhit ./ Noutof;    
+psuccess=Ncorrect ./ Noutof;
+[M,V]=binostat(Noutof, psuccess)
+std = sqrt(V)./100
+
+
 %------------------------define event time for event-alinged responses--------------------------
 
 event_times = TrialTimingData(:,12); % trial initiation/ onset beep
@@ -150,9 +162,13 @@ posRel = wheel.resetAtEvent(t, pos, eventTimes);
 
 % --------- make plots --------------
 %%
-f = figure; hold on
-subplot(7,2,1); % psych curve
+%f = figure; hold on
+f = figure('Position', [300 200 800 900]); hold on
 
+
+% ---------- psych curve ------------------------------------------------
+subplot(7,2,1); % psych curve
+errorbar(unique(TrialTimingData(:,2)'), performance, std, 'o', 'MarkerSize', 1)
 plot(unique(TrialTimingData(:,2)'), performance, 'color', [74/255 127/255 189/255],'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 127/255 189/255],'MarkerSize',3)
 xlabel('Contrast')
 xticks([min(Stimz) 0 max(Stimz)])
@@ -161,6 +177,8 @@ ylabel('% Right-ward')
 yticklabels({0 50 100})
 
 
+
+% --------- Ca response trace ---------------------------
 subplot(4,1,2); % snapshot of CA trace
 
 % 12: onset beep(solid line)
@@ -174,10 +192,14 @@ hold on
 
 ax = gca;
 Visstart = 30; % visualise trace from this trial 
-Visstop  = 46;  % visualise trace up to this trial
+Visstop  = 36;  % visualise trace up to this trial
+ymin = -13
+ymax = 21
+ylim([ymin ymax])
+
 for ievent = Visstart: Visstop
     
-    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) -2 TrialTimingData(ievent,14)-TrialTimingData(ievent,13) 10],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
+    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax-ymin],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
     
     line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
     line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
@@ -205,7 +227,7 @@ xlim([TrialTimingData(Visstart, 12) - 1  TrialTimingData(Visstop, 14) + 2])
 % find the max and min of signal: something like this:    
 %Max4Yaxis = max ( DeltaFoverF (TimeStamps (((TrialTimingData(3, 12)-1):(TrialTimingData(ievent, 14) + 2)), 1)))
 
-ylim([min(smooth(downsample(DeltaFoverF,10))) max(smooth(downsample(DeltaFoverF,10)))])
+
 
 % subplot(4,1,3);
 % plot(t(1:end-1)+FileAlignDelay-0.2, smooth(diff(posRel)./diff(t)),'k')
@@ -241,7 +263,7 @@ end
 
 
 
-ylim([min(normalised)*1.2 max(normalised)*1.2])
+ylim([min(normalised)-min(normalised)*.2 max(normalised)*1.2])
 xticks([Stimz])
 xticklabels([Stimz])
 plot (Stimz, normalised', 'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 127/255 189/255],'MarkerSize',3, 'Color', [74/255 127/255 189/255])
