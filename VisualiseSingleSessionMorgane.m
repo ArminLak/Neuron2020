@@ -1,5 +1,5 @@
 clear all
-%close all
+close all
 
 animal_name = 'ALK071'
 exp_date   = '2018-03-06'
@@ -13,7 +13,7 @@ exp_series ='6'
 % 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
-start = -1 % s
+start = -1 % s this should be -1 or less
 stop=1     % s
 
 % original data is sammple 12K per s. We downsample 10 times making it 1.2K
@@ -27,8 +27,8 @@ downsampleScale = 10;                                       % factor downsamplin
 
 %define time zones for normalisation after alignment
 
-preAlign = (0.1*(sample_rate/downsampleScale)*abs(start)):((sample_rate/downsampleScale)*abs(start)-70);
-postAlign = ((sample_rate/downsampleScale)*abs(start)+200):(0.9*(sample_rate/downsampleScale)*(abs(start)+stop));
+preAlign = ((sample_rate/downsampleScale)*abs(start)-800):((sample_rate/downsampleScale)*abs(start)-70);
+postAlign = ((sample_rate/downsampleScale)*abs(start)+200):((sample_rate/downsampleScale)*(abs(start))+700);
 
 
 %---------------- colors for plotting-------------------------------------
@@ -109,7 +109,7 @@ for istim = Stimz
 pR = Nhit ./ Noutof;    
 psuccess=Ncorrect ./ Noutof;
 [M,V]=binostat(Noutof, psuccess)
-std = sqrt(V)./100
+sem = sqrt(V)./ sqrt(Noutof);
 
 
 %------------------------define event time for event-alinged responses--------------------------
@@ -167,8 +167,8 @@ f = figure('Position', [300 200 800 900]); hold on
 
 
 % ---------- psych curve ------------------------------------------------
-subplot(7,2,1); % psych curve
-errorbar(unique(TrialTimingData(:,2)'), performance, std, 'o', 'MarkerSize', 1)
+subplot(7,2,1); hold on% psych curve
+%errorbar(unique(TrialTimingData(:,2)'), performance, sem, 'o', 'MarkerSize', 1);
 plot(unique(TrialTimingData(:,2)'), performance, 'color', [74/255 127/255 189/255],'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 127/255 189/255],'MarkerSize',3)
 xlabel('Contrast')
 xticks([min(Stimz) 0 max(Stimz)])
@@ -191,16 +191,16 @@ hold on
 % line([90 90], [-2 4])
 
 ax = gca;
-Visstart = 30; % visualise trace from this trial 
-Visstop  = 36;  % visualise trace up to this trial
-ymin = -13
-ymax = 21
+Visstart = 10; % visualise trace from this trial 
+Visstop  = 20;  % visualise trace up to this trial
+ymin = -15
+ymax = 27
 ylim([ymin ymax])
 
 for ievent = Visstart: Visstop
     
     h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax-ymin],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
-    
+    text(TrialTimingData(ievent, 13), 30, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
     line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
     line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
     rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);
@@ -216,12 +216,12 @@ for ievent = Visstart: Visstop
 end
 
  
-
+text(TrialTimingData(14,13), 35, 'ALK070 2018-03-06', 'FontWeight', 'bold', 'FontSize', 10);
 a = downsample(TimeStamps,10);
 xlim([0 a(end)])
 xlabel ('Time (s)')
 ylabel ('Response, {\Delta} F / F')
-title ('Ca responses')
+%title ('ALK070 2018-03-06')
 xlim([TrialTimingData(Visstart, 12) - 1  TrialTimingData(Visstop, 14) + 2])
 
 % find the max and min of signal: something like this:    
