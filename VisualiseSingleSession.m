@@ -1,10 +1,10 @@
 clear all
 close all
 
-animal_name = 'ALK070'
+animal_name = 'ALK071'
 
-exp_date   = '2018-02-13'
-exp_series ='2'
+exp_date   = '2018-03-06'
+exp_series ='6'
 
 %--------------- useful information --------------------------------------
 % task event

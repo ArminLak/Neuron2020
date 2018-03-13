@@ -3,7 +3,7 @@ close all
 
 load('BehPhotoM_Exp23')
 
-animal_ID = 50;
+animal_ID = 48;
 
 RTLimit = 10;
 
@@ -56,6 +56,8 @@ BehData(RT > RTLimit,:) = [];
 BeepData(RT > RTLimit,:) = [];
 StimData(RT > RTLimit,:) = [];
 RewardData(RT > RTLimit,:) = [];
+
+
 
 
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...

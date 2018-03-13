@@ -4,7 +4,7 @@ close all
 animal_name = 'ALK070'
 
 SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24]; % ALK068 Exp23
-SessionList = [13, 14, 15, 16,17, 18, 19, 20]; % ALK070 Exp23
+SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
 
 
 
