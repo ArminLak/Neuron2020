@@ -3,7 +3,7 @@ close all
 
 load('BehPhotoM_Exp23')
 
-animal_ID = 48;
+animal_ID = 51;
 
 RTLimit = 10;
 
@@ -58,8 +58,6 @@ StimData(RT > RTLimit,:) = [];
 RewardData(RT > RTLimit,:) = [];
 
 
-
-
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
     (BehData(:,3)==1 & BehData(:,8)==2));
 
@@ -109,8 +107,6 @@ title( 'B) Reaction Time')
 plot(unique(BehData(:,2))',RT(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',10)
 
 plot(unique(BehData(:,2))',RT(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',10)
-
-
 
 
 
@@ -170,7 +166,7 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
-NormBinStim = mean(StimData(:,4200:5200),2);
+NormBinStim = mean(StimData(:,4000:5200),2);
 
 c=1;
 for iblock= [1 2]
@@ -179,6 +175,7 @@ for iblock= [1 2]
     
     for iStimAbs = unique((BehData(:,2)))'
         
+        % only correct trials
        PopNormBinStimNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & BehData(:,2)==iStimAbs & BehData(:,8)==iblock));
         
        cStim = cStim + 1;
@@ -248,7 +245,7 @@ title('D) Reward Align')
 xlabel('Time (s)')
 ylabel('Norm response')
 
-NormBinReward = mean(RewardData(:,4200:5300),2) - mean(RewardData(:,3500:3800),2);
+NormBinReward = mean(RewardData(:,4000:5300),2) - mean(RewardData(:,3400:3800),2);
 
 c=1;
 for RewardSize= [-1 1]
@@ -284,7 +281,39 @@ ylabel('Norm response')
 legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
 
     
+% Grand Summary data of the animal
 
+GrandSummary(animal_ID).AbsStimResp = AbsStimResp;
+
+GrandSummary(animal_ID).PopNormBinStimNoFold = PopNormBinStimNoFold;
+
+GrandSummary(animal_ID).Beep2DACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==1,:));
+GrandSummary(animal_ID).BeepAwayDACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==-1,:));
+
+GrandSummary(animal_ID).Beep2DAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==1,:));
+GrandSummary(animal_ID).BeepAwayDAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==-1,:));
+
+
+GrandSummary(animal_ID).Stim2DACorr = nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:));
+GrandSummary(animal_ID).StimAwayDACorr = nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==-1,:));
+
+GrandSummary(animal_ID).Stim2DAErr = nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==1,:));
+GrandSummary(animal_ID).StimAwayDAErr = nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==-1,:));
+
+GrandSummary(animal_ID).Rew2DACorr = nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:));
+GrandSummary(animal_ID).RewAwayDACorr = nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:));
+
+GrandSummary(animal_ID).Rew2DAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:));
+GrandSummary(animal_ID).RewAwayDAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:));
+
+
+GrandSummary(animal_ID).PopNormBinStimCorrect=PopNormBinStimCorrect;
+
+GrandSummary(animal_ID).PopNormBinStimError=PopNormBinStimError;
+
+GrandSummary(animal_ID).PopNormBinRewardCorrect=PopNormBinRewardCorrect;
+
+GrandSummary(animal_ID).PopNormBinRewardError=PopNormBinRewardError;
 
 
     

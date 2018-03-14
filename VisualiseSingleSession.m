@@ -3,8 +3,8 @@ close all
 
 animal_name = 'ALK071'
 
-exp_date   = '2018-03-06'
-exp_series ='6'
+exp_date   = '2018-03-14'
+exp_series ='1'
 
 %--------------- useful information --------------------------------------
 % task event
