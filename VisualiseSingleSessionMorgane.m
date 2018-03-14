@@ -2,8 +2,8 @@ clear all
 close all
 
 animal_name = 'ALK071'
-exp_date   = '2018-03-06'
-exp_series ='6'
+exp_date   = '2018-03-13'
+exp_series ='1'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -191,15 +191,15 @@ hold on
 % line([90 90], [-2 4])
 
 ax = gca;
-Visstart = 10; % visualise trace from this trial 
-Visstop  = 20;  % visualise trace up to this trial
+Visstart = 43; % visualise trace from this trial 
+Visstop  = 50;  % visualise trace up to this trial
 ymin = -15
 ymax = 27
 ylim([ymin ymax])
 
 for ievent = Visstart: Visstop
     
-    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax-ymin],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
+    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax+abs(ymin)],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
     text(TrialTimingData(ievent, 13), 30, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
     line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
     line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
@@ -263,7 +263,7 @@ end
 
 
 
-ylim([min(normalised)-min(normalised)*.2 max(normalised)*1.2])
+ylim([min(normalised)-abs(min(normalised))*.2 max(normalised)*1.2])
 xticks([Stimz])
 xticklabels([Stimz])
 plot (Stimz, normalised', 'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 127/255 189/255],'MarkerSize',3, 'Color', [74/255 127/255 189/255])
