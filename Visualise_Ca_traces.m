@@ -5,8 +5,8 @@ animal_name = 'ALK071'
 exp_date   = '2018-03-13'
 exp_series ='1'
 
-trial_from = 1          % visualise trace from this trial
-trial_to = 50          % visualise trace up to this trial
+trial_from = 100          % visualise trace from this trial
+trial_to = 130          % visualise trace up to this trial
 
 
 % NB trial_to-trial_from = 50

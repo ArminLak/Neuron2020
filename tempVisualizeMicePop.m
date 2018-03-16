@@ -3,6 +3,8 @@ close all
 
 load('GrandSummaryExp23_2.mat')
 
+Animals = [48 50 51]
+
 color = [
     1 0 0         % red
     1 0.5 0       % orange
@@ -28,14 +30,10 @@ GrandPopBeep2AwayDACorError = zeros(4,7100);
 
 GrandPopRew2AwayDACorError = zeros(4,7100);
 
-
-
 GrandPopStimBin = zeros(4,4);
 
 GrandPopRewBin = zeros(4,4);
 
-
-Animals = [48 50]
 
 for iAnimal = Animals
     
@@ -70,8 +68,7 @@ for iAnimal = Animals
     
     
     SingleAnimalStim2AwayDACorrErrNorm = SingleAnimalStim2AwayDACorrErr ./ max(max(SingleAnimalStim2AwayDACorrErr));
-    
-    
+     
     GrandPopStim2AwayDACorError = SingleAnimalStim2AwayDACorrErrNorm + GrandPopStim2AwayDACorError ;
     
     
@@ -82,8 +79,6 @@ for iAnimal = Animals
     
     
     GrandPopStimBin = SingleBinStimCorrErrorNorm + GrandPopStimBin ;
-    
-    
     
     
     SingleAnimalRew2AwayDACorrErr(1,:)= GrandSummary(iAnimal).Rew2DACorr;
@@ -222,7 +217,7 @@ set(gca,'TickDir','out','Box','off');
 
 
 
-%%
+%% work in progress:
 
 
 c=1;

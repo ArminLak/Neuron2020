@@ -2,6 +2,7 @@
 close all
 
 load('BehPhotoM_Exp23')
+%[48, 50,51]  coresponding to ALK068, 70 and 71
 
 animal_ID = 51;
 
@@ -280,8 +281,11 @@ ylabel('Norm response')
     title('F) Outcome Align')
 legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
 
-    
+  %%  
 % Grand Summary data of the animal
+
+
+load('GrandSummaryExp23_2.mat')
 
 GrandSummary(animal_ID).AbsStimResp = AbsStimResp;
 

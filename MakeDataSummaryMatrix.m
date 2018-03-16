@@ -3,13 +3,11 @@ close all
 
 animal_name = 'ALK071'
 
+% give a list of sessions
+
 SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24]; % ALK068 Exp23
 SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
-SessionList = [10, 11, 12]; % ALK071 Exp23
-
-
-
-
+SessionList = [10, 11, 12,13, 14]; % ALK071 Exp23
 
 
 load('BehPhotoM_Exp23.mat')
