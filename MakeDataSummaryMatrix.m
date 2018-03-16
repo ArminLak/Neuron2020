@@ -1,6 +1,13 @@
 clear all
 close all
 
+% specify anial name and list of sessions of interest
+% it calcuate trial-by-trial data from each session and stores them in a
+% large strucutre (i.e. BehPhotoM_Exp23.mat)
+
+% if you are happy with it, then save it at our Github folder.
+
+
 animal_name = 'ALK071'
 
 % give a list of sessions
@@ -10,6 +17,7 @@ SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
 SessionList = [10, 11, 12,13, 14]; % ALK071 Exp23
 
 
+% This is the structure that will hold the data
 load('BehPhotoM_Exp23.mat')
 
 %--------------- useful information --------------------------------------

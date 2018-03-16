@@ -1,12 +1,16 @@
-%clear all
+clear all
 close all
 
-load('BehPhotoM_Exp23')
+% give animal name and it will plot data averaged across all session
+
+% it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
+
+
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 51;
+animal_ID = 48;
 
-RTLimit = 10;
+load('BehPhotoM_Exp23')
 
 
 color = [
@@ -19,10 +23,12 @@ color = [
     0 0 1];       % blue
 
 colorGray = [ 0.8 0.8 0.8
-             0.6 0.6 0.6
-             0.4 0.4 0.4
-             0 0 0
-             ];
+    0.6 0.6 0.6
+    0.4 0.4 0.4
+    0 0 0
+    ];
+
+RTLimit = 10;
 %%
 BehData = [];
 BeepData = [];
@@ -115,24 +121,24 @@ c=1;
 for iStim = abzStim
     
     AbsStimResp(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim, :));
-
+    
     
     subplot(4,2,3); hold on
     plot((AbsStimResp(c,:)),'color',colorGray(c,:),'LineWidth',2)
     
-
+    
     
     c=c+1;
 end
 
 if length(abzStim)==3
-legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)))
+    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)))
     
 elseif  length(abzStim)==4
-legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)))
-
+    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)))
+    
 elseif length(abzStim)==5
-legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)))
+    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)))
     
 end
 
@@ -177,9 +183,9 @@ for iblock= [1 2]
     for iStimAbs = unique((BehData(:,2)))'
         
         % only correct trials
-       PopNormBinStimNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & BehData(:,2)==iStimAbs & BehData(:,8)==iblock));
+        PopNormBinStimNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & BehData(:,2)==iStimAbs & BehData(:,8)==iblock));
         
-       cStim = cStim + 1;
+        cStim = cStim + 1;
     end
     
     c=c+1;
@@ -200,16 +206,16 @@ for RewardSize= [-1 1]
     
     for iStimAbs = abzStim
         
-       PopNormBinStimCorrect (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
-       PopNormBinStimError (c,cStim)= nanmean(NormBinStim (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+        PopNormBinStimCorrect (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+        PopNormBinStimError (c,cStim)= nanmean(NormBinStim (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
         
-       cStim = cStim + 1;
+        cStim = cStim + 1;
     end
     
     c=c+1;
 end
 
-    
+
 subplot(4,2,6); hold on
 plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(1,:),'--g','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(2,:),'g','LineWidth',2)
@@ -255,16 +261,16 @@ for RewardSize= [-1 1]
     
     for iStimAbs = abzStim
         
-       PopNormBinRewardCorrect (c,cStim)= nanmean(NormBinReward (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
-       PopNormBinRewardError (c,cStim)= nanmean(NormBinReward (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+        PopNormBinRewardCorrect (c,cStim)= nanmean(NormBinReward (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+        PopNormBinRewardError (c,cStim)= nanmean(NormBinReward (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
         
-       cStim = cStim + 1;
+        cStim = cStim + 1;
     end
     
     c=c+1;
 end
 
-    
+
 subplot(4,2,8); hold on
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(1,:),'--g','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(2,:),'g','LineWidth',2)
@@ -273,19 +279,19 @@ plot(unique(abs(BehData(:,2)))',PopNormBinRewardError(1,:),'--r','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardError(2,:),'r','LineWidth',2)
 
 
-    set(gca, 'TickDir','out','Box','off');
+set(gca, 'TickDir','out','Box','off');
 
 xlabel('Contrast')
 ylabel('Norm response')
-    
-    title('F) Outcome Align')
+
+title('F) Outcome Align')
 legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
 
-  %%  
+%%
 % Grand Summary data of the animal
 
 
-load('GrandSummaryExp23_2.mat')
+load('GrandSummaryExp23.mat')
 
 GrandSummary(animal_ID).AbsStimResp = AbsStimResp;
 
@@ -320,4 +326,4 @@ GrandSummary(animal_ID).PopNormBinRewardCorrect=PopNormBinRewardCorrect;
 GrandSummary(animal_ID).PopNormBinRewardError=PopNormBinRewardError;
 
 
-    
+

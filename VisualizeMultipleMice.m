@@ -1,9 +1,12 @@
 clear all
 close all
 
-load('GrandSummaryExp23_2.mat')
-
+% list of animals
 Animals = [48 50 51]
+
+load('GrandSummaryExp23.mat')
+
+
 
 color = [
     1 0 0         % red
@@ -218,177 +221,177 @@ set(gca,'TickDir','out','Box','off');
 
 
 %% work in progress:
-
-
-c=1;
-for iStim = abzStim
-    
-    AbsStimResp(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim, :));
-    
-    
-    subplot(4,2,3); hold on
-    plot((AbsStimResp(c,:)),'color',colorGray(c,:),'LineWidth',2)
-    
-    
-    
-    c=c+1;
-end
-
-if length(abzStim)==3
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)))
-    
-elseif  length(abzStim)==4
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)))
-    
-elseif length(abzStim)==5
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)))
-    
-end
-
-title('C) Stimulus Align')
-
-xlim([3500 4900])
-ylim([-0.3 2])
-
-
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-xlabel('Time (s)')
-ylabel('Norm response')
-
-
-%% Stimulus figure
-
-subplot(4,2,5); hold on
-
-plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
-plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
-
-plot(nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==1,:)),'r','LineWidth',2)
-plot(nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==-1,:)),'--r','LineWidth',2)
-
-xlim([3500 4800])
-ylim([-0.3 2])
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-title('C) Stimulus Align')
-xlabel('Time (s)')
-ylabel('Norm response')
-
-
-NormBinStim = mean(StimData(:,4200:5200),2);
-
-c=1;
-for iblock= [1 2]
-    
-    cStim = 1;
-    
-    for iStimAbs = unique((BehData(:,2)))'
-        
-        PopNormBinStimNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & BehData(:,2)==iStimAbs & BehData(:,8)==iblock));
-        
-        cStim = cStim + 1;
-    end
-    
-    c=c+1;
-end
-
-subplot(4,2,4); hold on
-
-plot(unique(BehData(:,2))',PopNormBinStimNoFold(1,:),'color',[0.5 0.2 0.1],'LineWidth',2)
-plot(unique(BehData(:,2))',PopNormBinStimNoFold(2,:),'color',[1 0.6 0.2],'LineWidth',2)
-
-
-%%
-
-c=1;
-for RewardSize= [-1 1]
-    
-    cStim = 1;
-    
-    for iStimAbs = abzStim
-        
-        PopNormBinStimCorrect (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
-        PopNormBinStimError (c,cStim)= nanmean(NormBinStim (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
-        
-        cStim = cStim + 1;
-    end
-    
-    c=c+1;
-end
-
-
-subplot(4,2,6); hold on
-plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(1,:),'--g','LineWidth',2)
-plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(2,:),'g','LineWidth',2)
-
-plot(unique(abs(BehData(:,2)))',PopNormBinStimError(1,:),'--r','LineWidth',2)
-plot(unique(abs(BehData(:,2)))',PopNormBinStimError(2,:),'r','LineWidth',2)
-
-set(gca, 'TickDir','out','Box','off');
-
-title('E) Stimulus Align')
-
-xlabel('Contrast')
-ylabel('Norm response')
-
-
-%% Reward figure
-
-
-
-subplot(4,2,7); hold on
-
-plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
-plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
-
-plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:)),'r','LineWidth',2)
-plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:)),'--r','LineWidth',2)
-
-xlim([3500 4900])
-ylim([-2 2])
-
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-title('D) Reward Align')
-xlabel('Time (s)')
-ylabel('Norm response')
-
-NormBinReward = mean(RewardData(:,4200:5300),2) - mean(RewardData(:,3500:3800),2);
-
-c=1;
-for RewardSize= [-1 1]
-    
-    cStim = 1;
-    
-    for iStimAbs = abzStim
-        
-        PopNormBinRewardCorrect (c,cStim)= nanmean(NormBinReward (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
-        PopNormBinRewardError (c,cStim)= nanmean(NormBinReward (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
-        
-        cStim = cStim + 1;
-    end
-    
-    c=c+1;
-end
-
-
-subplot(4,2,8); hold on
-plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(1,:),'--g','LineWidth',2)
-plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(2,:),'g','LineWidth',2)
-
-plot(unique(abs(BehData(:,2)))',PopNormBinRewardError(1,:),'--r','LineWidth',2)
-plot(unique(abs(BehData(:,2)))',PopNormBinRewardError(2,:),'r','LineWidth',2)
-
-
-set(gca, 'TickDir','out','Box','off');
-
-xlabel('Contrast')
-ylabel('Norm response')
-
-title('F) Outcome Align')
-legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
-
-
-
-
+% 
+% 
+% c=1;
+% for iStim = abzStim
+%     
+%     AbsStimResp(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim, :));
+%     
+%     
+%     subplot(4,2,3); hold on
+%     plot((AbsStimResp(c,:)),'color',colorGray(c,:),'LineWidth',2)
+%     
+%     
+%     
+%     c=c+1;
+% end
+% 
+% if length(abzStim)==3
+%     legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)))
+%     
+% elseif  length(abzStim)==4
+%     legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)))
+%     
+% elseif length(abzStim)==5
+%     legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)))
+%     
+% end
+% 
+% title('C) Stimulus Align')
+% 
+% xlim([3500 4900])
+% ylim([-0.3 2])
+% 
+% 
+% set(gca, 'XTick', [3700, 4300, 4900]);
+% set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+% xlabel('Time (s)')
+% ylabel('Norm response')
+% 
+% 
+% % Stimulus figure
+% 
+% subplot(4,2,5); hold on
+% 
+% plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
+% plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
+% 
+% plot(nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==1,:)),'r','LineWidth',2)
+% plot(nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==-1,:)),'--r','LineWidth',2)
+% 
+% xlim([3500 4800])
+% ylim([-0.3 2])
+% set(gca, 'XTick', [3700, 4300, 4900]);
+% set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+% title('C) Stimulus Align')
+% xlabel('Time (s)')
+% ylabel('Norm response')
+% 
+% 
+% NormBinStim = mean(StimData(:,4200:5200),2);
+% 
+% c=1;
+% for iblock= [1 2]
+%     
+%     cStim = 1;
+%     
+%     for iStimAbs = unique((BehData(:,2)))'
+%         
+%         PopNormBinStimNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & BehData(:,2)==iStimAbs & BehData(:,8)==iblock));
+%         
+%         cStim = cStim + 1;
+%     end
+%     
+%     c=c+1;
+% end
+% 
+% subplot(4,2,4); hold on
+% 
+% plot(unique(BehData(:,2))',PopNormBinStimNoFold(1,:),'color',[0.5 0.2 0.1],'LineWidth',2)
+% plot(unique(BehData(:,2))',PopNormBinStimNoFold(2,:),'color',[1 0.6 0.2],'LineWidth',2)
+% 
+% 
+% %
+% 
+% c=1;
+% for RewardSize= [-1 1]
+%     
+%     cStim = 1;
+%     
+%     for iStimAbs = abzStim
+%         
+%         PopNormBinStimCorrect (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+%         PopNormBinStimError (c,cStim)= nanmean(NormBinStim (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+%         
+%         cStim = cStim + 1;
+%     end
+%     
+%     c=c+1;
+% end
+% 
+% 
+% subplot(4,2,6); hold on
+% plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(1,:),'--g','LineWidth',2)
+% plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(2,:),'g','LineWidth',2)
+% 
+% plot(unique(abs(BehData(:,2)))',PopNormBinStimError(1,:),'--r','LineWidth',2)
+% plot(unique(abs(BehData(:,2)))',PopNormBinStimError(2,:),'r','LineWidth',2)
+% 
+% set(gca, 'TickDir','out','Box','off');
+% 
+% title('E) Stimulus Align')
+% 
+% xlabel('Contrast')
+% ylabel('Norm response')
+% 
+% 
+% %% Reward figure
+% 
+% 
+% 
+% subplot(4,2,7); hold on
+% 
+% plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
+% plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
+% 
+% plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:)),'r','LineWidth',2)
+% plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:)),'--r','LineWidth',2)
+% 
+% xlim([3500 4900])
+% ylim([-2 2])
+% 
+% set(gca, 'XTick', [3700, 4300, 4900]);
+% set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+% title('D) Reward Align')
+% xlabel('Time (s)')
+% ylabel('Norm response')
+% 
+% NormBinReward = mean(RewardData(:,4200:5300),2) - mean(RewardData(:,3500:3800),2);
+% 
+% c=1;
+% for RewardSize= [-1 1]
+%     
+%     cStim = 1;
+%     
+%     for iStimAbs = abzStim
+%         
+%         PopNormBinRewardCorrect (c,cStim)= nanmean(NormBinReward (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+%         PopNormBinRewardError (c,cStim)= nanmean(NormBinReward (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+%         
+%         cStim = cStim + 1;
+%     end
+%     
+%     c=c+1;
+% end
+% 
+% 
+% subplot(4,2,8); hold on
+% plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(1,:),'--g','LineWidth',2)
+% plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(2,:),'g','LineWidth',2)
+% 
+% plot(unique(abs(BehData(:,2)))',PopNormBinRewardError(1,:),'--r','LineWidth',2)
+% plot(unique(abs(BehData(:,2)))',PopNormBinRewardError(2,:),'r','LineWidth',2)
+% 
+% 
+% set(gca, 'TickDir','out','Box','off');
+% 
+% xlabel('Contrast')
+% ylabel('Norm response')
+% 
+% title('F) Outcome Align')
+% legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
+% 
+% 
+% 
+% 
