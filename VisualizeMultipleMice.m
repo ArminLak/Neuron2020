@@ -77,9 +77,7 @@ for iAnimal = Animals
     SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError ./ max(max(SingleAnimalTunningRewardCorrError));
     GrandPopNormBinRewardNoFoldCorrError = SingleAnimalNormTunningRewardCorrError + GrandPopNormBinRewardNoFoldCorrError ;
   
-
-    
-    
+  
     SingleAnimalBeep2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DACorr;
     SingleAnimalBeep2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.BeepAwayDACorr;
     SingleAnimalBeep2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DAErr;
@@ -117,9 +115,7 @@ for iAnimal = Animals
     
     
     SingleAnimalRew2AwayDACorrErrNorm = SingleAnimalRew2AwayDACorrErr ./ max(max(SingleAnimalRew2AwayDACorrErr));
-    
-    
-    
+     
     GrandPopRew2AwayDACorError = SingleAnimalRew2AwayDACorrErrNorm + GrandPopRew2AwayDACorError ;
     
     
@@ -159,53 +155,109 @@ plot(StimAllowed,nanmean(RTBlock1),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker',
 plot(StimAllowed,nanmean(RTBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 
 
-for c = 1:4
-    
-    
-    subplot(5,3,4); hold on
-    plot((GrandPopAbsStimResp(c,:) ./ length(Animals)),'color',colorGray(c,:),'LineWidth',2)
-    
-    
-end
 
-
-title('Stimulus Align')
-
-xlim([3500 4900])
-ylim([-0.3 1])
-
-
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-xlabel('Time (s)')
-ylabel('Norm response')
-
-
-subplot(5,3,5); hold on
+subplot(5,3,4); hold on
 plot(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 plot(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
+title('Stimulus Align')
+xlabel('Contrast')
 
-subplot(5,3,6); hold on
+
+subplot(5,3,5); hold on
 plot(StimAllowed,GrandPopNormBinRewardNoFold(1,:)./ length(Animals),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 plot(StimAllowed,GrandPopNormBinRewardNoFold(2,:)./ length(Animals),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
+xlabel('Contrast')
+title('Outcome Align')
 
 
 subplot(5,3,7); hold on
 plot(StimAllowed,GrandPopNormBinStimNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
 plot(StimAllowed,GrandPopNormBinStimNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
+title('Stimulus Align')
+xlabel('Contrast')
 
 subplot(5,3,8); hold on
 plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
 plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
+xlabel('Contrast')
+title('Outcome Align')
+
+
+
+subplot(5,3,10); hold on
+
+
+plot(unique(abs(StimAllowed)),GrandPopStimBin(1,:)./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
+plot(unique(abs(StimAllowed)),GrandPopStimBin(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+
+plot(unique(abs(StimAllowed)),GrandPopStimBin(3,:)./ length(Animals),'--r','LineWidth',2,'Marker','o','MarkerSize',5)
+plot(unique(abs(StimAllowed)),GrandPopStimBin(4,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
+set(gca,'TickDir','out','Box','off');
+xlabel('Contrast')
+title('Stimulus Align')
+
+
+subplot(5,3,11); hold on
+
+
+plot(unique(abs(StimAllowed)),GrandPopRewBin(1,:)./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
+plot(unique(abs(StimAllowed)),GrandPopRewBin(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+
+plot(unique(abs(StimAllowed)),GrandPopRewBin(3,:)./ length(Animals),'--r','LineWidth',2,'Marker','o','MarkerSize',5)
+plot(unique(abs(StimAllowed)),GrandPopRewBin(4,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
+
+set(gca,'TickDir','out','Box','off');
+xlabel('Contrast')
+title('Outcome Align')
+
+
+subplot(5,3,12); hold on
+
+plot(GrandPopStim2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
+
+plot(GrandPopStim2AwayDACorError(2,:)./ length(Animals),'--g','LineWidth',2);
+
+plot(GrandPopStim2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
+
+plot(GrandPopStim2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
+
+xlim([3500 4900])
+ylim([-0.3 1])
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+title('Stimulus Align')
+xlabel('Time (s)')
+ylabel('Norm response')
+legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
 
 
 
 
-subplot(5,3,9); hold on
+subplot(5,3,13); hold on
+
+plot(GrandPopRew2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
+
+plot(GrandPopRew2AwayDACorError(2,:)./ length(Animals),'--g','LineWidth',2);
+
+plot(GrandPopRew2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
+
+plot(GrandPopRew2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
+
+
+xlim([3500 4900])
+ylim([-0.8 1])
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+title('Outcome Align')
+xlabel('Time (s)')
+
+
+
+subplot(5,3,14); hold on
 
 plot(GrandPopBeep2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
 
@@ -223,68 +275,25 @@ title('Beep Align')
 xlabel('Time (s)')
 ylabel('Norm response')
 
+for c = 1:4
+    
+    
+    subplot(5,3,15); hold on
+    plot((GrandPopAbsStimResp(c,:) ./ length(Animals)),'color',colorGray(c,:),'LineWidth',2)
+  
+end
 
-subplot(5,3,10); hold on
 
-plot(GrandPopStim2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
-
-plot(GrandPopStim2AwayDACorError(2,:)./ length(Animals),'--g','LineWidth',2);
-
-plot(GrandPopStim2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
-
-plot(GrandPopStim2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
+title('Stimulus Align')
 
 xlim([3500 4900])
 ylim([-0.3 1])
+
+
 set(gca, 'XTick', [3700, 4300, 4900]);
 set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-title('C) Stimulus Align')
 xlabel('Time (s)')
 ylabel('Norm response')
-
-
-
-subplot(5,3,11); hold on
-
-plot(GrandPopRew2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
-
-plot(GrandPopRew2AwayDACorError(2,:)./ length(Animals),'--g','LineWidth',2);
-
-plot(GrandPopRew2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
-
-plot(GrandPopRew2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
-
-
-xlim([3500 4900])
-ylim([-0.8 1])
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-title('C) Outcome Align')
-xlabel('Time (s)')
-ylabel('Norm response')
-
-subplot(5,3,12); hold on
-
-
-plot(unique(abs(StimAllowed)),GrandPopStimBin(1,:)./ length(Animals),'--g','LineWidth',2)
-plot(unique(abs(StimAllowed)),GrandPopStimBin(2,:)./ length(Animals),'g','LineWidth',2)
-
-plot(unique(abs(StimAllowed)),GrandPopStimBin(3,:)./ length(Animals),'--r','LineWidth',2)
-plot(unique(abs(StimAllowed)),GrandPopStimBin(4,:)./ length(Animals),'r','LineWidth',2)
-set(gca,'TickDir','out','Box','off');
-
-
-subplot(5,3,11); hold on
-
-
-plot(unique(abs(StimAllowed)),GrandPopRewBin(1,:)./ length(Animals),'--g','LineWidth',2)
-plot(unique(abs(StimAllowed)),GrandPopRewBin(2,:)./ length(Animals),'g','LineWidth',2)
-
-plot(unique(abs(StimAllowed)),GrandPopRewBin(3,:)./ length(Animals),'--r','LineWidth',2)
-plot(unique(abs(StimAllowed)),GrandPopRewBin(4,:)./ length(Animals),'r','LineWidth',2)
-
-set(gca,'TickDir','out','Box','off');
-
 
 
 
