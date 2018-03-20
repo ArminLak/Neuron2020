@@ -7,9 +7,9 @@ close all
 
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
+cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
 
-animal_ID = 48;
-
+animal_ID = 51
 load('BehPhotoM_Exp23')
 
 RTLimit = 10; % in s, excluding trials with RT longer than this
@@ -533,7 +533,8 @@ BehPhotoM(animal_ID).GrandSummary.AbsStimRasterError=AbsStimRasterError;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrect=AbsStimRasterLargeCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
 
-
+% where we save the data
+cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
 
 
 
