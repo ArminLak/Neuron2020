@@ -3,7 +3,7 @@ close all
 
 animal_name = 'ALK071'
 
-exp_date   = '2018-03-14'
+exp_date   = '2018-03-16'
 exp_series ='1'
 
 %--------------- useful information --------------------------------------

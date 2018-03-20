@@ -1,9 +1,9 @@
 clear all
-% close all
+close all
 
 animal_name = 'ALK071'
-exp_date   = '2018-03-13'
-exp_series ='1'
+exp_date   = '2018-03-06'
+exp_series ='6'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -13,7 +13,7 @@ exp_series ='1'
 % 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
-start = -2 % s this should be -1 or less
+start = -1 % s this should be -1 or less
 stop=1     % s
 
 % original data is sammple 12K per s. We downsample 10 times making it 1.2K
@@ -191,16 +191,16 @@ hold on
 % line([90 90], [-2 4])
 
 ax = gca;
-Visstart = 3; % visualise trace from this trial 
-Visstop  = 12;  % visualise trace up to this trial
+Visstart = 10; % visualise trace from this trial 
+Visstop  = 20;  % visualise trace up to this trial
 ymin = -15
-ymax = 32
+ymax = 27
 ylim([ymin ymax])
 
 for ievent = Visstart: Visstop
     
-    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax+abs(ymin)],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
-    text(TrialTimingData(ievent, 13), 36, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
+    h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax-ymin],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
+    text(TrialTimingData(ievent, 13), 30, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
     line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
     line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
     rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);
@@ -222,7 +222,7 @@ xlim([0 a(end)])
 xlabel ('Time (s)')
 ylabel ('Response, {\Delta} F / F')
 %title ('ALK070 2018-03-06')
-xlim([TrialTimingData(Visstart, 12) - 1  TrialTimingData(Visstop, 14) + 4])
+xlim([TrialTimingData(Visstart, 12) - 1  TrialTimingData(Visstop, 14) + 2])
 
 % find the max and min of signal: something like this:    
 %Max4Yaxis = max ( DeltaFoverF (TimeStamps (((TrialTimingData(3, 12)-1):(TrialTimingData(ievent, 14) + 2)), 1)))
@@ -263,7 +263,7 @@ end
 
 
 
-ylim([min(normalised)-abs(min(normalised))*.2 max(normalised)*1.2])
+ylim([min(normalised)-min(normalised)*.2 max(normalised)*1.2])
 xticks([Stimz])
 xticklabels([Stimz])
 plot (Stimz, normalised', 'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 127/255 189/255],'MarkerSize',3, 'Color', [74/255 127/255 189/255])

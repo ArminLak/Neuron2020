@@ -5,8 +5,8 @@ animal_name = 'ALK071'
 exp_date   = '2018-03-13'
 exp_series ='1'
 
-trial_from = 3          % visualise trace from this trial
-trial_to = 13          % visualise trace up to this trial
+trial_from = 100          % visualise trace from this trial
+trial_to = 130          % visualise trace up to this trial
 
 
 % NB trial_to-trial_from = 50
@@ -88,11 +88,7 @@ TimeStamps=photoMdata.Time_s_;
 
 
 % --------- Ca response trace ---------------------------
-% <<<<<<< HEAD
-f = figure('Position', [300 200 1200 900]); hold on
-% =======
-% f = figure('Position', [300 200 800 900]); hold on
-% >>>>>>> 5e4ea8ac30a0634c31ac43873d5112ec8f110c18
+f = figure('Position', [300 200 800 900]); hold on
 
 formatSpec1 = '%s %s Trials %d to %d';
 formatSpec2 = 'Trials %d to %d';
