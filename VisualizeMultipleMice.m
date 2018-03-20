@@ -61,7 +61,7 @@ for iAnimal = Animals
     RTBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(2,:);
     
     
-    % Stim-align rasters
+    % Stim-align rastersCor
     SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster; 
     SingleAnimalNormStimTrace = SingleAnimalStimTrace ./ max(max(SingleAnimalStimTrace));
     GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
