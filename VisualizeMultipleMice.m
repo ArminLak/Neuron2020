@@ -6,7 +6,7 @@ Animals = [48 50 51]
 
 load('BehPhotoM_Exp23')
 
-
+ 
 
 color = [
     1 0 0         % red

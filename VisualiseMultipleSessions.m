@@ -8,7 +8,7 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 51;
+animal_ID = 48;
 
 load('BehPhotoM_Exp23')
 
@@ -394,6 +394,42 @@ ylabel('Norm response')
 
 title('Outcome Align')
 legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
+
+
+RT = BehData(:,10) - BehData(:,13);
+c=1;
+for RewardSize= 1
+    
+    cStim = 1;
+    
+    for iStimAbs = abzStim
+        
+        shortRT_threshold = prctile(RT(find(abs(BehData(:,2))==iStimAbs)),20);
+        longRT_threshold = prctile(RT(find(abs(BehData(:,2))==iStimAbs)),80);
+        
+        
+        PopNormBinRewardshortRT (cStim)= nanmean(NormBinReward (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize & RT<shortRT_threshold ));
+        PopNormBinRewardlongRT (cStim)= nanmean(NormBinReward (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize & RT>longRT_threshold));
+        
+        cStim = cStim + 1;
+    end
+    
+    c=c+1;
+end
+
+
+figure; hold on
+plot(unique(abs(BehData(:,2)))',PopNormBinRewardshortRT,'--b','LineWidth',2)
+plot(unique(abs(BehData(:,2)))',PopNormBinRewardlongRT,'b','LineWidth',2)
+
+
+set(gca, 'TickDir','out','Box','off');
+
+xlabel('Contrast')
+ylabel('Norm response')
+
+title('Outcome Align')
+legend('shortRT','longRT')
 
 %%
 % Grand Summary data of the animal
