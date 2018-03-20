@@ -12,7 +12,7 @@ animal_ID = 48;
 
 load('BehPhotoM_Exp23')
 
-RTLimit = 10; % in s, excluding trials with RT longer than this 
+RTLimit = 10; % in s, excluding trials with RT longer than this
 
 color = [
     1 0 0         % red
@@ -136,16 +136,16 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
-%% Stimulus fig panels 
+%% Stimulus fig panels
 
 c=1;
 for iStim = abzStim
     
     AbsStimRaster(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim, :));
-      
+    
     subplot(5,3,13); hold on
     plot((AbsStimRaster(c,:)),'color',colorGray(c,:),'LineWidth',2)
-     
+    
     c=c+1;
 end
 
@@ -279,6 +279,52 @@ title('Stimulus Align')
 xlabel('Contrast')
 ylabel('Norm response')
 
+% for 2 middle stimuli, make raster for large/small or correct/error
+c=1;
+middleStim =abzStim(2:3);
+for iStim = middleStim
+    
+    AbsStimRasterCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
+    AbsStimRasterError(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
+    
+    AbsStimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
+    AbsStimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
+    
+    
+    
+    
+    c=c+1;
+end
+%%
+subplot(5,3,3); hold on
+plot((AbsStimRasterCorrect(2,:)),'g','LineWidth',2)
+plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
+
+title('Stimulus Align')
+
+xlim([3500 4900])
+%ylim([-0.3 2])
+
+
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+subplot(5,3,6); hold on
+plot((AbsStimRasterLargeCorrect(2,:)),'b','LineWidth',2)
+plot((AbsStimRasterSmallCorrect(2,:)),'--b','LineWidth',2)
+
+
+title('Stimulus Align')
+
+xlim([3500 4900])
+%ylim([-0.3 2])
+
+
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
 
 
 %% Reward figure
@@ -395,6 +441,7 @@ ylabel('Norm response')
 title('Outcome Align')
 legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
 
+% looking at reward responses separated for short and ling RT
 
 RT = BehData(:,10) - BehData(:,13);
 c=1;
@@ -418,7 +465,7 @@ for RewardSize= 1
 end
 
 
-figure; hold on
+subplot(5,3,12); hold on
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardshortRT,'--b','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardlongRT,'b','LineWidth',2)
 
@@ -430,6 +477,8 @@ ylabel('Norm response')
 
 title('Outcome Align')
 legend('shortRT','longRT')
+
+
 
 %%
 % Grand Summary data of the animal
@@ -478,7 +527,11 @@ BehPhotoM(animal_ID).GrandSummary.RewAwayDACorr = nanmean(RewardData(BehData(:,9
 BehPhotoM(animal_ID).GrandSummary.Rew2DAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.RewAwayDAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:));
 
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterCorrect=AbsStimRasterCorrect;
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterError=AbsStimRasterError;
 
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrect=AbsStimRasterLargeCorrect;
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
 
 
 
