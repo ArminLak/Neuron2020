@@ -210,12 +210,12 @@ title('Stimulus Align')
 xlabel('Contrast')
 
 subplot(5,3,8); hold on
-plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5, 'DisplayName', 'Correct')
+plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5, 'DisplayName', 'Error')
 set(gca,'TickDir','out','Box','off');
 xlabel('Contrast')
 title('Outcome Align')
-
+legend
 
 
 subplot(5,3,10); hold on

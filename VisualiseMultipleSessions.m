@@ -7,7 +7,6 @@ close all
 
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
-cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
 
 animal_ID = 51
 load('BehPhotoM_Exp23')
