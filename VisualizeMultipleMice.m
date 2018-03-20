@@ -53,7 +53,7 @@ for iAnimal = Animals
     RTBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(2,:);
     
     
-    % Stim-align rasters
+    % Stim-align rastersCor
     SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster; 
     SingleAnimalNormStimTrace = SingleAnimalStimTrace ./ max(max(SingleAnimalStimTrace));
     GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
@@ -232,7 +232,7 @@ set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 title('Stimulus Align')
 xlabel('Time (s)')
 ylabel('Norm response')
-legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
+legend('CorLarge','CorSmall','ErrLarge','ErrSmall')
 
 
 
