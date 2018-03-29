@@ -1,9 +1,12 @@
 clear all
 close all
 
-animal_name = 'ALK071'
-exp_date   = '2018-03-23'
-exp_series ='1'
+animal_name = 'ALK074'
+exp_date   = '2018-03-29'
+exp_series ='2'
+
+%Unilatral or bilateral
+Implant = 'Un'  % or 'Bi'  % in progress
 
 %--------------- useful information --------------------------------------
 % task event
@@ -88,8 +91,9 @@ FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 
 % load photoM data
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
-%photoMdata = readtable([path2photoM,'\',photoMFileName]);
-load(photoMFileName);DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;TimeStamps=photoMdata.Time_s_;
+load(photoMFileName);
+
+DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;TimeStamps=photoMdata.Time_s_;
 
     
 %------------------------------- plot psychoimetric curve------------------
@@ -303,7 +307,7 @@ elseif length(StimzAbs)==2
     l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
 end
 
-title(l, 'Contrast')
+%title(l, 'Contrast')
 
 ylabel('{\Delta} F / F')
 xlabel ('Time (s)')
