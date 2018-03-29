@@ -259,11 +259,13 @@ xlabel('Contrast')
 % title('Outcome Align')
 
 subplot(5,3,8); hold on
+<<<<<<< HEAD
 
 errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),...
     nanstd(GrandPopNormBinRewardNoFoldCorrError1) ./ sqrt(14),'color','r','LineWidth',2,'Marker','o','MarkerSize',5)
 errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),...
     nanstd(GrandPopNormBinRewardNoFoldCorrError2) ./ sqrt(14),'color','g','LineWidth',2,'Marker','o','MarkerSize',5)
+=======
 set(gca,'TickDir','out','Box','off');
 title('Outcome Align')
 xlabel('Contrast')
