@@ -2,8 +2,8 @@ clear all
 close all
 
 animal_name = 'ALK071'
-exp_date   = '2018-03-06'
-exp_series ='6'
+exp_date   = '2018-03-23'
+exp_series ='1'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -173,8 +173,8 @@ plot(unique(TrialTimingData(:,2)'), performance, 'color', [74/255 127/255 189/25
 xlabel('Contrast')
 xticks([min(Stimz) 0 max(Stimz)])
 title('Psych Curve')
-ylabel('% Right-ward')
-yticklabels({0 50 100})
+ylabel('% Rightward')
+%yticklabels({0 50 100})
 
 
 

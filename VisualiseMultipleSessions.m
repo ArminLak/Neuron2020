@@ -7,7 +7,6 @@ close all
 
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
-cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
 
 animal_ID = 51
 load('BehPhotoM_Exp23')
@@ -29,14 +28,14 @@ colorGray = [ 0.8 0.8 0.8
     0 0 0
     ];
 
-
+% sessions used for ALK071 Exp 23 [1 2 3 4 5 8]
 %%
 BehData = [];
 BeepData = [];
 StimData = [];
 RewardData = [];
 
-for iSession = 1:length(BehPhotoM(animal_ID).Session)
+for iSession = [1 2 3 4 5 8] %1:length(BehPhotoM(animal_ID).Session)
     
     TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
     
@@ -534,7 +533,7 @@ BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrect=AbsStimRasterLargeCo
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
 
 % where we save the data
-cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
+%cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
 
 
 

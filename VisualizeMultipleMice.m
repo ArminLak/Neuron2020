@@ -89,21 +89,30 @@ for iAnimal = Animals
     SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
     SingleAnimalNormTunningStim = SingleAnimalTunningStim ./ max(max(SingleAnimalTunningStim));
     GrandPopNormBinStimNoFold = SingleAnimalNormTunningStim + GrandPopNormBinStimNoFold ;
+        GrandPopNormBinStimNoFold1(c,:)=SingleAnimalNormTunningStim(1,:);
+        GrandPopNormBinStimNoFold2(c,:)=SingleAnimalNormTunningStim(2,:);
+
     
     SingleAnimalTunningReward= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardNoFold;
     SingleAnimalNormTunningRew = SingleAnimalTunningReward ./ max(max(SingleAnimalTunningReward));
     GrandPopNormBinRewardNoFold = SingleAnimalNormTunningRew + GrandPopNormBinRewardNoFold ;
+    GrandPopNormBinRewardNoFold1(c,:)=SingleAnimalNormTunningRew(1,:);
+    GrandPopNormBinRewardNoFold2(c,:)=SingleAnimalNormTunningRew(2,:);
+  
     
     % tuning curve for corr/error
     SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
     SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
     GrandPopNormBinStimNoFoldCorrError = SingleAnimalNormTunningStimCorrError + GrandPopNormBinStimNoFoldCorrError ;
+    GrandPopNormBinStimNoFoldCorrError1(c,:)=SingleAnimalNormTunningStimCorrError(1,:);
+    GrandPopNormBinStimNoFoldCorrError2(c,:)=SingleAnimalNormTunningStimCorrError(2,:);
     
   
     SingleAnimalTunningRewardCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrectErrorNoFold;
     SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError ./ max(max(SingleAnimalTunningRewardCorrError));
     GrandPopNormBinRewardNoFoldCorrError = SingleAnimalNormTunningRewardCorrError + GrandPopNormBinRewardNoFoldCorrError ;
-  
+  GrandPopNormBinRewardNoFoldCorrError1(c,:)=GrandPopNormBinRewardNoFoldCorrError(1,:);
+    GrandPopNormBinRewardNoFoldCorrError2(c,:)=GrandPopNormBinRewardNoFoldCorrError(2,:);
   
     SingleAnimalBeep2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DACorr;
     SingleAnimalBeep2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.BeepAwayDACorr;
@@ -186,36 +195,78 @@ plot(StimAllowed,nanmean(RTBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o
 
 
 
-subplot(5,3,4); hold on
-plot(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-plot(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+% subplot(5,3,4); hold on
+% plot(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+% plot(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+% set(gca,'TickDir','out','Box','off');
+% title('Stimulus Align')
+% xlabel('Contrast')
+
+    
+    subplot(5,3,4); hold on % errorbars reflecting across sessions
+errorbar(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),...
+    nanstd(GrandPopNormBinStimNoFold1) ./ sqrt(12),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),...
+    nanstd(GrandPopNormBinStimNoFold2) ./ sqrt(12),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
 title('Stimulus Align')
 xlabel('Contrast')
 
+    
 
-subplot(5,3,5); hold on
-plot(StimAllowed,GrandPopNormBinRewardNoFold(1,:)./ length(Animals),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-plot(StimAllowed,GrandPopNormBinRewardNoFold(2,:)./ length(Animals),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+
+%subplot(5,3,5); hold on
+% plot(StimAllowed,GrandPopNormBinRewardNoFold(1,:)./ length(Animals),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+% plot(StimAllowed,GrandPopNormBinRewardNoFold(2,:)./ length(Animals),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+% set(gca,'TickDir','out','Box','off');
+% xlabel('Contrast')
+% title('Outcome Align')
+
+subplot(5,3,5); hold on % errorbars reflecting across sessions
+errorbar(StimAllowed,GrandPopNormBinRewardNoFold(1,:)./ length(Animals),...
+    nanstd(GrandPopNormBinRewardNoFold1) ./ sqrt(12),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(StimAllowed,GrandPopNormBinRewardNoFold(2,:)./ length(Animals),...
+    nanstd(GrandPopNormBinRewardNoFold2) ./ sqrt(12),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
-xlabel('Contrast')
 title('Outcome Align')
+xlabel('Contrast')
 
+
+% subplot(5,3,7); hold on
+% plot(StimAllowed,GrandPopNormBinStimNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
+% plot(StimAllowed,GrandPopNormBinStimNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+% set(gca,'TickDir','out','Box','off');
+% title('Stimulus Align')
+% xlabel('Contrast')
 
 subplot(5,3,7); hold on
-plot(StimAllowed,GrandPopNormBinStimNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(StimAllowed,GrandPopNormBinStimNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(StimAllowed,GrandPopNormBinStimNoFoldCorrError(1,:)./ length(Animals),...
+    nanstd(GrandPopNormBinStimNoFoldCorrError1) ./ sqrt(14),'color','r','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(StimAllowed,GrandPopNormBinStimNoFoldCorrError(2,:)./ length(Animals),...
+    nanstd(GrandPopNormBinStimNoFoldCorrError2) ./ sqrt(14),'color','g','LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
 title('Stimulus Align')
 xlabel('Contrast')
 
-subplot(5,3,8); hold on
-plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
-set(gca,'TickDir','out','Box','off');
-xlabel('Contrast')
-title('Outcome Align')
 
+
+
+% subplot(5,3,8); hold on
+% plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
+% plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+% set(gca,'TickDir','out','Box','off');
+% xlabel('Contrast')
+% title('Outcome Align')
+
+subplot(5,3,8); hold on
+
+errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),...
+    nanstd(GrandPopNormBinRewardNoFoldCorrError1) ./ sqrt(14),'color','r','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),...
+    nanstd(GrandPopNormBinRewardNoFoldCorrError2) ./ sqrt(14),'color','g','LineWidth',2,'Marker','o','MarkerSize',5)
+set(gca,'TickDir','out','Box','off');
+title('Outcome Align')
+xlabel('Contrast')
 
 
 subplot(5,3,10); hold on

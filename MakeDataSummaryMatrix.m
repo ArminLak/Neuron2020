@@ -5,16 +5,16 @@ close all
 % it calcuate trial-by-trial data from each session and stores them in a
 % large strucutre (i.e. BehPhotoM_Exp23.mat)
 
-% if you are happy with it, then save it at our Github folder.
+% if you are happy with it, then save it at the zubjects shared folder
 
 
-animal_name = 'ALK068'
+animal_name = 'ALK071'
 
 % give a list of sessions
 
 SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24]; % ALK068 Exp23
 %SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
-%SessionList = [10, 11, 12,13, 14]; % ALK071 Exp23
+SessionList = [10, 11, 12,13, 14,15,17,19]; % ALK071 Exp23 % 16 and 18 are bad
 
 
 % This is the structure that will hold the data
