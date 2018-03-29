@@ -266,9 +266,13 @@ errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals)
 errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals),...
     nanstd(GrandPopNormBinRewardNoFoldCorrError2) ./ sqrt(14),'color','g','LineWidth',2,'Marker','o','MarkerSize',5)
 =======
+plot(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5, 'DisplayName', 'Error')
 set(gca,'TickDir','out','Box','off');
 title('Outcome Align')
+<<<<<<< HEAD
 xlabel('Contrast')
+=======
+>>>>>>> fd2540d27d31f710eed8c0ab076885d5d26fa49b
 
 
 subplot(5,3,10); hold on
