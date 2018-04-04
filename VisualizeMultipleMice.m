@@ -26,8 +26,8 @@ colorGray = [ 0.8 0.8 0.8
 StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
 
 GrandPopAbsStimResp = zeros(4,7100);
-GrandPopAbsStimRespMiddleStimCorrect= zeros(1,7100);
-GrandPopAbsStimRespMiddleStimError= zeros(1,7100);
+GrandPopAbsStimRespMiddleStimCorrect= zeros(4,7100);
+GrandPopAbsStimRespMiddleStimError= zeros(4,7100);
 
 GrandPopAbsStimRespMiddleStimCorLarge= zeros(1,7100);
 GrandPopAbsStimRespMiddleStimCorSmall= zeros(1,7100);
@@ -67,20 +67,30 @@ for iAnimal = Animals
     GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
     
       % Stim-align rasters(middle stimuli, correct/error)
-    SingleAnimalStimTraceMiddleStimCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(1,:); 
+    SingleAnimalStimTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(1,:);
+    SingleAnimalStimTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(2,:);
+    SingleAnimalStimTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(3,:);
+    SingleAnimalStimTraceMiddleStimCorrect(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(4,:);
+    
     SingleAnimalNormStimTraceMiddleStimCorrect = SingleAnimalStimTraceMiddleStimCorrect ./ max(max(SingleAnimalStimTraceMiddleStimCorrect));
     GrandPopAbsStimRespMiddleStimCorrect = SingleAnimalNormStimTraceMiddleStimCorrect + GrandPopAbsStimRespMiddleStimCorrect ;
     
-    SingleAnimalStimTraceMiddleStimError= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(1,:); 
+    SingleAnimalStimTraceMiddleStimError(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(1,:); 
+    SingleAnimalStimTraceMiddleStimError(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(2,:);
+    SingleAnimalStimTraceMiddleStimError(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(3,:); 
+    SingleAnimalStimTraceMiddleStimError(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(4,:); 
+    
+    
     SingleAnimalNormStimTraceMiddleStimError = SingleAnimalStimTraceMiddleStimError ./ max(max(SingleAnimalStimTraceMiddleStimCorrect));
     GrandPopAbsStimRespMiddleStimError = SingleAnimalNormStimTraceMiddleStimError + GrandPopAbsStimRespMiddleStimError ;
     
+    
         % Stim-align rasters(middle stimuli, correct/ small/large reward)
-    SingleAnimalStimTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterLargeCorrect(1,:); 
+    SingleAnimalStimTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterLargeCorrect(2,:); 
     SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
     GrandPopAbsStimRespMiddleStimCorLarge = SingleAnimalNormStimTraceMiddleStimLargeCorrect + GrandPopAbsStimRespMiddleStimCorLarge ;
     
-    SingleAnimalStimTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterSmallCorrect(1,:); 
+    SingleAnimalStimTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterSmallCorrect(2,:); 
     SingleAnimalNormStimTraceMiddleStimSmallCorrect = SingleAnimalStimTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
     GrandPopAbsStimRespMiddleStimCorSmall = SingleAnimalNormStimTraceMiddleStimSmallCorrect + GrandPopAbsStimRespMiddleStimCorSmall ;
     
@@ -378,12 +388,19 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
+for c = 1:4
+    
+    
+    subplot(5,3,3); hold on
+    plot(GrandPopAbsStimRespMiddleStimCorrect(c,:)./ length(Animals),'g','LineWidth',2);
+
+plot(GrandPopAbsStimRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
+  
+end
 
 subplot(5,3,3); hold on
 title('middleSim,CorrError')
-plot(GrandPopAbsStimRespMiddleStimCorrect./ length(Animals),'g','LineWidth',2);
 
-plot(GrandPopAbsStimRespMiddleStimError./ length(Animals),'r','LineWidth',2);
 
 xlim([3500 4900])
 ylim([-0.3 0.5])

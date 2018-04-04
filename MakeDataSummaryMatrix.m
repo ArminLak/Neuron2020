@@ -13,9 +13,9 @@ animal_name = 'ALK071'
 % give a list of sessions
 
 SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24]; % ALK068 Exp23
-%SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
-SessionList = [10, 11, 12,13, 14,15,17,19]; % ALK071 Exp23 % 16 and 18 are bad
-
+SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
+SessionList = [10, 11, 12,13, 14,19]; % ALK071 Exp23 % 15-18 are bad
+          
 
 % This is the structure that will hold the data
 load('BehPhotoM_Exp23.mat')
@@ -29,7 +29,7 @@ load('BehPhotoM_Exp23.mat')
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
 start = -3 % s
-stop=3     % s
+stop=8     % s
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate

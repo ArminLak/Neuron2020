@@ -25,17 +25,25 @@ color = [
 colorGray = [ 0.8 0.8 0.8
     0.6 0.6 0.6
     0.4 0.4 0.4
-    0 0 0
-    ];
+    0 0 0];
 
-% sessions used for ALK071 Exp 23 [1 2 3 4 5 8]
+colorRed = [ 1 0.8 0.8
+    1 0.6 0.6
+    1 0.4 0.4
+    1 0 0];
+
+
 %%
 BehData = [];
 BeepData = [];
 StimData = [];
 RewardData = [];
 
-for iSession = [1 2 3 4 5 8] %1:length(BehPhotoM(animal_ID).Session)
+sessionz = 1:length(BehPhotoM(animal_ID).Session);
+%if animal_ID == 51 
+%sessionz = [1 2 3 4 5 8]; end % sessions used for ALK071 Exp 23 [1 2 3 4 5 8]
+
+for iSession = sessionz
     
     TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
     
@@ -55,6 +63,13 @@ for iSession = [1 2 3 4 5 8] %1:length(BehPhotoM(animal_ID).Session)
     
     
 end
+
+% BeepData = diff(BeepData')';
+% 
+% StimData = diff(StimData')';
+% RewardData = diff(RewardData')';
+
+
 
 RT = BehData(:,10) - BehData(:,13);
 
@@ -171,7 +186,19 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
-NormBinStim = mean(StimData(:,4000:5200),2);
+if animal_ID == 48 
+NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
+end
+
+if animal_ID == 50 
+NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3100:3400),2);
+end
+
+NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
+
+
+% for derivative
+%NormBinStim = mean(StimData(:,3800:4200),2);
 
 % this figure looks at response as a function of contrast separated for
 % blocks with large reward on L or R
@@ -281,6 +308,8 @@ ylabel('Norm response')
 % for 2 middle stimuli, make raster for large/small or correct/error
 c=1;
 middleStim =abzStim(2:3);
+middleStim =abzStim(1:4);
+
 for iStim = middleStim
     
     AbsStimRasterCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
@@ -288,25 +317,30 @@ for iStim = middleStim
     
     AbsStimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
     AbsStimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
-    
-    
-    
-    
+     
     c=c+1;
 end
-%%
-subplot(5,3,3); hold on
-plot((AbsStimRasterCorrect(2,:)),'g','LineWidth',2)
-plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
+
+%plot((AbsStimRasterCorrect(2,:)),'g','LineWidth',2)
+%plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
+for i = 1:4
+    
+    subplot(5,3,3); hold on
+
+plot((smooth(AbsStimRasterCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
+
+plot((smooth(AbsStimRasterError(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
+
+end
 
 title('Stimulus Align')
 
-xlim([3500 4900])
+%xlim([3500 4900])
 %ylim([-0.3 2])
 
 
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+%set(gca, 'XTick', [3700, 4300, 4900]);
+%set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 subplot(5,3,6); hold on
@@ -331,24 +365,59 @@ ylabel('Norm response')
 % this figure plots rasters at the outcome time separated based on the
 % pendding outcome
 
-subplot(5,3,15); hold on
+% subplot(5,3,15); hold on
+% 
+% plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
+% plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
+% 
+% plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:)),'r','LineWidth',2)
+% plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:)),'--r','LineWidth',2)
 
-plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
-plot(nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
+c=1;
 
-plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:)),'r','LineWidth',2)
-plot(nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:)),'--r','LineWidth',2)
 
-xlim([3500 4900])
+for iStim = abzStim(1:4)
+    
+    AbsStimRasterCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
+    AbsStimRasterErrorREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
+    
+    AbsStimRasterLargeCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
+    AbsStimRasterSmallCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
+    
+    
+    c=c+1;
+end
+    
+for i = 1:4
+    
+    subplot(5,3,15); hold on
+
+plot(smooth(AbsStimRasterCorrectREw(i,:),70),'color',colorGray(i,:),'LineWidth',2)
+
+plot(smooth(AbsStimRasterErrorREw(i,:),70),'color',colorRed(i,:),'LineWidth',2)
+
+end
+
+
+%xlim([3500 4900])
 %ylim([-2 2])
 
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+%set(gca, 'XTick', [3700, 4300, 4900]);
+%set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 title('Outcome Align')
 xlabel('Time (s)')
 ylabel('Norm response')
 
 NormBinReward = mean(RewardData(:,4000:5300),2) - mean(RewardData(:,3400:3800),2);
+
+if animal_ID == 48
+NormBinReward = mean(RewardData(:,4100:5000),2) - mean(RewardData(:,3800:3900),2);
+end
+
+if animal_ID == 50
+NormBinReward = mean(RewardData(:,4100:5000),2) - mean(RewardData(:,3800:3900),2);
+end
+
 
 % this figure looks at response as a function of contrast separated for
 % blocks with large reward on L or R
@@ -531,6 +600,13 @@ BehPhotoM(animal_ID).GrandSummary.AbsStimRasterError=AbsStimRasterError;
 
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrect=AbsStimRasterLargeCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
+
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterCorrectREw=AbsStimRasterCorrectREw;
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterErrorREw=AbsStimRasterErrorREw;
+
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrectREw=AbsStimRasterLargeCorrectREw;
+BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrectREw = AbsStimRasterSmallCorrectREw;
+
 
 % where we save the data
 %cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')

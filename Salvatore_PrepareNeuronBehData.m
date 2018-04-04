@@ -218,7 +218,7 @@ for trial = 1 : size(block.trial,2)-1
     
     %% reaction time (29.06.2016 changed stimonset_index (for now for animals with go cue.))
     % stimonset_index=find(floor(100*(block.inputSensorPositionTimes))==floor(100*(block.trial(trial).interactiveStartedTime)),1);
-    stimonset_index=find(floor(100*(block.inputSensorPositionTimes))==floor(100*(block.trial(trial).stimulusCueStartedTime)),1);
+    stimonset_index=find(floor(100*(block.inputSensorPositionTimes))==floor(100*(block.trial(trial).stimulusCueStartedTime)),1); 
     
     
     
