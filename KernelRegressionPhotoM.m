@@ -8,10 +8,10 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 50
+animal_ID = 51
 load('BehPhotoM_Exp23')
 
-RTLimit = 7; % in s, Dont change. excluding trials with RT longer than this
+RTLimit = 6; % in s, Dont change. excluding trials with RT longer than this
 Timereso = 40; %this is in unit of 1200 in s. 
 color = [
     1 0 0         % red
@@ -126,23 +126,31 @@ StimData(toExclude,:) = [];
 RewardData(toExclude,:) = [];
 
 % moving average and downsampling
-invertedStimData_to_row = movingmean(invertedStimData_to_row',100)';
-inverted_Matrix_to_row = downsample(invertedStimData_to_row',Timereso);
+%invertedStimData_to_row = movingmean(invertedStimData_to_row',100)';
+inverted_Matrix_to_row = smooth(invertedStimData_to_row,300);
+inverted_Matrix_to_row = (inverted_Matrix_to_row - movmean(inverted_Matrix_to_row,3000));
+
+StimDataSmooth = reshape(inverted_Matrix_to_row', 13100,size(BehData,1))';
+
+inverted_Matrix_to_row = downsample(inverted_Matrix_to_row,Timereso);
+%inverted_Matrix_to_row = smooth(inverted_Matrix_to_row,200);
 t=downsample(t,Timereso);
 
 % kernle regression
 eventTimes = {beep_time;stim_time; action_onsetTime; outcome_time};
 eventValues = {[];[];[];[]};
-windows = {[-400 800];[-300 900];[-800 400];[-200 1000]}; % 
+windows = {[-400 800];[-400 1400];[-800 400];[-200 1600]}; % 
 
+%inverted_Matrix_to_row = [0; diff(inverted_Matrix_to_row)];
 [fitKernels, predictedSignals,cvErr] = kernelRegression(inverted_Matrix_to_row', t', eventTimes, eventValues, windows , [5], [0 0]);
 
 %%
 % find trial by trail coefficents (regression)
 
-StimDataSmooth=movingmean(StimData,100,2);
-StimDataSmoothDownSample=downsample(StimDataSmooth',Timereso)';
+ 
 
+StimDataSmoothDownSample=downsample(StimDataSmooth',Timereso)';
+%StimDataSmoothDownSample = smooth2a(StimDataSmoothDownSample,10,0);
     Coefiz = nan(size(StimData,1),4);
  
 for itrial = 1: size(StimData,1)
@@ -154,7 +162,7 @@ for itrial = 1: size(StimData,1)
         zeroPadOutcome = zeros(1,328);
         
         % 90 is the stim onset 
-        zeroPadStim (90 -8:90+29-8 ) = fitKernels{2}';
+        zeroPadStim (90 -10:90+44-10) = fitKernels{2}';
         
         
         t_beep = floor((BehData(itrial, 13 ) - BehData(itrial, 12))*30); % 11 s is 328 samples, thus 1 s is 30
@@ -166,11 +174,11 @@ for itrial = 1: size(StimData,1)
         t_act (isnan(t_act))=floor((BehData(itrial, 14 ) - BehData(itrial, 13))*30) - 5; % very rare trials we could not measure action_onset time and we use this one
 
         
-        zeroPadAction(90+t_act-10 : 90+t_act-10 +29) = fitKernels{3}';
+        zeroPadAction(90+t_act-20 : 90+t_act-20 +29) = fitKernels{3}';
         
         t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*30); % 11 s is 328 samples, thus 1 s is 30
         
-        zeroPadOutcome(90+t_out-5 : 90+t_out-5 +29) = fitKernels{4}';
+        zeroPadOutcome(90+t_out-5 : 90+t_out-5 +44) = fitKernels{4}';
         
         
            Coefiz(itrial,:)= regress(StimDataSmoothDownSample(itrial,:)',[zeroPadBeep',zeroPadStim',zeroPadAction',zeroPadOutcome'])';
@@ -179,9 +187,8 @@ for itrial = 1: size(StimData,1)
            
 end
 %%
-Coefiz(Coefiz > 10) = nan;
-Coefiz(Coefiz < -10) = nan;
-
+Coefiz(Coefiz > 5) = nan;
+Coefiz(Coefiz < -5) = nan;
 
 StimsAllowed = unique(BehData(:,2))';
 Stimz = BehData(:,2);
@@ -196,20 +203,40 @@ for i=unique(BehData(:,2))'
         
         
         
-        resp_Block1StimCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),1));
-        resp_Block2StimCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),1));
+        resp_Block1StimCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),2));
+        resp_Block2StimCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),2));
         
-        resp_Block1StimErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==0)),1));
-        resp_Block2StimErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==0)),1));
+        resp_Block1StimErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==0)),2));
+        resp_Block2StimErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==0)),2));
         
-        resp_Block1ActCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),2));
-        resp_Block2ActCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),2));
+        resp_Block1ActCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),3));
+        resp_Block2ActCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),3));
         
-        resp_Block1ActErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==0)),2));
-        resp_Block2ActErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==0)),2));
+        resp_Block1ActErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==0)),3));
+        resp_Block2ActErr(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==0)),3));
         
         
 end
     
+figure; 
+plot(resp_Block1StimCor,'g')
+hold on
+plot(resp_Block2StimCor,'-.g')
+
+plot(resp_Block1StimErr,'r')
+hold on
+plot(resp_Block2StimErr,'-.r')
+
+
+title('stim')
+figure; 
+plot(resp_Block1ActCor)
+hold on
+plot(resp_Block1ActErr)
+title('act')
+
+%plot(resp_Block1StimErr)
+%hold on
+%plot(resp_Block2StimErr)
 
 
