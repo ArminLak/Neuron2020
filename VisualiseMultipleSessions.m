@@ -8,7 +8,7 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 51
+animal_ID = 48
 load('BehPhotoM_Exp23')
 
 RTLimit = 10; % in s, excluding trials with RT longer than this

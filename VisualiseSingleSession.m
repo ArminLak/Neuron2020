@@ -144,6 +144,9 @@ plot(Stimz, RT,'k')
 
 subplot(4,1,2); % snapshot of CA trace
 plot(downsample(TimeStamps,10),smooth(downsample(DeltaFoverF,10)),'k')
+hold on
+plot(downsample(TimeStamps(1:20000),10),deconvolveCa(downsample(DeltaFoverF(1:20000),10),'ar2'),'r')
+
 
 ax = gca;
 for ievent = 1: size(TrialTimingData,1)
