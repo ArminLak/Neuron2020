@@ -62,8 +62,38 @@ resp_Block2ActCor(c,:)=BehPhotoM(iAnimal).KernelSummary.resp_Block2ActCor./ max(
 resp_Block1RewCor(c,:)=BehPhotoM(iAnimal).KernelSummary.resp_Block1RewCor./ max(BehPhotoM(iAnimal).KernelSummary.resp_CorrStim);
 resp_Block2RewCor(c,:)=BehPhotoM(iAnimal).KernelSummary.resp_Block2RewCor./ max(BehPhotoM(iAnimal).KernelSummary.resp_CorrStim);
 
+PredictedStim1(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopStimAlign(1,:);
+PredictedStim2(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopStimAlign(2,:);
+PredictedStim3(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopStimAlign(3,:);
+PredictedStim4(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopStimAlign(4,:);
+
+
+PredictedRewL(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopRewAlignLarge;
+PredictedRewS(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopRewAlignSmall;
+PredictedRewNo(c,:) = BehPhotoM(iAnimal).KernelSummary.PredictedPopRewAlignNoRew;
+
+
+
 c=c+1;
 end
+
+%%
+figure % generate pop predicted responses
+subplot(1,2,1)
+plot(smooth(nanmean(PredictedStim1)))
+hold on
+plot(smooth(nanmean(PredictedStim2)))
+plot(smooth(nanmean(PredictedStim3)))
+plot(smooth(nanmean(PredictedStim4)))
+xlim([4 33])
+
+subplot(1,2,2)
+plot(smooth(nanmean(PredictedRewL)))
+hold on
+plot(smooth(nanmean(PredictedRewS)))
+plot(smooth(nanmean(PredictedRewNo)))
+xlim([6 38])
+
 
 
 resp_Block2ActCor(3,end) = nan;
@@ -94,21 +124,21 @@ subplot(1,4,4)
 plot(nanmean(RewKernel,1))
 
 
-figure
-
-windows = {[-400 800];[-200 1600];[-600 200];[200 2000]}; %
-
-subplot(1,4,1)
-plot(-300 :50: 800, nanmean(BeepKernel(1,1:end-1),1))
-
-subplot(1,4,2)
-plot(-100 :50: 1600,nanmean(StimKernel(1,2:end),1))
-
-subplot(1,4,3)
-plot(-500 :50: 250, nanmean(ActKernel(1,:),1))
-
-subplot(1,4,4)
-plot(0 :50: 1750, nanmean(RewKernel(1,:),1))
+% figure
+% 
+% windows = {[-400 800];[-200 1600];[-600 200];[200 2000]}; %
+% 
+% subplot(1,4,1)
+% plot(-300 :50: 800, nanmean(BeepKernel(1,1:end-1),1))
+% 
+% subplot(1,4,2)
+% plot(-100 :50: 1600,nanmean(StimKernel(1,2:end),1))
+% 
+% subplot(1,4,3)
+% plot(-500 :50: 250, nanmean(ActKernel(1,:),1))
+% 
+% subplot(1,4,4)
+% plot(0 :50: 1750, nanmean(RewKernel(1,:),1))
 
 
 

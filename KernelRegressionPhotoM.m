@@ -8,7 +8,7 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 48
+animal_ID = 51
 load('BehPhotoM_Exp23')
 
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
@@ -296,30 +296,30 @@ for itrial = 1: size(StimData,1)
     
     
     
-    
-    if ismember(itrial,[400:430]) 
-        
-        figure
-        plot(smooth(sum([B(1) .* zeroPadBeep',B(2) .*zeroPadStim',B(3) .*zeroPadAction',B(4) .*zeroPadOutcome']'),20) )
-        hold on
-        plot(smooth(StimDataSmooth2Visualise(itrial,:)',20))
-        
-        
-        
-        ax = gca;
-        
-        InterStimAction = 71 +  t_act;
-        h=rectangle(ax, 'Position',[InterStimAction 0  0.1 5],'EdgeColor',[1 0 0]);
-        
-        
-        InterBeepStim = 71 -  t_beep ;
-        h=rectangle(ax, 'Position',[InterBeepStim 0  0.1 5],'EdgeColor',[0 1 0]);
-          
-        
-        InterStimRew = 71 +  t_out ;
-        h=rectangle(ax, 'Position',[InterStimRew 0  0.1 5],'EdgeColor',[0 0 1]);
-        
-    end
+    % plotting example trials:
+%     if ismember(itrial,[400:430]) 
+%         
+%         figure
+%         plot(smooth(sum([B(1) .* zeroPadBeep',B(2) .*zeroPadStim',B(3) .*zeroPadAction',B(4) .*zeroPadOutcome']'),20) )
+%         hold on
+%         plot(smooth(StimDataSmooth2Visualise(itrial,:)',20))
+%         
+%         
+%         
+%         ax = gca;
+%         
+%         InterStimAction = 71 +  t_act;
+%         h=rectangle(ax, 'Position',[InterStimAction 0  0.1 5],'EdgeColor',[1 0 0]);
+%         
+%         
+%         InterBeepStim = 71 -  t_beep ;
+%         h=rectangle(ax, 'Position',[InterBeepStim 0  0.1 5],'EdgeColor',[0 1 0]);
+%           
+%         
+%         InterStimRew = 71 +  t_out ;
+%         h=rectangle(ax, 'Position',[InterStimRew 0  0.1 5],'EdgeColor',[0 0 1]);
+%         
+%     end
     
     
 end
@@ -455,7 +455,7 @@ end
 
 figure; 
 
-coefStim = [0.1 0.3 0.6 1]
+coefStim = [0.6 1 2 3]
 
 
 for i=1:4
@@ -476,8 +476,15 @@ plot(nanmean(Sliced_PredictedSignalRew(IndexLargeRew,:)));
 
 plot(nanmean(0.5 * Sliced_PredictedSignalRew(IndexSmallRew,:)));
 
-plot(nanmean(-0.5 * Sliced_PredictedSignalRew(IndexNoRew,:)));
+plot(nanmean(-0.2 * Sliced_PredictedSignalRew(IndexNoRew,:)));
 
+
+
+
+BehPhotoM(animal_ID).KernelSummary.PredictedPopStimAlign=PredictedPopStimAlign;
+BehPhotoM(animal_ID).KernelSummary.PredictedPopRewAlignLarge=nanmean(Sliced_PredictedSignalRew(IndexLargeRew,:));
+BehPhotoM(animal_ID).KernelSummary.PredictedPopRewAlignSmall=nanmean(0.5 * Sliced_PredictedSignalRew(IndexSmallRew,:));
+BehPhotoM(animal_ID).KernelSummary.PredictedPopRewAlignNoRew=nanmean(-0.2 *Sliced_PredictedSignalRew(IndexNoRew,:));
 
 
 
