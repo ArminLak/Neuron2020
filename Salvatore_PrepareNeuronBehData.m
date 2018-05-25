@@ -357,8 +357,11 @@ DataMatrix=[TrialCount',Sign_Contrast',ResponseSide',liquid', laser',laser_Stimt
 
 
 % removing late responses (Nick's design)
-DataMatrix(DataMatrix(:,3)==3,:) = [];
 
+if ~strcmp(animal_name,'ALK068')
+    
+DataMatrix(DataMatrix(:,3)==3,:) = [];
+end
 
 
 TrialTimingData = DataMatrix;
