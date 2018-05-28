@@ -17,6 +17,7 @@ else
     return
 end
 
+% load data and micePhotoM database
 load([exp_date,'_',exp_series,'_',animal_name,'_eye_proc.mat']);
 load([exp_date,'_',exp_series,'_',animal_name,'_eye.mat']);
 load([exp_date,'_',exp_series,'_',animal_name,'_Timeline']);
@@ -26,15 +27,14 @@ load('MiceExpInfoPhotoM.mat')
 % Align the timing of eyeLog and TimeLine and compute pupilArea according to TL timing 
 SR = 1000;   % sampling rate of timeline
 
-
 [animal_ID, ~] =Salvatore_Get_chan_order(animal_name);
 
 % camera strobe on timeline
-[flipTimes, flipsUp, flipsDown]=schmittTimes(Timeline.rawDAQTimestamps,Timeline.rawDAQData(:,4) , [1 4]);
+[flipTimesStrobe, flipsUpStrobe, flipsDownStrobe]=schmittTimes(Timeline.rawDAQTimestamps,Timeline.rawDAQData(:,4) , [1 4]);
 
 % find the time of the first and last CameraStrobe in the TL
-startPointEyeCamera = flipTimes(1) * SR;
-endPointEyeCamera = flipTimes(end) * SR;
+startPointEyeCamera = flipTimesStrobe(1) * SR; % first strobe on TL
+endPointEyeCamera = flipTimesStrobe(end) * SR;
 
 % timing of eyeLog data and pupil area
 ft = [eyeLog.TriggerData.Time];
@@ -46,12 +46,16 @@ if abs((ft(end)-ft(1)) - (endPointEyeCamera-startPointEyeCamera)/SR) > 1
   return
 end
 
-% iterpolate pupilArea data
+% iterpolate pupilArea data. This gives pupil data aligned on the Timelines
+% timestamps
 pupilArea = interp1(ft-ft(1), pupilArea,0:1/30:(endPointEyeCamera-startPointEyeCamera)/SR);
+
 assert(sum(isnan(pupilArea)) < 10, 'interpolation failure') % a fewNaNs in the very end are acceptable
 pupilArea(isnan(pupilArea)) = 0;
 
 
+
+% ---------------------------------------
 % Align photoM or ephy synch data with Timeline
 
 % water data from TL
@@ -92,19 +96,22 @@ TimeStamps=photoMdata.Time_s_;
 
 WaterUp = find(diff(WaterDig)>0.5);
 
-WaterUpTime = TimeStamps(WaterUp);
+WaterUpTime = TimeStamps(WaterUp); % watertime data from photometry data file
 
 end
 
+
 s=regstats(WaterUpTime,flipsUpWater);               
 lag = s.beta(1)                 % this is the duration that photoM or ephys data was earlier than TL
+% ---------------------------------------------
 
+%ShorterTrace = min(length(flipsUpStrobe),length(pupilArea));
 
-ShorterTrace = min(length(flipsUp),length(pupilArea));
+TimeIntervalOnTLwithMeasuredPupil =startPointEyeCamera/SR:1/30: endPointEyeCamera/SR;
 
-pupilArea = pupilArea(1:ShorterTrace);
-eyeTimeAlingedtoNeurData = flipsUp + lag;  % this is the time aligned to neuronal responses
-eyeTimeAlingedtoNeurData=eyeTimeAlingedtoNeurData(1:ShorterTrace);
+%pupilArea = pupilArea(1:ShorterTrace);
+eyeTimeAlingedtoNeurData = TimeIntervalOnTLwithMeasuredPupil + lag ;  % this is the time aligned to neuronal responses
+%eyeTimeAlingedtoNeurData=eyeTimeAlingedtoNeurData(1:ShorterTrace);
 
 % save
 cd(['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series])
