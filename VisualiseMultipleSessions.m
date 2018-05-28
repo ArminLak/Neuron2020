@@ -8,7 +8,7 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 48
+animal_ID = 51
 load('BehPhotoM_Exp23')
 
 RTLimit = 10; % in s, excluding trials with RT longer than this
@@ -195,6 +195,7 @@ NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3100:3400),2);
 end
 
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
+
 
 
 % for derivative
@@ -545,8 +546,35 @@ ylabel('Norm response')
 
 title('Outcome Align')
 legend('shortRT','longRT')
+%%
+% conditional psych function ( condition to DA response)
+figure
 
+BehData01 = BehData; % changed response to 0 and 1
+BehData01 (BehData01(:,3)==-1,3) = 0;
+cz = 1;
+for thresholdRange = 80 %[60 70 80 90 95]
 
+    DA_threshold = percentile(NormBinStim, thresholdRange);
+    
+    
+    c = 1;
+    for istim = unique(BehData01(:,2))'
+        
+        performance_lowDA(c) = nanmean (BehData01(BehData01(:,2)==istim & NormBinStim < DA_threshold,3));
+        performance_highDA(c) = nanmean (BehData01(BehData01(:,2)==istim & NormBinStim > DA_threshold,3));
+        
+        c=c+1;
+    end
+    
+    subplot(1,6,cz)
+    plot(performance_lowDA,'k')
+    hold on
+    plot(performance_highDA,'r')
+    
+    cz = cz +1;
+
+end
 
 %%
 % Grand Summary data of the animal
@@ -606,6 +634,9 @@ BehPhotoM(animal_ID).GrandSummary.AbsStimRasterErrorREw=AbsStimRasterErrorREw;
 
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrectREw=AbsStimRasterLargeCorrectREw;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrectREw = AbsStimRasterSmallCorrectREw;
+
+BehPhotoM(animal_ID).GrandSummary.performance_lowDA = performance_lowDA;
+BehPhotoM(animal_ID).GrandSummary.performance_highDA = performance_highDA;
 
 
 % where we save the data

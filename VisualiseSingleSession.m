@@ -1,9 +1,9 @@
 clear all
 close all
 
-animal_name = 'ALK074'
+animal_name = 'ALK070'
 
-exp_date   = '2018-03-29'
+exp_date   = '2018-03-07'
 exp_series ='2'
 
 %--------------- useful information --------------------------------------
@@ -77,7 +77,7 @@ FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
 %photoMdata = readtable([path2photoM,'\',photoMFileName]);
 load(photoMFileName);
-DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
+DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
 TimeStamps=photoMdata.Time_s_;
 
     
