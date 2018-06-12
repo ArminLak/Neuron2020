@@ -4,6 +4,7 @@ close all
 % give animal name and it will plot data averaged across all session
 
 % it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
+% Armin Feb 2018
 
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
