@@ -1,9 +1,9 @@
-clear all
-close all
+% clear all
+% close all
 
-animal_name = 'ALK074'
-exp_date   = '2018-03-29'
-exp_series ='2'
+animal_name = 'ALK071'
+exp_date   = '2018-03-23'
+exp_series ='1'
 
 %Unilatral or bilateral
 Implant = 'Un'  % or 'Bi'  % in progress
