@@ -1,4 +1,5 @@
-
+% This code plots trial by trial rasters of photometry signal
+% Morgane Moss June 2018
 
 clear all
 close all
@@ -7,19 +8,19 @@ close all
 
 animal_ID = 48
 animal_name = animal_ID + 20;
-load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23')  % Database with data summary
 
 
 concatenate = 'y' % or n (show all trials from single animal)
 
-
+smoothFactor = 100; 
 RTLimit = 10; % in s, excluding trials with RT longer than this
 
-sample_rate = 12000
-downSample = 1200
-eventOnset = 3700
+sample_rate = 12000;
+downSample = 1200;
+eventOnset = 3700;
 
-colorRange=[-4 12]
+colorRange=[-4 12];  % color range for plotting imagesc data
 
 % ------------------ start stop times for task events ------------------
 
@@ -50,9 +51,9 @@ colorRed = [1 0 0
 
 %%
 
-    sessionz = 1:length(BehPhotoM(animal_ID).Session);
-    
-    
+sessionz = 1:length(BehPhotoM(animal_ID).Session);
+
+
 if concatenate == 'y'
     
     TempBehData=[];
@@ -60,31 +61,31 @@ if concatenate == 'y'
     TempStimData=[];
     TempActionData=[];
     TempRewardData=[];
-
-        for iSession = sessionz
-
-            % for each of these, the event is at column 3700
-
-            TempBehData = [TempBehData; BehPhotoM(animal_ID).Session(iSession).TrialTimingData];
-            TempBeepData   = [TempBeepData; BehPhotoM(animal_ID).Session(iSession).NeuronBeep];
-            TempStimData   = [TempStimData; BehPhotoM(animal_ID).Session(iSession).NeuronStim];            
-            TempActionData = [TempActionData; BehPhotoM(animal_ID).Session(iSession).NeuronAction];
-            TempRewardData = [TempRewardData; BehPhotoM(animal_ID).Session(iSession).NeuronReward];
-            
-        end
-
-        TempStimz      = unique(TempBehData(:,2));
-        StimzAbs       = unique(abs(TempBehData(:,2)));
-
-        sessionz = 1;
-
+    
+    for iSession = sessionz
+        
+        % for each of these, the event is at column 3700
+        
+        TempBehData = [TempBehData; BehPhotoM(animal_ID).Session(iSession).TrialTimingData];
+        TempBeepData   = [TempBeepData; BehPhotoM(animal_ID).Session(iSession).NeuronBeep];
+        TempStimData   = [TempStimData; BehPhotoM(animal_ID).Session(iSession).NeuronStim];
+        TempActionData = [TempActionData; BehPhotoM(animal_ID).Session(iSession).NeuronAction];
+        TempRewardData = [TempRewardData; BehPhotoM(animal_ID).Session(iSession).NeuronReward];
+        
+    end
+    
+    TempStimz      = unique(TempBehData(:,2));
+    StimzAbs       = unique(abs(TempBehData(:,2)));
+    
+    sessionz = 1;
+    
 elseif concatenate == 'n'
-
+    
     sessionz = 1:length(BehPhotoM(animal_ID).Session);
-
+    
 end
 
-%% START PLOTTING!!! 
+%% START PLOTTING!!!
 
 for iSession = sessionz
     
@@ -98,18 +99,15 @@ for iSession = sessionz
         TempRewardData = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
         TempStimz      = unique(TempBehData(:,2));
         StimzAbs       = unique(abs(TempBehData(:,2)));
-    
+        
     end
     
     
-    TempStimData   = smooth2a(TempStimData,0,100);
-    TempActionData   = smooth2a(TempActionData,0,100);
-    TempRewardData   = smooth2a(TempRewardData,0,100);
+    TempStimData   = smooth2a(TempStimData,0,smoothFactor);
+    TempActionData   = smooth2a(TempActionData,0,smoothFactor);
+    TempRewardData   = smooth2a(TempRewardData,0,smoothFactor);
     
-    % here you can use imagesc to make colourful plots
-    % for each session lets make the following subplots
-    
-    
+   
     
     RT = TempBehData(:,10) - TempBehData (:,13); % compute choice reaction time from action-stim interval
     [i sortingIndex] = sort(RT);
@@ -186,17 +184,17 @@ for iSession = sessionz
     
     if length(StimzAbs)>3
         subplot(5, 8, 3);
-
+        
         imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(length(StimzAbs)), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
         colormap('bluewhitered')
         title('Stimulus')
-
+        
         line([abs(sStart*downSample) abs(sStart*downSample)], [0.5 0.5+length(TempBehData(:,2)==StimzAbs(end))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
-
+        
         xticks([ ])
         xticklabels([ ])
         ylabel([num2str(StimzAbs(end)) ' Contrast Trials'], 'FontWeight', 'bold')
-    
+        
     end
     
     % ------------- 2. raster for sitm response, 2nd max contrast (L+R)
@@ -289,7 +287,7 @@ for iSession = sessionz
     
     % ------------- 1. raster for action, 0.5 contrast (L+R)
     
-%         figure; hold on;
+    %         figure; hold on;
     
     if length(StimzAbs)>3
         subplot(5, 8, 4);
@@ -302,7 +300,7 @@ for iSession = sessionz
         
         xticklabels([ ])
         yticklabels([ ])
-    
+        
     end
     
     % --------- 2. raster for action, 0.25 contrast (L+R)
@@ -317,7 +315,7 @@ for iSession = sessionz
         
         xticklabels([ ])
         yticklabels([ ])
-    
+        
     end
     
     % --------- 3. raster for action, 0.12 contrast (L+R)
@@ -332,7 +330,7 @@ for iSession = sessionz
         
         xticklabels([ ])
         yticklabels([ ])
-    
+        
     end
     
     % --------- 4. raster for action, 0 contrast
@@ -344,8 +342,8 @@ for iSession = sessionz
     
     line([abs(aStart*downSample) abs(aStart*downSample)], [0.5 0.5+length(TempBehData(:,2)==StimzAbs(1))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     
-        xticklabels([ ])
-        yticklabels([ ])
+    xticklabels([ ])
+    yticklabels([ ])
     
     
     % ------------- 5. line plot; avg stim response over time by contrast
@@ -440,9 +438,9 @@ for iSession = sessionz
     
     line([abs(rStart*downSample) abs(rStart*downSample)], [0.5 0.5+length(TempBehData(:,2)==StimzAbs(1))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     
-        xticklabels([ ])
-        yticklabels([ ])
-       
+    xticklabels([ ])
+    yticklabels([ ])
+    
     % ------------- 5. line plot; avg rwd response over time by contrast
     
     subplot(5, 8, 37);
@@ -481,7 +479,7 @@ for iSession = sessionz
     
     
     % ------------- 1. raster for stim reponse, large reward trials
-%         figure; hold on;
+    %         figure; hold on;
     subplot(4, 8, 7);
     
     imagesc(TempStimData(largeRew, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample)), colorRange)
@@ -505,7 +503,7 @@ for iSession = sessionz
     xticklabels([ ])
     ylabel('Small Reward Trials', 'FontWeight', 'bold')
     
-
+    
     % ------------- 3. raster for stim reponse, NO reward trials
     
     subplot(4, 8, 23);
@@ -522,15 +520,15 @@ for iSession = sessionz
     
     
     % -------------- 4. summary avg reward response large/small/error
-
-        subplot(5, 8, 39);
-
-        plot(nanmean(TempStimData(largeRew, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorGreen(3,:),'LineWidth',2)
-    hold on; 
-        plot(nanmean(TempStimData(smallRew, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorGreen(1,:),'LineWidth',2)
-    hold on; 
-        plot(nanmean(TempStimData(TempBehData(:,9)==0, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorRed(2,:),'LineWidth',2)
-
+    
+    subplot(5, 8, 39);
+    
+    plot(nanmean(TempStimData(largeRew, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorGreen(3,:),'LineWidth',2)
+    hold on;
+    plot(nanmean(TempStimData(smallRew, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorGreen(1,:),'LineWidth',2)
+    hold on;
+    plot(nanmean(TempStimData(TempBehData(:,9)==0, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorRed(2,:),'LineWidth',2)
+    
     legend('Large reward','Small reward', 'No reward','location','best')
     
     xlim([0 abs(sStop*downSample)+abs(sStart*downSample)])
@@ -544,9 +542,9 @@ for iSession = sessionz
     
     
     % ------------- 1. raster for stim reponse, large reward trials
-%     figure; hold on;
+    %     figure; hold on;
     subplot(4, 8, 8);
- 
+    
     imagesc(TempRewardData(largeRew, eventOnset-abs(rStart*downSample):eventOnset+abs(rStop*downSample)), colorRange)
     colormap('bluewhitered')
     
@@ -578,25 +576,25 @@ for iSession = sessionz
     colormap('bluewhitered')
     
     line([abs(rStart*downSample) abs(rStart*downSample)], [0.5 0.5+length(TempStimData((TempBehData(:,9)==1)))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
-
+    
     xticklabels([ ])
     yticklabels([ ])
     
     % ---------------- 4. summary avg reward response large/small/error
-
-        subplot(5, 8, 40);
+    
+    subplot(5, 8, 40);
     %plot large rewards
     
-        plot(nanmean(TempRewardData(largeRew, eventOnset-abs(rStart*downSample):eventOnset+abs(rStop*downSample))),'color',colorGreen(3,:),'LineWidth',2)
-    hold on; 
-        plot(nanmean(TempRewardData(smallRew, eventOnset-abs(rStart*downSample):eventOnset+abs(rStop*downSample))),'color',colorGreen(1,:),'LineWidth',2)
-    hold on; 
+    plot(nanmean(TempRewardData(largeRew, eventOnset-abs(rStart*downSample):eventOnset+abs(rStop*downSample))),'color',colorGreen(3,:),'LineWidth',2)
+    hold on;
+    plot(nanmean(TempRewardData(smallRew, eventOnset-abs(rStart*downSample):eventOnset+abs(rStop*downSample))),'color',colorGreen(1,:),'LineWidth',2)
+    hold on;
     
     % plot no rewards:
     
     plot(nanmean(TempRewardData(TempBehData(:,9)==0, eventOnset-abs(rStart*downSample):eventOnset+abs(rStop*downSample))),'color',colorRed(2,:),'LineWidth',2)
-
-        legend('Large reward','Small reward', 'No reward','location','best')
+    
+    legend('Large reward','Small reward', 'No reward','location','best')
     
     xlim([0 abs(rStop*downSample)+abs(rStart*downSample)])
     xticks([1 abs(rStop*downSample)+abs(rStart*downSample)])
