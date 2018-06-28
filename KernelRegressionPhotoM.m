@@ -39,7 +39,6 @@ StimData = [];
 RewardData = [];
 
 
-
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
 
 
