@@ -69,7 +69,7 @@ if concatenate == 'y'
 
         for iSession = sessionz
 
-            % for each of these, the event is at column 3700
+            % for each of these, the event onset is at column 3700
 
             TempBehData = [TempBehData; BehPhotoM(animal_ID).Session(iSession).TrialTimingData];
             TempBeepData   = [TempBeepData; BehPhotoM(animal_ID).Session(iSession).NeuronBeep];
@@ -165,11 +165,11 @@ for iSession = sessionz
     
     c = 1;
 
-%     for istim = TempStimz'
-%         
-%         performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
-%         %         RT(c) = nanmean (ReactionTime(TempBehData(:,2)==istim));
-%        
+    for istim = TempStimz'
+        
+        performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
+        %         RT(c) = nanmean (ReactionTime(TempBehData(:,2)==istim));
+       
     if concatenate == 'n'      
         for istim = TempStimz'
             performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
@@ -187,7 +187,7 @@ for iSession = sessionz
         for istim = TempStimz' 
             largePerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeRewTrials),3))
             smallPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), smallRewTrials),3))
-           c=c+1;
+            c=c+1;
         end
         
         plot(TempStimz, largePerformance,'k', 'LineWidth', 1.5)
@@ -197,8 +197,8 @@ for iSession = sessionz
 
     end
     
-   %  c=c+1;
-%     end
+     c=c+1;
+    end
     
     xticks([min(TempStimz) 0 max(TempStimz)])
     xlabel('Contrast')
@@ -211,12 +211,13 @@ for iSession = sessionz
     text(TempStimz(end), 1.2, ['ALK0' num2str(animal_name) '  Session ' num2str(iSession)], 'FontWeight', 'bold', 'FontSize', 10);
     
     
+    %%
     
     % ---------- raster for all trials in session in order of RT ---------
     %     figure; hold on;
     subplot(2, 4, 5);
     
-    imagesc((TempStimData(sortingIndex, (eventOnset-200):4900)),colorRange)
+    imagesc((TempStimData(sortingIndex, (eventOnset-200):end)),colorRange)
     
     colormap('bluewhitered')
     
@@ -241,7 +242,7 @@ for iSession = sessionz
     xticklabels([TempStimData./1200])
     xlabel('Time (s)', 'FontWeight', 'bold')
     
-    %-- STIM RESPONSE RASTERSSSS ---------------------------------------
+    %% STIM RESPONSE RASTERSSSS ---------------------------------------
     
     % ------------- 1. raster for stim reponse, max contrast (L+R)
     
