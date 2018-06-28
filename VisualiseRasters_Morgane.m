@@ -5,7 +5,7 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 48
+animal_ID = 50
 animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')
 
@@ -19,7 +19,7 @@ sample_rate = 12000
 downSample = 1200
 eventOnset = 3700
 
-colorRange=[-4 12]
+colorRange=[-10 15]
 
 % ------------------ start stop times for task events ------------------
 
@@ -114,8 +114,9 @@ for iSession = sessionz
     RT = TempBehData(:,10) - TempBehData (:,13); % compute choice reaction time from action-stim interval
     [i sortingIndex] = sort(RT);
     
-    largeRew = sort([intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==1)),...
-        intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==2))]);
+%     largeRew = sort(find(TempBehData(:,8)==1 & TempBehData(:,9)==1 & 
+    
+    largeRew = sort([(intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==1))); (intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==2)))]);
     smallRew = setdiff([1:length(TempBehData)],largeRew)';
     
     %------------------------------- plot psychometric curve------------------
@@ -125,15 +126,33 @@ for iSession = sessionz
     subplot(2, 4, 1);
     
     c = 1;
-    for istim = TempStimz'
+    
+    if concatenate == 'n'      
+        for istim = TempStimz'
+            performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
+            c=c+1;
+        end
+        plot(TempStimz, performance,'k', 'LineWidth', 1.5) % plot one line if not concatenated
         
-        performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
-        %         RT(c) = nanmean (ReactionTime(TempBehData(:,2)==istim));
         
-        c=c+1;
+    elseif concatenate == 'y'
+        
+        largeRewTrials = [find(TempBehData(:,8)==1 & TempBehData(:,3)==-1); find((TempBehData(:,8)==2 & TempBehData(:,3)==1))];
+        smallRewTrials = [find(TempBehData(:,8)==1 & TempBehData(:,3)==1); find((TempBehData(:,8)==2 & TempBehData(:,3)==-1))];
+
+
+        for istim = TempStimz' 
+            largePerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), LTrials),3))
+            smallPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), STrials),3))
+            c=c+1;
+        end
+        
+        plot(TempStimz, largePerformance,'k', 'LineWidth', 1.5)
+        hold on;
+        plot(TempStimz, smallPerformance,'color', [0.5 0.5 0.5], 'LineWidth', 1.5) %plot two lines if concatenated 
+    
     end
     
-    plot(TempStimz, performance,'k', 'LineWidth', 1.5)
     
     xticks([min(TempStimz) 0 max(TempStimz)])
     xlabel('Contrast')
