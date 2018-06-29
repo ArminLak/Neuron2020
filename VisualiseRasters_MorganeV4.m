@@ -13,7 +13,7 @@ animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'y' % or n (show all trials from single animal)
+concatenate = 'n' % or n (show all trials from single animal)
 
 smoothFactor = 100;
 
@@ -26,7 +26,9 @@ eventOnset = 3700;
 
 
 % color range for plotting imagesc data
-colorRange=[-10 15];
+colorRange=[-10 12];
+colorRange=[-5 10];
+
 
 % ------------------ start stop times for task events ------------------
 
@@ -112,6 +114,22 @@ for iSession = sessionz
     
     
     RT = TempBehData(:,10) - TempBehData (:,13); % compute choice reaction time from action-stim interval
+    RT(RT < 0) = nan;   %few trials with error negative RTs
+    
+    % exclude trials with RTs longer than predefiend RT limits
+    TempBehData(RT > RTLimit,: )=[];
+    TempStimData(RT > RTLimit,: )=[];
+    TempActionData(RT > RTLimit,: )=[];
+    TempRewardData(RT > RTLimit,: )=[];
+    RT(RT > RTLimit)=[];
+    
+    TempBehData(isnan(RT),: )=[];
+    TempStimData(isnan(RT),: )=[];
+    TempActionData(isnan(RT),: )=[];
+    TempRewardData(isnan(RT),: )=[];
+    RT(isnan(RT))=[];
+    
+    
     [i sortingIndex] = sort(RT);
     
     largeRew = sort([(intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==1))); (intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==2)))]);
@@ -122,7 +140,7 @@ for iSession = sessionz
     
     
     %------------------------------- plot psychometric curve------------------
-    %%
+    %
     
     f = figure('Position', [300 200 800 900]); hold on
     subplot(2, 4, 1);
@@ -144,8 +162,8 @@ for iSession = sessionz
         
         
         for istim = TempStimz'
-            largeLPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeonLTrials),3))
-            largeRPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeonRTrials),3))
+            largeLPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeonLTrials),3));
+            largeRPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeonRTrials),3));
             c=c+1;
         end
         
@@ -174,29 +192,28 @@ for iSession = sessionz
     %     figure; hold on;
     subplot(2, 4, 5);
     
-    imagesc((TempStimData(sortingIndex, (eventOnset-200):4900)),colorRange)
+    imagesc((TempStimData(sortingIndex, 1:5700)),colorRange)
     
     colormap('bluewhitered')
     
-    %
-    %     a = 1
-    %     for i = sortingIndex
-    %         line([200+RT(i) 200+RT(i)], [i i], 'Color', 'black', 'LineWidth', 1.5); % create tiny line for each session showing time of action
-    %
-    % %         if i == sortingIndex(1)
-    % %             text(200, 150,
-    %
-    %     end
-    %
-    %
-    %     line ( [ 200+RT(432)*downSample 200+RT(432)*downSample ], [sortingIndex(200) sortingIndex(400)], 'color', 'black', 'LineWidth', 1.5);
-    line([200 200], [max(sortingIndex) min(sortingIndex)], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
+  
+       trace = 1;
+        
+        for ievent=RT(sortingIndex)'
+            
+            H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+            set(H,'color',[0 0 0],'LineWidth',3)
+            
+            trace  = trace + 1;
+        end
+        
+    line([eventOnset eventOnset], [max(sortingIndex) min(sortingIndex)], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
     
     ylabel('Trials', 'FontWeight', 'bold')
-    xlim([0 RTLimit*(sample_rate/downSample)])
-    xticks([1 RTLimit*(sample_rate/downSample)])
-    xticklabels([0-(200/(sample_rate/downSample)) RTLimit*(sample_rate/downSample)])
+    xlim([3500 5700])
+    xticks([1 RTLimit*downSample])
+    xticklabels([0-(200/(sample_rate/downSample)) RTLimit*(downSample)])
     xlabel('Time (s)', 'FontWeight', 'bold')
     
     
@@ -390,8 +407,11 @@ for iSession = sessionz
     
     c=1;
     for istim = StimzAbs'
+        
+         tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
+
         hold on
-        h = plot(nanmean(TempStimData(abs(TempBehData(:,2))==istim, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample)))), 'LineWidth', 2)
+        h = plot(nanmean(TempStimData(tempIndex, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample)))), 'LineWidth', 2)
         
         if length(StimzAbs)==4
             set(h, 'color', colorGray4(c,:));
@@ -426,7 +446,9 @@ for iSession = sessionz
     c=1;
     for istim = StimzAbs'
         hold on
-        h = plot(nanmean(TempActionData(abs(TempBehData(:,2))==istim, (eventOnset-abs(aStart*downSample)):(eventOnset+abs(aStop*downSample)))), 'LineWidth', 2)
+         tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
+
+        h = plot(nanmean(TempActionData(tempIndex, (eventOnset-abs(aStart*downSample)):(eventOnset+abs(aStop*downSample)))), 'LineWidth', 2)
         
         if length(StimzAbs)==4
             set(h, 'color', colorGray4(c,:))
@@ -460,7 +482,9 @@ for iSession = sessionz
     c=1;
     for istim = StimzAbs'
         hold on
-        h = plot(nanmean(TempRewardData(abs(TempBehData(:,2))==istim, (eventOnset-abs(rStart*downSample)):(eventOnset+abs(rStop*downSample)))), 'LineWidth', 2)
+                 tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
+
+        h = plot(nanmean(TempRewardData(tempIndex, (eventOnset-abs(rStart*downSample)):(eventOnset+abs(rStop*downSample)))), 'LineWidth', 2)
         
         if length(StimzAbs)==4
             set(h, 'color', colorGray4(c,:))
