@@ -13,7 +13,7 @@ animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'n' % or n (show all trials from single animal)
+concatenate = 'y' % or n (show all trials from single animal)
 
 smoothFactor = 100;
 
@@ -129,7 +129,7 @@ for iSession = sessionz
     TempRewardData(isnan(RT),: )=[];
     RT(isnan(RT))=[];
     
-    
+    TempBehData(:,7)= RT;
     [i sortingIndex] = sort(RT);
     
     largeRew = sort([(intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==1))); (intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==2)))]);
@@ -137,6 +137,8 @@ for iSession = sessionz
     smallRew = setdiff([1:length(TempBehData)],largeRew)';
     
     correct = find(TempBehData(:,9)==1);
+    error = find(TempBehData(:,9)==0);
+    
     
     
     %------------------------------- plot psychometric curve------------------
@@ -192,17 +194,34 @@ for iSession = sessionz
     %     figure; hold on;
     subplot(2, 4, 5);
     
-    imagesc((TempStimData(sortingIndex, 1:5700)),colorRange)
+    TempBehData2sort = TempBehData;
+    TempBehData2sort(:,2)=abs(TempBehData2sort(:,2));
+    TempBehData2sort(error,2)=-TempBehData2sort(error,2);
+    
+    [i j]= sortrows(TempBehData2sort,[9,2,7]);
+    
+    imagesc((TempStimData(j, 1:6700)),colorRange)
     
     colormap('bluewhitered')
     
   
        trace = 1;
         
-        for ievent=RT(sortingIndex)'
+        for ievent=RT(j)'
             
             H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
             set(H,'color',[0 0 0],'LineWidth',3)
+            
+            trace  = trace + 1;
+        end
+        
+        trace = 1;
+        
+        StimOutcomeInt = TempBehData(:,14)-TempBehData(:,13); 
+        for ievent=StimOutcomeInt(j)'
+            
+            H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+            set(H,'color',[0 1 0],'LineWidth',3)
             
             trace  = trace + 1;
         end
@@ -211,7 +230,7 @@ for iSession = sessionz
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
     
     ylabel('Trials', 'FontWeight', 'bold')
-    xlim([3500 5700])
+    xlim([3500 6700])
     xticks([1 RTLimit*downSample])
     xticklabels([0-(200/(sample_rate/downSample)) RTLimit*(downSample)])
     xlabel('Time (s)', 'FontWeight', 'bold')
