@@ -143,13 +143,7 @@ for iSession = sessionz
     TempActionData   = smooth2a(TempActionData,0,smoothFactor);
     TempRewardData   = smooth2a(TempRewardData,0,smoothFactor);
     
-       
-%     end
-%      
-%     TempStimData   = smooth2a(TempStimData,0,100);
-%     TempActionData   = smooth2a(TempActionData,0,100);
-%     TempRewardData   = smooth2a(TempRewardData,0,100);
-    
+
     RT = TempBehData(:,10) - TempBehData (:,13); % compute choice reaction time from action-stim interval
     [i sortingIndex] = sort(RT);
     
@@ -210,8 +204,7 @@ for iSession = sessionz
     
     text(TempStimz(end), 1.2, ['ALK0' num2str(animal_name) '  Session ' num2str(iSession)], 'FontWeight', 'bold', 'FontSize', 10);
     
-    
-    
+
     % ---------- raster for all trials in session in order of RT ---------
     %     figure; hold on;
     subplot(2, 4, 5);
@@ -236,12 +229,13 @@ for iSession = sessionz
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
     
     ylabel('Trials', 'FontWeight', 'bold')
-    %     xticks([1:1200:4500])
-    %     xticklabels([0 1 2 3])
-    xticklabels([TempStimData./1200])
+    xlim([0 RTLimit*(sample_rate/downSample)])
+    xticks([1 RTLimit*(sample_rate/downSample)])
+    xticklabels([0-(200/(sample_rate/downSample)) RTLimit*(sample_rate/downSample)])
     xlabel('Time (s)', 'FontWeight', 'bold')
     
-    %-- STIM RESPONSE RASTERSSSS ---------------------------------------
+    
+%-- STIM RESPONSE RASTERSSSS ---------------------------------------
     
     % ------------- 1. raster for stim reponse, max contrast (L+R)
     
@@ -379,7 +373,7 @@ for iSession = sessionz
     ylabel('{\Delta} F / F')
     
     
-    % ACTION RASTERS ------------------------------------------------------
+% ACTION RASTERS ------------------------------------------------------
     
     % ------------- 1. raster for action, 0.5 contrast (L+R)
     
@@ -519,7 +513,7 @@ for iSession = sessionz
     ylabel('{\Delta} F / F')
     
     
-    %-- ACTION RASTERS ------------------------------------------------------
+%-- ACTION RASTERS ------------------------------------------------------
     
     % ------------- 1. raster for action, 0.5 contrast (L+R)
     
@@ -615,7 +609,7 @@ for iSession = sessionz
     xticklabels([aStart aStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
     
-    %-- REWARD RESPONSE RASTERS ---------------------------------------------
+%-- REWARD RESPONSE RASTERS ---------------------------------------------
     
     % ------------- 1. raster for reward response, 0.5 contrast (L+R)
     
@@ -712,7 +706,7 @@ for iSession = sessionz
     xticklabels([aStart aStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
     
-    %-- REWARD RESPONSE RASTERS ---------------------------------------------
+%-- REWARD RESPONSE RASTERS ---------------------------------------------
     
     % ------------- 1. raster for reward response, 0.5 contrast (L+R)
     
@@ -823,7 +817,7 @@ for iSession = sessionz
 %     xlabel('Time (s)', 'FontWeight', 'bold')
 %     
     
-    %-- STIM RESPONSE RASTERS 2 (BROKEN BY LARGE/SMALL/NO REWARD) -------------------
+%-- STIM RESPONSE RASTERS 2 (BROKEN BY LARGE/SMALL/NO REWARD) -------------------
     
     
     % ------------- 1. raster for stim reponse, large reward trials
@@ -965,7 +959,7 @@ for iSession = sessionz
 %     xlabel('Time (s)', 'FontWeight', 'bold')
 %     
 %     
-%     %-- REWARD RESPONSE RASTERS 2 (BROKEN BY LARGE/SMALL/NO REWARD) -------------------
+%-- REWARD RESPONSE RASTERS 2 (BROKEN BY LARGE/SMALL/NO REWARD) -------------------
 %     
     
     % ------------- 1. raster for stim reponse, large reward trials
