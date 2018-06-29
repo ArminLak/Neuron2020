@@ -6,7 +6,7 @@ clear all
 close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
-
+% session 5 of ALK068 is chosen to be shown in paper figure
 
 animal_ID = 48
 animal_name = animal_ID + 20;
