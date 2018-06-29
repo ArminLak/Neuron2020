@@ -91,36 +91,6 @@ elseif concatenate == 'n'
 
 end
 
-% if concatenate == 'y'
-%     
-%     TempBehData=[];
-%     TempBeepData=[];
-%     TempStimData=[];
-%     TempActionData=[];
-%     TempRewardData=[];
-%     
-%     for iSession = sessionz
-%         
-%         % for each of these, the event is at column 3700
-%         
-%         TempBehData = [TempBehData; BehPhotoM(animal_ID).Session(iSession).TrialTimingData];
-%         TempBeepData   = [TempBeepData; BehPhotoM(animal_ID).Session(iSession).NeuronBeep];
-%         TempStimData   = [TempStimData; BehPhotoM(animal_ID).Session(iSession).NeuronStim];
-%         TempActionData = [TempActionData; BehPhotoM(animal_ID).Session(iSession).NeuronAction];
-%         TempRewardData = [TempRewardData; BehPhotoM(animal_ID).Session(iSession).NeuronReward];
-%         
-%     end
-%     
-%     TempStimz      = unique(TempBehData(:,2));
-%     StimzAbs       = unique(abs(TempBehData(:,2)));
-%     
-%     sessionz = 1;
-%     
-% elseif concatenate == 'n'
-%     
-%     sessionz = 1:length(BehPhotoM(animal_ID).Session);
-%     
-% end
 
 %-- START PLOTTING!!!
 
@@ -151,6 +121,9 @@ for iSession = sessionz
 
     smallRew = setdiff([1:length(TempBehData)],largeRew)';
     
+    correct = find(TempBehData(:,9)==1);
+    
+    
     %------------------------------- plot psychometric curve------------------
     %%
    
@@ -158,12 +131,7 @@ for iSession = sessionz
     subplot(2, 4, 1);
     
     c = 1;
-
-%     for istim = TempStimz'
-%         
-%         performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
-%         %         RT(c) = nanmean (ReactionTime(TempBehData(:,2)==istim));
-%        
+       
     if concatenate == 'n'      
         for istim = TempStimz'
             performance(c) = nanmean (TempBehData(TempBehData(:,2)==istim,3));
@@ -174,19 +142,19 @@ for iSession = sessionz
         
     elseif concatenate == 'y'
         
-        largeRewTrials = [find(TempBehData(:,8)==1 & TempBehData(:,3)==-1); find((TempBehData(:,8)==2 & TempBehData(:,3)==1))];
-        smallRewTrials = [find(TempBehData(:,8)==1 & TempBehData(:,3)==1); find((TempBehData(:,8)==2 & TempBehData(:,3)==-1))];
+        largeonLTrials = find(TempBehData(:,8)==1); % large on left
+        largeonRTrials = find(TempBehData(:,8)==2); % large on right
 
 
         for istim = TempStimz' 
-            largePerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeRewTrials),3))
-            smallPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), smallRewTrials),3))
+            largeLPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeonLTrials),3))
+            largeRPerformance(c) = nanmean(TempBehData(intersect(find(TempBehData(:,2)==istim), largeonRTrials),3))
            c=c+1;
         end
         
-        plot(TempStimz, largePerformance,'k', 'LineWidth', 1.5)
+        plot(TempStimz, largeLPerformance,'k', 'LineWidth', 1.5)
         hold on;
-        plot(TempStimz, smallPerformance,'color', [0.5 0.5 0.5], 'LineWidth', 1.5) %plot two lines if concatenated 
+        plot(TempStimz, largeRPerformance,'color', [0.5 0.5 0.5], 'LineWidth', 1.5) %plot two lines if concatenated 
     
 
     end
@@ -245,7 +213,10 @@ for iSession = sessionz
     if length(StimzAbs)>3
         subplot(5, 8, 3);
 
-        imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(length(StimzAbs)), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
+        
+        tempIndex = intersect(find(abs(TempBehData(:,2))==StimzAbs(length(StimzAbs))),correct);
+        
+        imagesc(TempStimData(tempIndex, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
         colormap('bluewhitered')
         title('Stimulus')
         
@@ -255,17 +226,6 @@ for iSession = sessionz
         xticklabels([ ])
         ylabel([num2str(StimzAbs(end)) ' Contrast Trials'], 'FontWeight', 'bold')
 
-
-        imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(length(StimzAbs)), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
-        colormap('bluewhitered')
-        title('Stimulus')
-
-        line([abs(sStart*downSample) abs(sStart*downSample)], [0.5 0.5+length(TempBehData(:,2)==StimzAbs(end))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
-
-        xticks([ ])
-        xticklabels([ ])
-        ylabel([num2str(StimzAbs(end)) ' Contrast Trials'], 'FontWeight', 'bold')
-    
     end
     
     % ------------- 2. raster for sitm response, 2nd max contrast (L+R)
@@ -273,7 +233,9 @@ for iSession = sessionz
     if length(StimzAbs)>1
         subplot(5, 8, 11);
         
-        imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-1), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
+       tempIndex = intersect(find(abs(TempBehData(:,2))==StimzAbs(end-1)),correct);
+
+        imagesc(TempStimData(tempIndex, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
         colormap('bluewhitered')
         
         line([abs(sStart*downSample) abs(sStart*downSample)], [0.5 0.5+length(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-1)))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
@@ -286,31 +248,16 @@ for iSession = sessionz
         
     end
     
-    % ------------- 2. raster for sitm response, 2nd max contrast (L+R)
-    
-
-    if length(StimzAbs)>1
-        subplot(5, 8, 11);
-        
-        imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-1), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
-        colormap('bluewhitered')
-        
-        line([abs(sStart*downSample) abs(sStart*downSample)], [0.5 0.5+length(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-1)))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
-        
-        
-        xticks([ ])
-        xticklabels([ ])
-        ylabel([num2str(StimzAbs(end-1)) ' Contrast Trials'], 'FontWeight', 'bold')
-        
-    end
-    
-    
+ 
     % ------------- 3. raster for stim response, 3rd max contrast (L+R)
     
     if length(StimzAbs)>2
         subplot(5, 8, 19);
         
-        imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-2), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
+  tempIndex = intersect(find(abs(TempBehData(:,2))==StimzAbs(end-2)),correct);
+
+        
+        imagesc(TempStimData(tempIndex, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
         colormap('bluewhitered')
         
         line([abs(sStart*downSample) abs(sStart*downSample)], [0.5 0.5+length(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-2)))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
@@ -326,7 +273,9 @@ for iSession = sessionz
     if length(StimzAbs)>3
         subplot(5, 8, 27);
         
-        imagesc(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-3), (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
+          tempIndex = intersect(find(abs(TempBehData(:,2))==StimzAbs(end-3)),correct);
+
+        imagesc(TempStimData(tempIndex, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample))),colorRange)
         colormap('bluewhitered')
         
         line([abs(sStart*downSample) abs(sStart*downSample)], [0.5 0.5+length(TempStimData(abs(TempBehData(:,2))==StimzAbs(end-3)))], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
