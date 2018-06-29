@@ -8,9 +8,12 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 48
 load('BehPhotoM_Exp23')
-%%
+%
+animal_ID = 51
+
+ModelArrangment = 8
+
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
 Timereso = 50; %this is in unit of 1200 in s. dont change
 color = [
@@ -117,7 +120,7 @@ inverted_Matrix_to_row = downsample(inverted_Matrix_to_row,Timereso);
 StimDataSmooth2Visualise = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
 
-[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2');
+[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
 
 StimDataSmoothDownSample = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
@@ -131,6 +134,7 @@ eventTimes = {stim_time; action_onsetTime; outcome_time};
 eventValues = {[];[];[]};
 
 windows = {[-400 800];[-200 1600];[-600 200];[200 2000]}; %
+
 windows = {[-400 2600];[-1000 200];[-400 2000]}; %
 
 
@@ -261,7 +265,7 @@ plot(fitKernels{3})
 
 
 
-%%
+%
 
 StimsAllowed = unique(BehData(:,2))';
 Stimz = BehData(:,2);
@@ -296,18 +300,18 @@ for i=unique(BehData(:,2))'
     
     
     % reduced
-    %     resp_CorrStim(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1)),2));
-    %     resp_ErrStim(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0)),2));
+    %     resp_CorrStim(j) = nanmean(Coefiz(mintersect(tempIndex,find(    correct==1)),2));
+    %     resp_ErrStim(j) = nanmean(Coefiz(mintersect(tempIndex,find(    correct==0)),2));
     %
     %
-    %     resp_CorrRew(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1)),3));
-    %     resp_ErrRew(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0)),3));
+    %     resp_CorrRew(j) = nanmean(Coefiz(mintersect(tempIndex,find(    correct==1)),3));
+    %     resp_ErrRew(j) = nanmean(Coefiz(mintersect(tempIndex,find(    correct==0)),3));
     %
-    %     resp_Block1StimCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),2));
-    %     resp_Block2StimCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),2));
+    %     resp_Block1StimCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),2));
+    %     resp_Block2StimCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),2));
     %
-    %     resp_Block1RewCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),3));
-    %     resp_Block2RewCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),3));
+    %     resp_Block1RewCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),3));
+    %     resp_Block2RewCor(j) = nanmean(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),3));
     %
     
 end
@@ -352,26 +356,26 @@ plot(resp_Block2RewCor,'-.k')
 
 
 %save
-BehPhotoM(animal_ID).KernelSummary.Kernels = fitKernels;
-BehPhotoM(animal_ID).KernelSummary.resp_CorrStim = resp_CorrStim;
-BehPhotoM(animal_ID).KernelSummary.resp_ErrStim = resp_ErrStim;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).Kernels = fitKernels;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrStim = resp_CorrStim;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrStim = resp_ErrStim;
 
-BehPhotoM(animal_ID).KernelSummary.resp_CorrAct=resp_CorrAct;
-BehPhotoM(animal_ID).KernelSummary.resp_ErrAct=resp_ErrAct;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrAct=resp_CorrAct;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrAct=resp_ErrAct;
 
-BehPhotoM(animal_ID).KernelSummary.resp_CorrRew=resp_CorrRew;
-BehPhotoM(animal_ID).KernelSummary.resp_ErrRew=resp_ErrRew;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrRew=resp_CorrRew;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrRew=resp_ErrRew;
 
-BehPhotoM(animal_ID).KernelSummary.resp_Block1StimCor=resp_Block1StimCor;
-BehPhotoM(animal_ID).KernelSummary.resp_Block2StimCor=resp_Block2StimCor;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block1StimCor=resp_Block1StimCor;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block2StimCor=resp_Block2StimCor;
 
-BehPhotoM(animal_ID).KernelSummary.resp_Block1ActCor=resp_Block1ActCor;
-BehPhotoM(animal_ID).KernelSummary.resp_Block2ActCor=resp_Block2ActCor;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block1ActCor=resp_Block1ActCor;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block2ActCor=resp_Block2ActCor;
 
-BehPhotoM(animal_ID).KernelSummary.resp_Block1RewCor=resp_Block1RewCor;
-BehPhotoM(animal_ID).KernelSummary.resp_Block2RewCor=resp_Block2RewCor;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block1RewCor=resp_Block1RewCor;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block2RewCor=resp_Block2RewCor;
 
-%%
+%
 StimzAbs = abs(BehData(1:end-1,2));
 
 StimsAllowed = unique(StimzAbs');
@@ -382,13 +386,15 @@ for i=unique(StimzAbs')
     [i j]=ismember(i, StimsAllowed);
     
     
-    PredictedPopStimAlign(j,:)=nanmean(Sliced_PredictedSignalStim(tempIndex,:));
+    PredictedPopStimAlign(j,:)=nanmean(EstimatedSignalStim(tempIndex,:));
     
 end
-
+%
 figure;
 
 coefStim = [0.6 1 2 3]
+
+coefStim = [1 1 1 1]
 
 
 for i=1:4
@@ -405,19 +411,20 @@ IndexSmallRew = [find(BehData(:,9)==1 & BehData(:,3)==-1 & BehData(:,8)==2 ) ; f
 IndexNoRew = find(BehData(:,9)==1);
 
 figure; hold on
-plot(nanmean(Sliced_PredictedSignalRew(IndexLargeRew,:)));
+plot(nanmean(EstimatedSignalOutcome(IndexLargeRew,:)));
 
-plot(nanmean(0.5 * Sliced_PredictedSignalRew(IndexSmallRew,:)));
+plot(nanmean(EstimatedSignalOutcome(IndexSmallRew,:)));
 
-plot(nanmean(-0.2 * Sliced_PredictedSignalRew(IndexNoRew,:)));
-
-
+plot(nanmean(EstimatedSignalOutcome(IndexNoRew,:)));
 
 
-BehPhotoM(animal_ID).KernelSummary.PredictedPopStimAlign=PredictedPopStimAlign;
-BehPhotoM(animal_ID).KernelSummary.PredictedPopRewAlignLarge=nanmean(Sliced_PredictedSignalRew(IndexLargeRew,:));
-BehPhotoM(animal_ID).KernelSummary.PredictedPopRewAlignSmall=nanmean(0.5 * Sliced_PredictedSignalRew(IndexSmallRew,:));
-BehPhotoM(animal_ID).KernelSummary.PredictedPopRewAlignNoRew=nanmean(-0.2 *Sliced_PredictedSignalRew(IndexNoRew,:));
 
+
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopStimAlign=PredictedPopStimAlign;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopRewAlignLarge=nanmean(EstimatedSignalOutcome(IndexLargeRew,:));
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopRewAlignSmall=nanmean(EstimatedSignalOutcome(IndexSmallRew,:));
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopRewAlignNoRew=nanmean(EstimatedSignalOutcome(IndexNoRew,:));
+
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).EV=EV;
 
 

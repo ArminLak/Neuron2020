@@ -87,7 +87,7 @@ for iAnimal = Animals
     
         % Stim-align rasters(middle stimuli, correct/ small/large reward)
     SingleAnimalStimTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterLargeCorrect(2,:); 
-    SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
+    SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimCorrect(2,:) ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
     GrandPopAbsStimRespMiddleStimCorLarge = SingleAnimalNormStimTraceMiddleStimLargeCorrect + GrandPopAbsStimRespMiddleStimCorLarge ;
     
     SingleAnimalStimTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterSmallCorrect(2,:); 
@@ -388,8 +388,8 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
-for c = 1:4
-    
+for c = 2 % you could do the 1:4 and get all stimuli
+   
     
     subplot(5,3,3); hold on
     plot(GrandPopAbsStimRespMiddleStimCorrect(c,:)./ length(Animals),'g','LineWidth',2);
@@ -416,7 +416,7 @@ subplot(5,3,6); hold on
 title('middleSim,SmallLarge')
 
 plot(GrandPopAbsStimRespMiddleStimCorLarge./ length(Animals),'g','LineWidth',2);
-
+hold on
 plot(GrandPopAbsStimRespMiddleStimCorSmall./ length(Animals),'--g','LineWidth',2);
 
 xlim([3500 4900])
