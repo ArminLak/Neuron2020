@@ -5,6 +5,7 @@
 clear all
 close all
 
+% things to do:
 %1. tickdirection out
 %2. render as painter 
 % in the sorting based on CrrErrContRT, plot a thick green line on the
