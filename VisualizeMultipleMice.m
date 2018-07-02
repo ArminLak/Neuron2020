@@ -25,13 +25,14 @@ colorGray = [ 0.8 0.8 0.8
 
 StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
 
-GrandPopAbsStimResp = zeros(4,7100);
-GrandPopAbsStimRespMiddleStimCorrect= zeros(4,7100);
-GrandPopAbsStimRespMiddleStimError= zeros(4,7100);
+GrandPopAbsStimResp = zeros(4,13100);
+GrandPopAbsActionResp = zeros(4,13100);
 
-GrandPopAbsStimRespMiddleStimCorLarge= zeros(1,7100);
-GrandPopAbsStimRespMiddleStimCorSmall= zeros(1,7100);
+GrandPopAbsStimRespMiddleStimCorrect= zeros(4,13100);
+GrandPopAbsStimRespMiddleStimError= zeros(4,13100);
 
+GrandPopAbsStimRespMiddleStimCorLarge= zeros(1,13100);
+GrandPopAbsStimRespMiddleStimCorSmall= zeros(1,13100);
 
 
 GrandPopNormBinStimNoFold = zeros(2,7);
@@ -40,11 +41,11 @@ GrandPopNormBinStimNoFoldCorrError = zeros(2,7);
 GrandPopNormBinRewardNoFoldCorrError = zeros(2,7);
 
 
-GrandPopStim2AwayDACorError = zeros(4,7100);
+GrandPopStim2AwayDACorError = zeros(4,13100);
 
-GrandPopBeep2AwayDACorError = zeros(4,7100);
+GrandPopBeep2AwayDACorError = zeros(4,13100);
 
-GrandPopRew2AwayDACorError = zeros(4,7100);
+GrandPopRew2AwayDACorError = zeros(4,13100);
 
 GrandPopStimBin = zeros(4,4);
 
@@ -65,6 +66,11 @@ for iAnimal = Animals
     SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster; 
     SingleAnimalNormStimTrace = SingleAnimalStimTrace ./ max(max(SingleAnimalStimTrace));
     GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
+    
+        % Action-align rastersCor
+    SingleAnimalActionTrace= BehPhotoM(iAnimal).GrandSummary.AbsActionRaster; 
+    SingleAnimalNormActionTrace = SingleAnimalActionTrace ./ max(max(SingleAnimalActionTrace));
+    GrandPopAbsActionResp = SingleAnimalNormActionTrace + GrandPopAbsActionResp ;
     
       % Stim-align rasters(middle stimuli, correct/error)
     SingleAnimalStimTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(1,:);
@@ -174,14 +180,11 @@ for iAnimal = Animals
     GrandPopRewBin = SingleBinRewCorrErrorNorm + GrandPopRewBin ;
     
     
-    
-    
-    
     c=c+1;
 end
 
 %%
-subplot(5,3,1); hold on
+subplot(6,3,1); hold on
 xlabel('Contrast')
 ylabel('P(R)')
 title( 'Psychometric curves')
@@ -192,7 +195,7 @@ plot(StimAllowed,nanmean(PerBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','
 legend('LargeRew@L','LargeRew@R','Location','southeast')
 
 
-subplot(5,3,2); hold on
+subplot(6,3,2); hold on
 xlabel('Contrast')
 ylabel('Norm RT')
 title( 'Reaction Time')
@@ -213,7 +216,7 @@ plot(StimAllowed,nanmean(RTBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o
 % xlabel('Contrast')
 
     
-    subplot(5,3,4); hold on % errorbars reflecting across sessions
+    subplot(6,3,4); hold on % errorbars reflecting across sessions
 errorbar(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),...
     nanstd(GrandPopNormBinStimNoFold1) ./ sqrt(12),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 errorbar(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),...
@@ -232,7 +235,7 @@ xlabel('Contrast')
 % xlabel('Contrast')
 % title('Outcome Align')
 
-subplot(5,3,5); hold on % errorbars reflecting across sessions
+subplot(6,3,5); hold on % errorbars reflecting across sessions
 errorbar(StimAllowed,GrandPopNormBinRewardNoFold(1,:)./ length(Animals),...
     nanstd(GrandPopNormBinRewardNoFold1) ./ sqrt(12),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 errorbar(StimAllowed,GrandPopNormBinRewardNoFold(2,:)./ length(Animals),...
@@ -249,7 +252,7 @@ xlabel('Contrast')
 % title('Stimulus Align')
 % xlabel('Contrast')
 
-subplot(5,3,7); hold on
+subplot(6,3,7); hold on
 errorbar(StimAllowed,GrandPopNormBinStimNoFoldCorrError(1,:)./ length(Animals),...
     nanstd(GrandPopNormBinStimNoFoldCorrError1) ./ sqrt(14),'color','r','LineWidth',2,'Marker','o','MarkerSize',5)
 errorbar(StimAllowed,GrandPopNormBinStimNoFoldCorrError(2,:)./ length(Animals),...
@@ -268,7 +271,7 @@ xlabel('Contrast')
 % xlabel('Contrast')
 % title('Outcome Align')
 
-subplot(5,3,8); hold on
+subplot(6,3,8); hold on
 
 errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(1,:)./ length(Animals),...
     nanstd(GrandPopNormBinRewardNoFoldCorrError1) ./ sqrt(14),'color','r','LineWidth',2,'Marker','o','MarkerSize',5)
@@ -280,7 +283,7 @@ title('Outcome Align')
 xlabel('Contrast')
 
 
-subplot(5,3,10); hold on
+subplot(6,3,10); hold on
 
 
 plot(unique(abs(StimAllowed)),GrandPopStimBin(1,:)./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
@@ -293,7 +296,7 @@ xlabel('Contrast')
 title('Stimulus Align')
 
 
-subplot(5,3,11); hold on
+subplot(6,3,11); hold on
 
 
 plot(unique(abs(StimAllowed)),GrandPopRewBin(1,:)./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
@@ -307,7 +310,7 @@ xlabel('Contrast')
 title('Outcome Align')
 
 
-subplot(5,3,12); hold on
+subplot(6,3,12); hold on
 
 plot(GrandPopStim2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
 
@@ -329,7 +332,7 @@ legend('CorLarge','CorSmall','ErrLarge','ErrSmall')
 
 
 
-subplot(5,3,13); hold on
+subplot(6,3,13); hold on
 
 plot(GrandPopRew2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
 
@@ -349,7 +352,7 @@ xlabel('Time (s)')
 
 
 
-subplot(5,3,14); hold on
+subplot(6,3,14); hold on
 
 plot(GrandPopBeep2AwayDACorError(1,:)./ length(Animals),'g','LineWidth',2);
 
@@ -370,7 +373,7 @@ ylabel('Norm response')
 for c = 1:4
     
     
-    subplot(5,3,15); hold on
+    subplot(6,3,15); hold on
     plot((GrandPopAbsStimResp(c,:) ./ length(Animals)),'color',colorGray(c,:),'LineWidth',2)
   
 end
@@ -388,17 +391,37 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
+for c = 1:4
+    
+    
+    subplot(6,3,18); hold on
+    plot((GrandPopAbsActionResp(c,:) ./ length(Animals)),'color',colorGray(c,:),'LineWidth',2)
+  
+end
+
+
+title('Stimulus Align')
+
+xlim([2800 4000])
+ylim([-0.3 1])
+
+
+set(gca, 'XTick', [2800, 3700, 4000]);
+set(gca, 'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+
 for c = 2 % you could do the 1:4 and get all stimuli
    
     
-    subplot(5,3,3); hold on
+    subplot(6,3,3); hold on
     plot(GrandPopAbsStimRespMiddleStimCorrect(c,:)./ length(Animals),'g','LineWidth',2);
 
 plot(GrandPopAbsStimRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
   
 end
 
-subplot(5,3,3); hold on
+subplot(6,3,3); hold on
 title('middleSim,CorrError')
 
 
@@ -412,7 +435,7 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
-subplot(5,3,6); hold on
+subplot(6,3,6); hold on
 title('middleSim,SmallLarge')
 
 plot(GrandPopAbsStimRespMiddleStimCorLarge./ length(Animals),'g','LineWidth',2);

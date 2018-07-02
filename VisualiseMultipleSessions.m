@@ -38,11 +38,12 @@ colorRed = [ 1 0.8 0.8
 BehData = [];
 BeepData = [];
 StimData = [];
+ActionData = [];
 RewardData = [];
 
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
-%if animal_ID == 51 
-%sessionz = [1 2 3 4 5 8]; end % sessions used for ALK071 Exp 23 [1 2 3 4 5 8]
+% if animal_ID == 51 
+% sessionz = [1 2 3 4 5 8]; end % sessions used for ALK071 Exp 23 [1 2 3 4 5 8]
 
 for iSession = sessionz
     
@@ -52,12 +53,16 @@ for iSession = sessionz
     
     TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
     
+    TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronAction;
+
     TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
     
     BeepData = [BeepData;TempBeepData];
     
     StimData = [StimData;TempStimData];
     
+    ActionData = [ActionData;TempActionData];
+
     RewardData = [RewardData;TempRewardData];
     
     BehData = [BehData; TempBehData];
@@ -78,6 +83,7 @@ BehData(RT > RTLimit,:) = [];
 
 BeepData(RT > RTLimit,:) = [];
 StimData(RT > RTLimit,:) = [];
+ActionData(RT > RTLimit,:) = [];
 RewardData(RT > RTLimit,:) = [];
 
 
@@ -110,7 +116,7 @@ for iBlock = [1 2]
     
 end
 
-subplot(5,3,1); hold on
+subplot(6,3,1); hold on
 xlabel('Contrast')
 ylabel('P(R)')
 title( 'Psychometric curves')
@@ -121,7 +127,7 @@ plot(unique(BehData(:,2))',performance(2,:),'color',[1 0.6 0.2],'LineWidth',2,'M
 legend('LargeRew@L','LargeRew@R','Location','southeast')
 
 
-subplot(5,3,2); hold on
+subplot(6,3,2); hold on
 xlabel('Contrast')
 ylabel('Norm RT')
 title( 'Reaction Time')
@@ -135,7 +141,7 @@ plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker',
 %% beep figure
 
 
-subplot(5,3,9); hold on
+subplot(6,3,9); hold on
 
 plot(nanmean(BeepData),'k','LineWidth',2)
 
@@ -157,9 +163,14 @@ c=1;
 for iStim = abzStim
     
     AbsStimRaster(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim, :));
+    AbsActionRaster(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim, :));
     
-    subplot(5,3,13); hold on
+    subplot(6,3,13); hold on
     plot((AbsStimRaster(c,:)),'color',colorGray(c,:),'LineWidth',2)
+    
+    subplot(6,3,16); hold on
+    plot((AbsActionRaster(c,:)),'color',colorGray(c,:),'LineWidth',2)
+    
     
     c=c+1;
 end
@@ -174,11 +185,10 @@ elseif length(abzStim)==5
     legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)))
     
 end
-
+subplot(6,3,13);
 title('Stimulus Align')
 
 xlim([3500 4900])
-%ylim([-0.3 2])
 
 
 set(gca, 'XTick', [3700, 4300, 4900]);
@@ -186,18 +196,34 @@ set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
+subplot(6,3,16);
+title('Stimulus Align')
 
+xlim([3000 4400])
+
+
+set(gca, 'XTick', [3000, 3700, 4400]);
+set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+
+%%
 if animal_ID == 48 
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
+
 end
 
 if animal_ID == 50 
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3100:3400),2);
+
 end
 
-NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
+if animal_ID == 51
 
+%NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
+NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3400:3800),2);
 
+end
 
 % for derivative
 %NormBinStim = mean(StimData(:,3800:4200),2);
@@ -220,7 +246,7 @@ for iblock= [1 2]
     c=c+1;
 end
 
-subplot(5,3,4); hold on
+subplot(6,3,4); hold on
 
 plot(unique(BehData(:,2))',PopNormBinStimBlocksNoFold(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 plot(unique(BehData(:,2))',PopNormBinStimBlocksNoFold(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
@@ -230,7 +256,7 @@ ylabel('Norm response')
 
 % this figure plots rasters at the stimulus time separated based on the
 % pendding outcome
-subplot(5,3,14); hold on
+subplot(6,3,14); hold on
 
 plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
 plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==-1,:)),'--g','LineWidth',2)
@@ -263,7 +289,7 @@ for CorrError= [0 1]
     c=c+1;
 end
 
-subplot(5,3,7); hold on
+subplot(6,3,7); hold on
 plot(unique((BehData(:,2)))',PopNormBinStimCorrectErrorNoFold(1,:),'r','LineWidth',2)
 plot(unique((BehData(:,2)))',PopNormBinStimCorrectErrorNoFold(2,:),'g','LineWidth',2)
 
@@ -293,7 +319,7 @@ for RewardSize= [-1 1]
     c=c+1;
 end
 
-subplot(5,3,10); hold on
+subplot(6,3,10); hold on
 plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(1,:),'--g','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinStimCorrect(2,:),'g','LineWidth',2)
 
@@ -327,7 +353,7 @@ end
 %plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
 for i = 1:4
     
-    subplot(5,3,3); hold on
+    subplot(6,3,3); hold on
 
 plot((smooth(AbsStimRasterCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
 
@@ -345,7 +371,7 @@ title('Stimulus Align')
 %set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
-subplot(5,3,6); hold on
+subplot(6,3,6); hold on
 plot((AbsStimRasterLargeCorrect(2,:)),'b','LineWidth',2)
 plot((AbsStimRasterSmallCorrect(2,:)),'--b','LineWidth',2)
 
@@ -392,7 +418,7 @@ end
     
 for i = 1:4
     
-    subplot(5,3,15); hold on
+    subplot(6,3,15); hold on
 
 plot(smooth(AbsStimRasterCorrectREw(i,:),70),'color',colorGray(i,:),'LineWidth',2)
 
@@ -439,7 +465,7 @@ for iblock= [1 2]
     c=c+1;
 end
 
-subplot(5,3,5); hold on
+subplot(6,3,5); hold on
 
 plot(unique(BehData(:,2))',PopNormBinRewardBlocksNoFold(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 plot(unique(BehData(:,2))',PopNormBinRewardBlocksNoFold(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
@@ -467,7 +493,7 @@ for CorrError= [0 1]
     c=c+1;
 end
 
-subplot(5,3,8); hold on
+subplot(6,3,8); hold on
 plot(unique((BehData(:,2)))',PopNormBinRewardCorrectErrorNoFold(1,:),'r','LineWidth',2)
 plot(unique((BehData(:,2)))',PopNormBinRewardCorrectErrorNoFold(2,:),'g','LineWidth',2)
 
@@ -495,7 +521,7 @@ for RewardSize= [-1 1]
 end
 
 
-subplot(5,3,11); hold on
+subplot(6,3,11); hold on
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(1,:),'--g','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardCorrect(2,:),'g','LineWidth',2)
 
@@ -511,7 +537,7 @@ ylabel('Norm response')
 title('Outcome Align')
 legend('CorSmall','CorLarge','ErrSmall','ErrLarge')
 
-% looking at reward responses separated for short and ling RT
+% looking at reward responses separated for short and long RT
 
 RT = BehData(:,10) - BehData(:,13);
 c=1;
@@ -535,7 +561,7 @@ for RewardSize= 1
 end
 
 
-subplot(5,3,12); hold on
+subplot(6,3,12); hold on
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardshortRT,'--b','LineWidth',2)
 plot(unique(abs(BehData(:,2)))',PopNormBinRewardlongRT,'b','LineWidth',2)
 
@@ -587,6 +613,8 @@ BehPhotoM(animal_ID).GrandSummary.Performance = performance;
 BehPhotoM(animal_ID).GrandSummary.RT = RTAv;
 
 BehPhotoM(animal_ID).GrandSummary.AbsStimRaster = AbsStimRaster;
+
+BehPhotoM(animal_ID).GrandSummary.AbsActionRaster = AbsActionRaster;
 
 BehPhotoM(animal_ID).GrandSummary.PopNormBinStimCorrectErrorNoFold=PopNormBinStimCorrectErrorNoFold;
 

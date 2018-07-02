@@ -13,7 +13,7 @@ animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'y' % or n (show all trials from single animal)
+concatenate = 'n' % or n (show all trials from single animal)
 
 smoothFactor = 100;
 
