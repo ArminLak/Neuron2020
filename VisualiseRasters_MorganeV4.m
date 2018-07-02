@@ -5,6 +5,12 @@
 clear all
 close all
 
+%1. tickdirection out
+%2. render as painter 
+% in the sorting based on CrrErrContRT, plot a thick green line on the
+% boarders between trials
+
+
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 % session 5 of ALK068 is chosen to be shown in paper figure
 
@@ -15,14 +21,16 @@ load('BehPhotoM_Exp23')  % Database with data summary
 %%
 concatenate = 'n' % or n (show all trials from single animal)
 
+sortDesign = 'CrrErrContRT'; % 'RT' or 'CrrErrContRT' sort based on RT or CorrectError Contrst and RTs
+
 smoothFactor = 100;
 
 
-RTLimit = 10; % in s, excluding trials with RT longer than this
+RTLimit = 2; % in s, excluding trials with RT longer than this
 
 sample_rate = 12000;
 downSample = 1200;
-eventOnset = 3700;
+eventOnset = 3700;  % in the saved matrix, the ev 
 
 
 % color range for plotting imagesc data
@@ -30,7 +38,7 @@ colorRange=[-10 12];
 colorRange=[-5 10];
 
 
-% ------------------ start stop times for task events ------------------
+% ------------------ start stop times for task events in second ------------------
 
 sStart = -0.2; %stimulus
 sStop = 0.8;
@@ -129,7 +137,7 @@ for iSession = sessionz
     TempRewardData(isnan(RT),: )=[];
     RT(isnan(RT))=[];
     
-    TempBehData(:,7)= RT;
+    TempBehData(:,7)= RT;  % put these RTs in the matrix
     [i sortingIndex] = sort(RT);
     
     largeRew = sort([(intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==1))); (intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==2)))]);
@@ -181,6 +189,7 @@ for iSession = sessionz
     
     xticks([min(TempStimz) 0 max(TempStimz)])
     xlabel('Contrast')
+    xticks
     yticks([-1 0 1])
     yticklabels([0 0.5 1])
     ylabel('% Right', 'FontWeight', 'bold')
@@ -194,18 +203,19 @@ for iSession = sessionz
     %     figure; hold on;
     subplot(2, 4, 5);
     
+    % sort based on correct/error, contrast and then RT
     TempBehData2sort = TempBehData;
-    TempBehData2sort(:,2)=abs(TempBehData2sort(:,2));
-    TempBehData2sort(error,2)=-TempBehData2sort(error,2);
+    TempBehData2sort(:,2)=abs(TempBehData2sort(:,2)); % sort based on abs of stimulus
+    TempBehData2sort(error,2)=-TempBehData2sort(error,2); % label error trials with negative so that they appear first
     
-    [i j]= sortrows(TempBehData2sort,[9,2,7]);
+    [i j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
     
-    imagesc((TempStimData(j, 1:6700)),colorRange)
+    if strcmp(sortDesign ,'CrrErrContRT')
     
-    colormap('bluewhitered')
+    imagesc((TempStimData(j, 1:6100)),colorRange)
     
-  
-       trace = 1;
+    
+     trace = 1;
         
         for ievent=RT(j)'
             
@@ -229,10 +239,38 @@ for iSession = sessionz
     line([eventOnset eventOnset], [max(sortingIndex) min(sortingIndex)], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
     
+   
+    
+    elseif     strcmp( sortDesign , 'RT')
+    
+
+    imagesc((TempStimData(sortingIndex, 1:6100)),colorRange)
+    
+     trace = 1;
+        
+        for ievent=RT(sortingIndex)'
+            
+            H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+            set(H,'color',[0 0 0],'LineWidth',3)
+            
+            trace  = trace + 1;
+        end
+        
+    
+    end
+    
+    
+    colormap('bluewhitered')
+    
+  
+      
+    
     ylabel('Trials', 'FontWeight', 'bold')
-    xlim([3500 6700])
-    xticks([1 RTLimit*downSample])
-    xticklabels([0-(200/(sample_rate/downSample)) RTLimit*(downSample)])
+    xlim([3500 6100])
+    xticks([3700 4900 6100])
+    xticklabels({'0','1','2','3'})
+    
+   
     xlabel('Time (s)', 'FontWeight', 'bold')
     
     
