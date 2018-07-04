@@ -1,4 +1,4 @@
-thiclear all
+clear all
 close all
 
 % list of animals

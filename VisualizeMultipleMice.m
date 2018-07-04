@@ -6,7 +6,12 @@ Animals = [48 50 51]
 
 load('BehPhotoM_Exp23')
 
- 
+TimingVisualise = [-0.2 0.8
+                  -0.8, 0.2
+                  -0.2, 0.8]; % stim, action, reward in s
+              sampleRate = 1200;
+              StartTime = 3700; % saved in the database.
+
 
 color = [
     1 0 0         % red
@@ -31,8 +36,15 @@ GrandPopAbsActionResp = zeros(4,13100);
 GrandPopAbsStimRespMiddleStimCorrect= zeros(4,13100);
 GrandPopAbsStimRespMiddleStimError= zeros(4,13100);
 
+
+GrandPopAbsActionRespMiddleStimCorrect= zeros(4,13100);
+GrandPopAbsActionRespMiddleStimError= zeros(4,13100);
+
 GrandPopAbsStimRespMiddleStimCorLarge= zeros(1,13100);
 GrandPopAbsStimRespMiddleStimCorSmall= zeros(1,13100);
+
+GrandPopAbsActionRespMiddleStimCorLarge= zeros(1,13100);
+GrandPopAbsActionRespMiddleStimCorSmall= zeros(1,13100);
 
 
 GrandPopNormBinStimNoFold = zeros(2,7);
@@ -47,9 +59,9 @@ GrandPopBeep2AwayDACorError = zeros(4,13100);
 
 GrandPopRew2AwayDACorError = zeros(4,13100);
 
-GrandPopStimBin = zeros(4,4);
+GrandPopStimBin = nan(4,4,length(Animals));
 
-GrandPopRewBin = zeros(4,4);
+GrandPopRewBin = nan(4,4,length(Animals));
 
 c=1;
 
@@ -72,7 +84,7 @@ for iAnimal = Animals
     SingleAnimalNormActionTrace = SingleAnimalActionTrace ./ max(max(SingleAnimalActionTrace));
     GrandPopAbsActionResp = SingleAnimalNormActionTrace + GrandPopAbsActionResp ;
     
-      % Stim-align rasters(middle stimuli, correct/error)
+      % Stim-align rasters(correct/error)
     SingleAnimalStimTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(1,:);
     SingleAnimalStimTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(2,:);
     SingleAnimalStimTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(3,:);
@@ -91,14 +103,46 @@ for iAnimal = Animals
     GrandPopAbsStimRespMiddleStimError = SingleAnimalNormStimTraceMiddleStimError + GrandPopAbsStimRespMiddleStimError ;
     
     
+       % Action-align rasters(correct/error)
+    SingleAnimalActionTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(1,:);
+    SingleAnimalActionTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(2,:);
+    SingleAnimalActionTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(3,:);
+    SingleAnimalActionTraceMiddleStimCorrect(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(4,:);
+    
+    SingleAnimalNormActionTraceMiddleStimCorrect = SingleAnimalActionTraceMiddleStimCorrect ./ max(max(SingleAnimalActionTraceMiddleStimCorrect));
+    GrandPopAbsActionRespMiddleStimCorrect = SingleAnimalNormActionTraceMiddleStimCorrect + GrandPopAbsActionRespMiddleStimCorrect ;
+    
+    SingleAnimalActionTraceMiddleStimError(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(1,:); 
+    SingleAnimalActionTraceMiddleStimError(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(2,:);
+    SingleAnimalActionTraceMiddleStimError(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(3,:); 
+    SingleAnimalActionTraceMiddleStimError(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(4,:); 
+    
+    
+    SingleAnimalNormActionTraceMiddleStimError = SingleAnimalActionTraceMiddleStimError ./ max(max(SingleAnimalActionTraceMiddleStimCorrect));
+    GrandPopAbsActionRespMiddleStimError = SingleAnimalNormActionTraceMiddleStimError + GrandPopAbsActionRespMiddleStimError ;
+    
+    
+    
         % Stim-align rasters(middle stimuli, correct/ small/large reward)
     SingleAnimalStimTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterLargeCorrect(2,:); 
-    SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimCorrect(2,:) ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
+    SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimLargeCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
     GrandPopAbsStimRespMiddleStimCorLarge = SingleAnimalNormStimTraceMiddleStimLargeCorrect + GrandPopAbsStimRespMiddleStimCorLarge ;
     
     SingleAnimalStimTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterSmallCorrect(2,:); 
     SingleAnimalNormStimTraceMiddleStimSmallCorrect = SingleAnimalStimTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
     GrandPopAbsStimRespMiddleStimCorSmall = SingleAnimalNormStimTraceMiddleStimSmallCorrect + GrandPopAbsStimRespMiddleStimCorSmall ;
+    
+ 
+    
+          % Action-align rasters(middle stimuli, correct/ small/large reward)
+    SingleAnimalActionTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterLargeCorrect(2,:); 
+    SingleAnimalNormActionTraceMiddleStimLargeCorrect = SingleAnimalActionTraceMiddleStimLargeCorrect ./ max(max(SingleAnimalActionTraceMiddleStimLargeCorrect));
+    GrandPopAbsActionRespMiddleStimCorLarge = SingleAnimalNormActionTraceMiddleStimLargeCorrect + GrandPopAbsActionRespMiddleStimCorLarge ;
+    
+    SingleAnimalActionTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterSmallCorrect(2,:); 
+    SingleAnimalNormActionTraceMiddleStimSmallCorrect = SingleAnimalActionTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalActionTraceMiddleStimLargeCorrect));
+    GrandPopAbsActionRespMiddleStimCorSmall = SingleAnimalNormActionTraceMiddleStimSmallCorrect + GrandPopAbsActionRespMiddleStimCorSmall ;
+ 
     
     
     % tuning curve for different blocks
@@ -157,8 +201,9 @@ for iAnimal = Animals
     SingleBinStimCorrErrorNorm = SingleBinStimCorrError ./ max(max(SingleBinStimCorrError));
     
     
-    GrandPopStimBin = SingleBinStimCorrErrorNorm + GrandPopStimBin ;
+    %GrandPopStimBin = SingleBinStimCorrErrorNorm + GrandPopStimBin ;
     
+    GrandPopStimBin(:,:,c) = SingleBinStimCorrErrorNorm  ;
     
     SingleAnimalRew2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Rew2DACorr;
     SingleAnimalRew2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.RewAwayDACorr;
@@ -177,8 +222,10 @@ for iAnimal = Animals
     SingleBinRewCorrErrorNorm = SingleBinRewCorrError ./ max(max(SingleBinRewCorrError));
     
     
-    GrandPopRewBin = SingleBinRewCorrErrorNorm + GrandPopRewBin ;
+    %GrandPopRewBin = SingleBinRewCorrErrorNorm + GrandPopRewBin ;
     
+        GrandPopRewBin(:,:,c) = SingleBinRewCorrErrorNorm  ;
+
     
     c=c+1;
 end
@@ -286,11 +333,11 @@ xlabel('Contrast')
 subplot(6,3,10); hold on
 
 
-plot(unique(abs(StimAllowed)),GrandPopStimBin(1,:)./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(unique(abs(StimAllowed)),GrandPopStimBin(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopStimBin(1,:,:))'),nanstd(squeeze(GrandPopStimBin(1,:,:))')./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopStimBin(2,:,:))'),nanstd(squeeze(GrandPopStimBin(2,:,:))')./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopStimBin(3,:,:))'),nanstd(squeeze(GrandPopStimBin(3,:,:))')./ length(Animals),'--r','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopStimBin(4,:,:))'),nanstd(squeeze(GrandPopStimBin(4,:,:))')./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
 
-plot(unique(abs(StimAllowed)),GrandPopStimBin(3,:)./ length(Animals),'--r','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(unique(abs(StimAllowed)),GrandPopStimBin(4,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
 set(gca,'TickDir','out','Box','off');
 xlabel('Contrast')
 title('Stimulus Align')
@@ -299,11 +346,11 @@ title('Stimulus Align')
 subplot(6,3,11); hold on
 
 
-plot(unique(abs(StimAllowed)),GrandPopRewBin(1,:)./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(unique(abs(StimAllowed)),GrandPopRewBin(2,:)./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopRewBin(1,:,:))'),nanstd(squeeze(GrandPopRewBin(1,:,:))')./ length(Animals),'--g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopRewBin(2,:,:))'),nanstd(squeeze(GrandPopRewBin(2,:,:))')./ length(Animals),'g','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopRewBin(3,:,:))'),nanstd(squeeze(GrandPopRewBin(3,:,:))')./ length(Animals),'--r','LineWidth',2,'Marker','o','MarkerSize',5)
+errorbar(unique(abs(StimAllowed)),nanmean(squeeze(GrandPopRewBin(4,:,:))'),nanstd(squeeze(GrandPopRewBin(4,:,:))')./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
 
-plot(unique(abs(StimAllowed)),GrandPopRewBin(3,:)./ length(Animals),'--r','LineWidth',2,'Marker','o','MarkerSize',5)
-plot(unique(abs(StimAllowed)),GrandPopRewBin(4,:)./ length(Animals),'r','LineWidth',2,'Marker','o','MarkerSize',5)
 
 set(gca,'TickDir','out','Box','off');
 xlabel('Contrast')
@@ -320,14 +367,16 @@ plot(GrandPopStim2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
 
 plot(GrandPopStim2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
 
-xlim([3500 4900])
+              
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
 ylim([-0.3 1])
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 title('Stimulus Align')
 xlabel('Time (s)')
 ylabel('Norm response')
 legend('CorLarge','CorSmall','ErrLarge','ErrSmall')
+
 
 
 
@@ -342,11 +391,12 @@ plot(GrandPopRew2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
 
 plot(GrandPopRew2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
 
-
-xlim([3500 4900])
 ylim([-0.8 1])
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+
+xlim([StartTime + (TimingVisualise(3,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(3,2)*sampleRate)]);
+
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 title('Outcome Align')
 xlabel('Time (s)')
 
@@ -362,10 +412,12 @@ plot(GrandPopBeep2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
 
 plot(GrandPopBeep2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
 
-xlim([3000 4900])
 ylim([-0.3 0.7])
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
 title('Beep Align')
 xlabel('Time (s)')
 ylabel('Norm response')
@@ -381,12 +433,15 @@ end
 
 title('Stimulus Align')
 
-xlim([3500 4900])
+
 ylim([-0.3 1])
 
 
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
 xlabel('Time (s)')
 ylabel('Norm response')
 
@@ -400,14 +455,16 @@ for c = 1:4
 end
 
 
-title('Stimulus Align')
+title('Action Align')
 
-xlim([2800 4000])
+
 ylim([-0.3 1])
 
 
-set(gca, 'XTick', [2800, 3700, 4000]);
-set(gca, 'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off');
+xlim([StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.2'},'TickDir','out','Box','off');
+
 xlabel('Time (s)')
 ylabel('Norm response')
 
@@ -424,16 +481,38 @@ end
 subplot(6,3,3); hold on
 title('middleSim,CorrError')
 
-
-xlim([3500 4900])
 ylim([-0.3 0.5])
 
 
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
 xlabel('Time (s)')
 ylabel('Norm response')
 
+for c = 2 % you could do the 1:4 and get all stimuli
+   
+    
+    subplot(6,3,16); hold on
+    plot(GrandPopAbsActionRespMiddleStimCorrect(c,:)./ length(Animals),'g','LineWidth',2);
+
+plot(GrandPopAbsActionRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
+  
+end
+
+subplot(6,3,16); hold on
+title('middleSim,CorrError')
+
+ylim([-0.3 0.5])
+
+
+xlim([StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.2'},'TickDir','out','Box','off');
+
+xlabel('Time (s)')
+ylabel('Norm response')
 
 subplot(6,3,6); hold on
 title('middleSim,SmallLarge')
@@ -446,10 +525,36 @@ xlim([3500 4900])
 ylim([-0.3 0.5])
 
 
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+subplot(6,3,6); hold on
+title('middleSim,SmallLarge')
+
+plot(GrandPopAbsStimRespMiddleStimCorLarge./ length(Animals),'g','LineWidth',2);
+hold on
+plot(GrandPopAbsStimRespMiddleStimCorSmall./ length(Animals),'--g','LineWidth',2);
+
+ylim([-0.3 0.5])
+
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
 xlabel('Time (s)')
 ylabel('Norm response')
 
     
+subplot(6,3,17); hold on
+title('middleSim,SmallLarge')
+
+plot(GrandPopAbsActionRespMiddleStimCorLarge./ length(Animals),'g','LineWidth',2);
+hold on
+plot(GrandPopAbsActionRespMiddleStimCorSmall./ length(Animals),'--g','LineWidth',2);
+
+ylim([-0.3 0.5])
+
+xlim([StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.2'},'TickDir','out','Box','off');
+
+xlabel('Time (s)')
+ylabel('Norm response')
     

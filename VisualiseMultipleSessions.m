@@ -345,7 +345,15 @@ for iStim = middleStim
     
     AbsStimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
     AbsStimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
-     
+   
+    
+     AbsActionRasterCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
+    AbsActionRasterError(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
+    
+    AbsActionRasterLargeCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
+    AbsActionRasterSmallCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
+   
+    
     c=c+1;
 end
 
@@ -355,28 +363,28 @@ for i = 1:4
     
     subplot(6,3,3); hold on
 
-plot((smooth(AbsStimRasterCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
+plot((smooth(AbsActionRasterCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
 
-plot((smooth(AbsStimRasterError(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
+plot((smooth(AbsActionRasterError(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
 
 end
 
-title('Stimulus Align')
+title('Action Align')
 
-%xlim([3500 4900])
-%ylim([-0.3 2])
+xlim([3500 4900])
+ylim([-0.3 2])
 
 
-%set(gca, 'XTick', [3700, 4300, 4900]);
-%set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 subplot(6,3,6); hold on
-plot((AbsStimRasterLargeCorrect(2,:)),'b','LineWidth',2)
-plot((AbsStimRasterSmallCorrect(2,:)),'--b','LineWidth',2)
+plot((AbsActionRasterLargeCorrect(2,:)),'b','LineWidth',2)
+plot((AbsActionRasterSmallCorrect(2,:)),'--b','LineWidth',2)
 
 
-title('Stimulus Align')
+title('Action Align')
 
 xlim([3500 4900])
 %ylim([-0.3 2])
@@ -657,6 +665,14 @@ BehPhotoM(animal_ID).GrandSummary.AbsStimRasterError=AbsStimRasterError;
 
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrect=AbsStimRasterLargeCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
+
+BehPhotoM(animal_ID).GrandSummary.AbsActionRasterCorrect=AbsActionRasterCorrect;
+BehPhotoM(animal_ID).GrandSummary.AbsActionRasterError=AbsActionRasterError;
+
+BehPhotoM(animal_ID).GrandSummary.AbsActionRasterLargeCorrect=AbsActionRasterLargeCorrect;
+BehPhotoM(animal_ID).GrandSummary.AbsActionRasterSmallCorrect = AbsActionRasterSmallCorrect;
+
+
 
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterCorrectREw=AbsStimRasterCorrectREw;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterErrorREw=AbsStimRasterErrorREw;
