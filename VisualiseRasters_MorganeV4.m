@@ -209,15 +209,33 @@ for iSession = sessionz
     % sort based on correct/error, contrast and then RT
     TempBehData2sort = TempBehData;
     TempBehData2sort(:,2)=abs(TempBehData2sort(:,2)); % sort based on abs of stimulus
+    TempBehData2sort(intersect(error , find (TempBehData2sort(:,2)==0)),2) =0.01; % stupid fix of my code 
+    
     TempBehData2sort(error,2)=-TempBehData2sort(error,2); % label error trials with negative so that they appear first
     
     [i j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
     
+    
     if strcmp(sortDesign ,'CrrErrContRT')
+        
+    %%      
+        a = 0;
+       
+        for c = j
     
-    imagesc((TempStimData(j, 1:6100)),colorRange)
-    
-    
+            hold on;
+            imagesc((TempStimData(c, 1:6100)),colorRange)
+            
+            a = a+1;
+            if TempBehData(j(a),9) ~= TempBehData(j(a+1),9) | TempBehData(j(a),2) ~= TempBehData(j(a+1),2)
+                H=line([1 6100], [c c]);
+                set(H, 'color', 'green', 'LineWidth', 10)
+            end
+            
+        
+        end
+        
+    %%
      trace = 1;
         
         for ievent=RT(j)'
@@ -241,6 +259,8 @@ for iSession = sessionz
         
     line([eventOnset eventOnset], [max(sortingIndex) min(sortingIndex)], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
+    
+    %create thick green line every time 
     
    
     
