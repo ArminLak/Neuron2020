@@ -215,36 +215,70 @@ for iSession = sessionz
     
     [i j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
     
+    % find index for 
+    
     
     if strcmp(sortDesign ,'CrrErrContRT')
         
     %%      
-        a = 0;
-       
-        for c = j
+
+    TempStimDataforR = TempStimData(j,:);
+    tempj = j;
     
-            hold on;
-            imagesc((TempStimData(c, 1:6100)),colorRange)
-            
-            a = a+1;
-            if TempBehData(j(a),9) ~= TempBehData(j(a+1),9) | TempBehData(j(a),2) ~= TempBehData(j(a+1),2)
-                H=line([1 6100], [c c]);
-                set(H, 'color', 'green', 'LineWidth', 10)
+    %first go through Stim Data and add 5 meaningless rows for every time
+    %the condition changes (err/crr/stim)
+    a = 1;
+        for c = 1:(length(i)-1)
+            if i(c,9) ~= i((c+1),9) | i(c,2) ~= i((c+1),2)
+                TempStimDataforR = insertrows(TempStimDataforR, nan(3,size(TempStimData,2)), a);
+                tempj = insertrows(tempj, nan(3,1), a);
+                a=a+3;
             end
-            
-        
+            a = a+1;
         end
         
+    %then plot all these rows 
+    imagesc((TempStimDataforR(:, 1:6100)),colorRange)
+    hold on;
+%     
+%     % then go through and add a line every time there is a row of ones 
+
+    a=1;
+    for c = 1:length(TempStimDataforR)
+
+        
+        if a <= size(TempStimDataforR,1) & isnan(TempStimDataforR(a,1))
+            
+            H=line([1 6100], [a a]);
+            set(H, 'color', 'green', 'LineWidth', 3)
+            a=a+3;
+        end
+        a=a+1;
+        
+        
+    end
+    
+
     %%
      trace = 1;
         
+     for c = 1:length(TempStimDataforR)
+
         for ievent=RT(j)'
+                
+             if trace <= size(TempStimDataforR,1) & isnan(TempStimDataforR(trace,1))==0
             
-            H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
-            set(H,'color',[0 0 0],'LineWidth',3)
+                H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+                set(H,'color',[0 0 0],'LineWidth',3)
+
+             end
             
             trace  = trace + 1;
-        end
+        
+         end
+         
+     end
+     
         
         trace = 1;
         
