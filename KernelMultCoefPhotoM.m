@@ -10,7 +10,8 @@ close all
 
 load('BehPhotoM_Exp23')
 %
-animal_ID = 50
+animal_ID = 48
+
 
 ModelArrangment = 11
 
@@ -120,8 +121,9 @@ inverted_Matrix_to_row = downsample(inverted_Matrix_to_row,Timereso);
 StimDataSmooth2Visualise = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
 
-[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
+%[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
 
+inverted_Matrix_to_row = zscore(inverted_Matrix_to_row');
 StimDataSmoothDownSample = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
 t=downsample(t,Timereso);
@@ -130,19 +132,29 @@ t=downsample(t,Timereso);
 % kernle regression
 
 % full
-eventTimes = {stim_time; action_onsetTime; outcome_time};
-eventValues = {[];[];[]};
 
-windows = {[-400 800];[-200 1600];[-600 200];[200 2000]}; %
+        if ModelArrangment ==8
 
-windows = {[-400 2600];[-1000 200];[-400 2000]}; %
+eventTimes = {beep_time;stim_time; action_onsetTime; outcome_time};
+eventValues = {[];[];[];[]};
 
+windows = {[-400 800];[-200 1600];[-600 200];[200 2000]}; % not in s but sample rate of 1200
+windows = {[-400 800];[-400 2600];[-1000 200];[-400 2000]}; %
+
+
+%windows = {[-400 2600];[-1000 200];[-400 2000]}; %
+        end
 
 % stim,outcome
+
+        if ModelArrangment ==11
+
 eventTimes = {stim_time; outcome_time};
+eventValues = {[];[]};
 
 windows = {[-400 2600];[-400 2000]}; %
 
+        end
 
 for fititer=1:1:4
     
@@ -150,13 +162,14 @@ for fititer=1:1:4
     [fitKernels, predictedSignals,cvErr] = kernelRegression(inverted_Matrix_to_row', t', eventTimes, eventValues, windows , [0], [0 0]);
  
     
-    Coefiz=ones(length(beep_time),3);
+    Coefiz=ones(length(beep_time),4);
     
     
     % recover observed and estimated PSTHs
     for itrial = 1 : length(beep_time)-1
         
- 
+     zeroPadBeep = zeros(1,262);
+
         zeroPadAction = zeros(1,262);
         zeroPadStim = zeros(1,262);
         zeroPadOutcome = zeros(1,262);
@@ -164,19 +177,28 @@ for fititer=1:1:4
        
         if ModelArrangment ==8
             
-        zeroPadStim (71 -8:71+59-8) =  (fitKernels{1}');
+        zeroPadStim (71 -8:71+59-8) =  (fitKernels{2}');
         
-        
-        t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
-        zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = (fitKernels{2}');
+         t_beep = floor((BehData(itrial, 13 ) - BehData(itrial, 12))*24); % 11 s is 262 samples, thus 1 s is 24
+    zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 23-8) = ( fitKernels{1}');
+      
         
        
         t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
-        zeroPadOutcome(71+t_out-8: 71+t_out-8 +47) = (fitKernels{3}');
+        zeroPadOutcome(71+t_out-8: 71+t_out-8 +47) = (fitKernels{4}');
         
-        [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadStim',zeroPadAction',zeroPadOutcome']);
+          t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+        t_act(isnan(t_act) )=t_out  -4; 
         
-        Coefiz(itrial,L)= B';
+        zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = (fitKernels{3}');
+        
+      %  [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadStim',zeroPadAction',zeroPadOutcome']);
+        
+            [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadBeep',zeroPadStim',zeroPadAction',zeroPadOutcome']);
+
+        
+            tofill = [1,2,3,4];
+        Coefiz(itrial,tofill)= B';
         end
         
         
@@ -190,7 +212,7 @@ for fititer=1:1:4
         
         [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadStim',zeroPadOutcome']);
         
-          tofill = [1,3];
+          tofill = [2,4];
         Coefiz(itrial,tofill)= B';
                 end
         
@@ -213,7 +235,7 @@ for fititer=1:1:4
     
 end
 
-Coefiz = Coefiz  ./ mean (Coefiz);
+%Coefiz = Coefiz  ./ mean (Coefiz);
 
 SignalStim = [];
 SignalAction = [];
@@ -225,12 +247,19 @@ EstimatedSignalOutcome = [];
 
 
 for iter = 1 : length(stim_time) -1  % we ingore the last trial
+      
     
     [diff_recover i_recover] = min (abs(t - stim_time(iter)));
     
     
     EstimatedSignalStim (iter,:) =predictedSignals(i_recover-10 : i_recover+200);
     SignalStim (iter,:) =inverted_Matrix_to_row(i_recover-10 : i_recover+200)';
+    
+    [diff_recover i_recover] = min (abs(t - action_onsetTime(iter)));
+    
+    
+    EstimatedSignalAction (iter,:) =predictedSignals(i_recover-10 : i_recover+200);
+    SignalAction (iter,:) =inverted_Matrix_to_row(i_recover-10 : i_recover+200)';
     
     
     [diff_recover i_recover] = min (abs(t - outcome_time(iter)));
@@ -257,12 +286,12 @@ BehDataAbs(:,2) = abs(BehDataAbs(:,2));
 figure
 
 subplot(1,2,1)
-imagesc(EstimatedSignalStim(j,3:30),[-1 15])
+imagesc(EstimatedSignalStim(j,3:30),[-1 8])
 title('estimated stim')
 colormap('Copper')
 
 subplot(1,2,2)
-imagesc(SignalStim(j,3:30),[-1 15])
+imagesc(SignalStim(j,3:30),[-1 8])
 colormap('Copper')
 title('real stim')
 
@@ -279,7 +308,9 @@ title('real outcome')
 
 
 %
-
+% Coefiz(Coefiz>5)=nan;
+% Coefiz(Coefiz<-5)=nan;
+% 
 
 for i=abzStim
     
@@ -290,31 +321,22 @@ for i=abzStim
  
     
     % correct large
-    resp_CorrStimLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),1));
-    resp_ErrStimLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),1));
-    
-    resp_CorrStimSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),1));
+    resp_CorrStimLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),2));
+    resp_ErrStimLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),2));
+   
+    resp_CorrStimSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),2));
 
-     resp_CorrActionLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),2));
-    resp_ErrActionLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),2));
+     resp_CorrActionLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),3));
+    resp_ErrActionLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),3));
     
-    resp_CorrActionSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),2));
+    resp_CorrActionSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),3));
 
-    resp_CorrOutcomeLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),3));
-    resp_ErrOutcomeLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),3));
+    resp_CorrOutcomeLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),4));
+    resp_ErrOutcomeLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),4));
     
-    resp_CorrOutcomeSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),3));
+    resp_CorrOutcomeSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),4));
 
-    
-    resp_Block1StimCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),1));
-    resp_Block2StimCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),1));
-    
-    resp_Block1ActCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==0)),2));
-    resp_Block2ActCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==0)),2));
-    
-    resp_Block1RewCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==1),find(    correct==1)),3));
-    resp_Block2RewCor(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    block==2),find(    correct==1)),3));
-    
+ 
    
 end
 %
@@ -348,44 +370,28 @@ plot(resp_CorrOutcomeLarge,'g')
 hold on
 plot(resp_CorrOutcomeSmall,'--g')
 
-subplot(2,3,5)
-% plot(resp_Block1ActCor,'k')
-% hold on
-% plot(resp_Block2ActCor,'-.k')
-
-
-
-% subplot(2,3,6)
-% 
-% plot(resp_Block1RewCor,'k')
-% hold on
-% plot(resp_Block2RewCor,'-.k')
-
-
-%save
+    
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).Kernels = fitKernels;
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrStimLarge = resp_CorrStimLarge;
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrStimSmall = resp_CorrStimSmall;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrStimLarge = resp_ErrStimLarge;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrStimSmall=resp_CorrStimSmall;
 
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrStimLarge=resp_CorrStimLarge;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrActionLarge=resp_CorrActionLarge;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrActionLarge=resp_ErrActionLarge;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrActionSmall=resp_CorrActionSmall;
+
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrOutcomeLarge=resp_CorrOutcomeLarge;
-
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrOutcomeLarge=resp_ErrOutcomeLarge;
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrOutcomeSmall=resp_CorrOutcomeSmall;
 
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block1StimCor=resp_Block1StimCor;
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block2StimCor=resp_Block2StimCor;
-
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block1ActCor=resp_Block1ActCor;
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block2ActCor=resp_Block2ActCor;
-
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block1RewCor=resp_Block1RewCor;
-BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_Block2RewCor=resp_Block2RewCor;
 
 %
 StimzAbs = abs(BehData(1:end-1,2));
 
 StimsAllowed = unique(StimzAbs');
+
+%%
+figure; hold on
 for i=unique(StimzAbs')
     
     tempIndex = find(StimzAbs==i);
@@ -394,28 +400,26 @@ for i=unique(StimzAbs')
     
     
     PredictedPopStimAlign(j,:)=nanmean(EstimatedSignalStim(tempIndex,:));
+    PredictedPopActionAlign(j,:)=nanmean(EstimatedSignalAction(tempIndex,:));
+    
+    hold on
+    
+    plot(PredictedPopStimAlign(j,:),'color',colorGray(j,:))
+    
     
 end
 %
 figure;
 
-coefStim = [0.6 1 2 3]
-
-coefStim = [1 1 1 1]
-
-
-for i=1:4
-    
-    PredictedPopStimAlign(i,15:end)=  coefStim(i) .* PredictedPopStimAlign(i,15:end);
-    hold on
-    plot(PredictedPopStimAlign(i,:),'color',colorGray(i,:))
-    
-end
 
 BehData(end,:)=[];
-IndexLargeRew = [find(BehData(:,9)==1 & BehData(:,3)==-1 & BehData(:,8)==1 ) ; find(BehData(:,9)==1 & BehData(:,3)==1 & BehData(:,8)==2) ];
-IndexSmallRew = [find(BehData(:,9)==1 & BehData(:,3)==-1 & BehData(:,8)==2 ) ; find(BehData(:,9)==1 & BehData(:,3)==1 & BehData(:,8)==1) ];
-IndexNoRew = find(BehData(:,9)==1);
+IndexLargeRew = mintersect(find( BehData(:,9)==1),find(BehData(:,16)==1)); 
+
+IndexSmallRew = mintersect(find(   BehData(:,9)==1),find(BehData(:,16)==-1));
+
+IndexNoRew = find(BehData(:,9)==0);
+
+
 
 figure; hold on
 plot(nanmean(EstimatedSignalOutcome(IndexLargeRew,:)));
@@ -428,6 +432,8 @@ plot(nanmean(EstimatedSignalOutcome(IndexNoRew,:)));
 
 
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopStimAlign=PredictedPopStimAlign;
+BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopActionAlign=PredictedPopActionAlign;
+
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopRewAlignLarge=nanmean(EstimatedSignalOutcome(IndexLargeRew,:));
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopRewAlignSmall=nanmean(EstimatedSignalOutcome(IndexSmallRew,:));
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).PredictedPopRewAlignNoRew=nanmean(EstimatedSignalOutcome(IndexNoRew,:));

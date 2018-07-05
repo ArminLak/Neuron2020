@@ -8,7 +8,7 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-animal_ID = 51
+animal_ID = 48
 load('BehPhotoM_Exp23')
 
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
@@ -64,7 +64,7 @@ for iSession = sessionz
 end
 
 %StimData(:,5400:end) = StimData(:,5400:end) - repmat(mean(StimData (:,5400:5500),2), 1, 13100-5399);
-%StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
+StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
 
 %StimData = StimData - repmat(mean(StimData,2), 1, 13100);
 
@@ -164,7 +164,7 @@ eventTimes = {beep_time;stim_time; action_onsetTime; outcome_time};
 eventValues = {[];[];[];[]};
 
 windows = {[-400 800];[-200 1600];[-600 200];[200 2000]}; %
-windows = {[-400 800];[-400 2600];[-1000 200];[-400 2000]}; %
+%windows = {[-400 800];[-400 2600];[-1000 200];[-400 2000]}; %
 
 %windows = {[-1000 2000];[-1000 3000];[-2000 600];[-800 2000]}; %
 
@@ -254,8 +254,8 @@ for itrial = 1: size(StimData,1)
     zeroPadStim = zeros(1,262);
     zeroPadOutcome = zeros(1,262);
     
-    %zeroPadStim (71 -4:71+35-4) = scaling .* (fitKernels{2}');
-    zeroPadStim (71 -8:71+59-8) = scaling .* (fitKernels{2}');
+    zeroPadStim (71 -4:71+35-4) = scaling .* (fitKernels{2}');
+    %zeroPadStim (71 -8:71+59-8) = scaling .* (fitKernels{2}');
     
     t_beep = floor((BehData(itrial, 13 ) - BehData(itrial, 12))*24); % 11 s is 262 samples, thus 1 s is 24
     zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 23-8) = scaling.*( fitKernels{1}');
@@ -263,12 +263,12 @@ for itrial = 1: size(StimData,1)
     
     t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
     t_act (isnan(t_act))=floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24) - 4; % very rare trials we could not measure action_onset time and we use this one
-    %zeroPadAction(71+t_act-12 : 71+t_act-12 +15) = scaling .*(fitKernels{3}');
-    zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = scaling .*(fitKernels{3}');
+    zeroPadAction(71+t_act-12 : 71+t_act-12 +15) = scaling .*(fitKernels{3}');
+    %zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = scaling .*(fitKernels{3}');
     
     t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
-    % zeroPadOutcome(71+t_out+4 : 71+t_out+4 +35) = scaling .*(fitKernels{4}');
-    zeroPadOutcome(71+t_out-8: 71+t_out-8 +47) = scaling .*(fitKernels{4}');
+     zeroPadOutcome(71+t_out+4 : 71+t_out+4 +35) = scaling .*(fitKernels{4}');
+%    zeroPadOutcome(71+t_out-8: 71+t_out-8 +47) = scaling .*(fitKernels{4}');
     
     [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadBeep',zeroPadStim',zeroPadAction',zeroPadOutcome']);
     
@@ -327,6 +327,74 @@ end
 
 %Coefiz = zscore(Coefiz')';
 
+StimsAllowed = unique(BehData(:,2))';
+Stimz = BehData(:,2);
+block = BehData(:,8);
+correct = BehData(:,9);
+BehDataAbs = BehData;
+BehDataAbs(:,2) = abs(BehDataAbs(:,2));
+
+
+
+for i=abzStim
+    
+    tempIndex = find(abs(Stimz)==i);
+    
+    [i j]=ismember(i, abzStim);
+    
+ 
+    
+    % correct large
+    resp_CorrStimLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),2));
+    resp_ErrStimLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),2));
+   
+    resp_CorrStimSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),2));
+
+     resp_CorrActionLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),3));
+    resp_ErrActionLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),3));
+    
+    resp_CorrActionSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),3));
+
+    resp_CorrOutcomeLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==1)),4));
+    resp_ErrOutcomeLarge(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==0),find(BehData(:,16)==1)),4));
+    
+    resp_CorrOutcomeSmall(j) = nanmedian(Coefiz(mintersect(tempIndex,find(    correct==1),find(BehData(:,16)==-1)),4));
+
+ 
+   
+end
+%
+figure
+
+subplot(2,3,1)
+plot(resp_CorrStimLarge,'g')
+hold on
+plot(resp_ErrStimLarge,'r')
+
+subplot(2,3,2)
+
+plot(resp_CorrStimLarge,'g')
+hold on
+plot(resp_CorrStimSmall,'--g')
+
+
+% plot(resp_CorrAct,'g')
+% hold on
+% plot(resp_ErrAct,'r')
+
+subplot(2,3,3)
+
+
+plot(resp_CorrOutcomeLarge,'g')
+hold on
+plot(resp_ErrOutcomeLarge,'r')
+
+subplot(2,3,4)
+plot(resp_CorrOutcomeLarge,'g')
+hold on
+plot(resp_CorrOutcomeSmall,'--g')
+
+%%
 
 StimsAllowed = unique(BehData(:,2))';
 Stimz = BehData(:,2);
