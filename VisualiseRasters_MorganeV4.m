@@ -20,7 +20,7 @@ animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'n' % or n (show all trials from single animal)
+concatenate = 'n' % y or n (show all trials from single animal)
 
 sortDesign = 'CrrErrContRT'; % 'RT' or 'CrrErrContRT' sort based on RT or CorrectError Contrst and RTs
 
@@ -36,7 +36,7 @@ eventOnset = 3700;  % in the saved matrix, the ev
 
 % color range for plotting imagesc data
 colorRange=[-10 12];
-colorRange=[-5 10];
+colorRange=[-5 12];
 
 
 % ------------------ start stop times for task events in second ------------------
@@ -153,7 +153,8 @@ for iSession = sessionz
     %------------------------------- plot psychometric curve------------------
     %
     
-    f = figure('Position', [300 200 800 900]); hold on
+    f = figure('Position', [300 200 800 900]); 
+    set(gcf, 'Renderer', 'painters'); hold on
     subplot(2, 4, 1);
     
     c = 1;
@@ -194,6 +195,7 @@ for iSession = sessionz
     yticks([-1 0 1])
     yticklabels([0 0.5 1])
     ylabel('% Right', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     % -------------- plot title ------------------------------------
     
@@ -207,24 +209,76 @@ for iSession = sessionz
     % sort based on correct/error, contrast and then RT
     TempBehData2sort = TempBehData;
     TempBehData2sort(:,2)=abs(TempBehData2sort(:,2)); % sort based on abs of stimulus
+    TempBehData2sort(intersect(error , find (TempBehData2sort(:,2)==0)),2) =0.01; % stupid fix of my code 
+    
     TempBehData2sort(error,2)=-TempBehData2sort(error,2); % label error trials with negative so that they appear first
     
     [i j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
     
+    % find index for 
+    
+    
     if strcmp(sortDesign ,'CrrErrContRT')
+        
+    %%      
+
+    TempStimDataforR = TempStimData(j,:);
+    tempj = j;
     
-    imagesc((TempStimData(j, 1:6100)),colorRange)
+    %first go through Stim Data and add 5 meaningless rows for every time
+    %the condition changes (err/crr/stim)
+    a = 1;
+        for c = 1:(length(i)-1)
+            if i(c,9) ~= i((c+1),9) | i(c,2) ~= i((c+1),2)
+                TempStimDataforR = insertrows(TempStimDataforR, nan(3,size(TempStimData,2)), a);
+                tempj = insertrows(tempj, nan(3,1), a);
+                a=a+3;
+            end
+            a = a+1;
+        end
+        
+    %then plot all these rows 
+    imagesc((TempStimDataforR(:, 1:6100)),colorRange)
+    hold on;
+%     
+%     % then go through and add a line every time there is a row of ones 
+
+    a=1;
+    for c = 1:length(TempStimDataforR)
+
+        
+        if a <= size(TempStimDataforR,1) & isnan(TempStimDataforR(a,1))
+            
+            H=line([1 6100], [a a]);
+            set(H, 'color', 'green', 'LineWidth', 3)
+            a=a+3;
+        end
+        a=a+1;
+        
+        
+    end
     
-    
+
+    %%
      trace = 1;
         
+     for c = 1:length(TempStimDataforR)
+
         for ievent=RT(j)'
+                
+             if trace <= size(TempStimDataforR,1) & isnan(TempStimDataforR(trace,1))==0
             
-            H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
-            set(H,'color',[0 0 0],'LineWidth',3)
+                H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+                set(H,'color',[0 0 0],'LineWidth',3)
+
+             end
             
             trace  = trace + 1;
-        end
+        
+         end
+         
+     end
+     
         
         trace = 1;
         
@@ -239,6 +293,8 @@ for iSession = sessionz
         
     line([eventOnset eventOnset], [max(sortingIndex) min(sortingIndex)], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
+    
+    %create thick green line every time 
     
    
     
@@ -271,7 +327,7 @@ for iSession = sessionz
     xticks([3700 4900 6100])
     xticklabels({'0','1','2','3'})
     
-   
+    set(gca, 'TickDir', 'out')
     xlabel('Time (s)', 'FontWeight', 'bold')
     
     
@@ -296,6 +352,7 @@ for iSession = sessionz
         xticks([ ])
         xticklabels([ ])
         ylabel([num2str(StimzAbs(end)) ' Contrast Trials'], 'FontWeight', 'bold')
+        set(gca, 'TickDir', 'out')
         
         % ------------- 1.2 raster for action, 0.5 contrast (L+R)
         subplot(5, 8, 4);
@@ -341,6 +398,7 @@ for iSession = sessionz
         xticks([ ])
         xticklabels([ ])
         ylabel([num2str(StimzAbs(end-1)) ' Contrast Trials'], 'FontWeight', 'bold')
+        set(gca, 'TickDir', 'out')
         
         % ------------- 2.2 raster for action, 0.25 contrast (L+R)
         
@@ -386,6 +444,7 @@ for iSession = sessionz
         xticks([ ])
         xticklabels([ ])
         ylabel([num2str(StimzAbs(end-2)) ' Contrast Trials'], 'FontWeight', 'bold')
+        set(gca, 'TickDir', 'out')
         
         % ------------- 3.2 raster for action, 0.25 contrast (L+R)
         
@@ -430,6 +489,7 @@ for iSession = sessionz
         xticks([ ])
         xticklabels([ ])
         ylabel([num2str(StimzAbs(end-3)) ' Contrast Trials'], 'FontWeight', 'bold')
+        set(gca, 'TickDir', 'out')
         
         % ------------- 4.2 raster for action, 0 contrast
         
@@ -482,22 +542,23 @@ for iSession = sessionz
         c=c+1;
     end
     
-    if length(StimzAbs)==4
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
-    elseif length(StimzAbs)==3
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
-    elseif length(StimzAbs)==2
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
-    end
+%     if length(StimzAbs)==4
+%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
+%     elseif length(StimzAbs)==3
+%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
+%     elseif length(StimzAbs)==2
+%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
+%     end
     
     xlim([0 abs(sStop*downSample)+abs(sStart*downSample)])
     xticks([1 abs(sStop*downSample)+abs(sStart*downSample)])
     xticklabels([sStart sStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
     ylabel('{\Delta} F / F')
+    set(gca, 'TickDir', 'out')
     
     
-    % ------------- 5. line plot; avg stim response over time by contrast
+    % ------------- 5. line plot; avg action response over time by contrast
     
     subplot(5, 8, 36);
     
@@ -519,18 +580,19 @@ for iSession = sessionz
         c=c+1;
     end
     
-    if length(StimzAbs)==4
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
-    elseif length(StimzAbs)==3
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
-    elseif length(StimzAbs)==2
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
-    end
+%     if length(StimzAbs)==4
+%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
+%     elseif length(StimzAbs)==3
+%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
+%     elseif length(StimzAbs)==2
+%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
+%     end
     
     xlim([0 abs(aStop*downSample)+abs(aStart*downSample)])
     xticks([1 abs(aStop*downSample)+abs(aStart*downSample)])
     xticklabels([aStart aStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     
     % ------------- 5. line plot; avg rwd response over time by contrast
@@ -567,6 +629,7 @@ for iSession = sessionz
     xticks([1 abs(rStop*downSample)+abs(rStart*downSample)])
     xticklabels([rStart rStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     
     
@@ -585,6 +648,7 @@ for iSession = sessionz
     title('Stimulus')
     xticklabels([ ])
     ylabel('Large Reward Trials', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     % ------------- 2. raster for stim reponse, small reward trials
     
@@ -597,6 +661,7 @@ for iSession = sessionz
     
     xticklabels([ ])
     ylabel('Small Reward Trials', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     
     % ------------- 3. raster for stim reponse, NO reward trials
@@ -611,6 +676,7 @@ for iSession = sessionz
     
     xticklabels([ ])
     ylabel('No Reward Trials', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     
     
@@ -624,13 +690,14 @@ for iSession = sessionz
     hold on;
     plot(nanmean(TempStimData(TempBehData(:,9)==0, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorRed(2,:),'LineWidth',2)
     
-    legend('Large reward','Small reward', 'No reward','location','best')
+%     legend('Large reward','Small reward', 'No reward','location','best')
     
     xlim([0 abs(sStop*downSample)+abs(sStart*downSample)])
     xticks([1 abs(sStop*downSample)+abs(sStart*downSample)])
     xticklabels([sStart sStop])
     ylabel('{\Delta} F / F')
     xlabel('Time (s)', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     
     %-- REWARD RESPONSE RASTERS 2 (BROKEN BY LARGE/SMALL/NO REWARD) -------------------
@@ -697,6 +764,7 @@ for iSession = sessionz
     xticks([1 abs(rStop*downSample)+abs(rStart*downSample)])
     xticklabels([rStart rStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
+    set(gca, 'TickDir', 'out')
     
     
     
