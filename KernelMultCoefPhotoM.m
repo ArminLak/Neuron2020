@@ -245,6 +245,7 @@ EstimatedSignalStim = [];
 EstimatedSignalAction = [];
 EstimatedSignalOutcome = [];
 
+predictedSignals = zscore(predictedSignals);
 
 for iter = 1 : length(stim_time) -1  % we ingore the last trial
       
@@ -285,27 +286,29 @@ BehDataAbs(:,2) = abs(BehDataAbs(:,2));
 [i j] = sortrows(BehDataAbs,[9 2]);
 figure
 
+%EstimatedSignalStimZscore = zscore(EstimatedSignalStim')';
+
 subplot(1,2,1)
-imagesc(EstimatedSignalStim(j,3:30),[-1 8])
+imagesc(EstimatedSignalStim(j,5:30),[-1 8])
 title('estimated stim')
-colormap('Copper')
 
 subplot(1,2,2)
 imagesc(SignalStim(j,3:30),[-1 8])
-colormap('Copper')
 title('real stim')
+colormap('bluewhitered')
+
 
 figure
 subplot(1,2,1)
 imagesc(EstimatedSignalOutcome(j,2:50),[0 5])
 title('estimated outcome')
-colormap('Copper')
 
 subplot(1,2,2)
 imagesc(SignalOutcome(j,2:50),[0 5])
-colormap('Copper')
 title('real outcome')
+colormap('bluewhitered')
 
+%%
 
 %
 % Coefiz(Coefiz>5)=nan;

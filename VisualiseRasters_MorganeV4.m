@@ -7,7 +7,7 @@ close all
 
 % things to do:
 %1. tickdirection out
-%2. render as painter 
+%2. render as painter
 % in the sorting based on CrrErrContRT, plot a thick green line on the
 % boarders between trials
 
@@ -15,31 +15,34 @@ close all
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 % session 5 of ALK068 is chosen to be shown in paper figure
 
-animal_ID = 51
+animal_ID = 48
 animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
 concatenate = 'y' % y or n (show all trials from single animal)
 
+selectStimulus2Plot = 'y' %(this only works if concatenate = 'y')
+
 sortDesign = 'CrrErrContRT'; % 'RT' or 'CrrErrContRT' sort based on RT or CorrectError Contrst and RTs
 
-smoothFactor = 100;
-
+smoothFactor = 100;  % for smoothing the calcium data 
 
 RTLimit = 3; % in s, excluding trials with RT longer than this
 
 sample_rate = 12000;
 downSample = 1200;
-eventOnset = 3700;  % in the saved matrix, the ev 
+eventOnset = 3700;  % in the saved matrix, the ev
 
 
 % color range for plotting imagesc data
-colorRange=[-10 12];
-colorRange=[-5 20];
-%colorRange=[-2 8];
+colorRange=[-2 10];
 
+if animal_ID ==48
+colorRange=[-2 10]; end
 
+if animal_ID == 51
+    colorRange=[-5 20]; end
 
 % ------------------ start stop times for task events in second ------------------
 
@@ -90,6 +93,19 @@ if concatenate == 'y'
         
     end
     
+    
+    if selectStimulus2Plot == 'y'  % making plots only for a subset of trials
+        stim2plot = [-0.25 0.25];
+        trialSubset=find(ismember(TempBehData(:,2),stim2plot));
+        
+        TempBehData = TempBehData(trialSubset,:);
+        TempBeepData = TempBeepData (trialSubset,:);
+        TempStimData = TempStimData (trialSubset,:);
+        TempActionData = TempActionData (trialSubset,:);
+        TempRewardData = TempRewardData (trialSubset,:);
+        
+    end
+      
     TempStimz      = unique(TempBehData(:,2));
     StimzAbs       = unique(abs(TempBehData(:,2)));
     
@@ -123,7 +139,6 @@ for iSession = sessionz
     TempActionData   = smooth2a(TempActionData,0,smoothFactor);
     TempRewardData   = smooth2a(TempRewardData,0,smoothFactor);
     
-    
     RT = TempBehData(:,10) - TempBehData (:,13); % compute choice reaction time from action-stim interval
     RT(RT < 0) = nan;   %few trials with error negative RTs
     
@@ -145,17 +160,20 @@ for iSession = sessionz
     
     largeRew = sort([(intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==1))); (intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==2)))]);
     
-    smallRew = setdiff([1:length(TempBehData)],largeRew)';
+    smallRew = sort([(intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==1), find(TempBehData(:,8)==1))); (intersect(find(TempBehData(:,9)==1 & TempBehData(:,3)==-1), find(TempBehData(:,8)==2)))]);
+    
+    TempBehData (:,16) = nan;
+    TempBehData (largeRew,16) = 2;
+    TempBehData (smallRew,16) = 1; % adding reward size to the data
+    TempBehData (isnan(TempBehData(:,16)),16)= 0;
     
     correct = find(TempBehData(:,9)==1);
     error = find(TempBehData(:,9)==0);
-    
-    
-    
+      
     %------------------------------- plot psychometric curve------------------
     %
     
-    f = figure('Position', [300 200 800 900]); 
+    f = figure('Position', [300 200 800 900]);
     set(gcf, 'Renderer', 'painters'); hold on
     subplot(2, 4, 1);
     
@@ -187,9 +205,7 @@ for iSession = sessionz
         
         
     end
-    
-    %  c=c+1;
-    %     end
+   
     
     xticks([min(TempStimz) 0 max(TempStimz)])
     xlabel('Contrast')
@@ -202,8 +218,7 @@ for iSession = sessionz
     % -------------- plot title ------------------------------------
     
     text(TempStimz(end), 1.2, ['ALK0' num2str(animal_name) '  Session ' num2str(iSession)], 'FontWeight', 'bold', 'FontSize', 10);
-    
-    
+     
     % ---------- raster for all trials in session in order of RT ---------
     %     figure; hold on;
     subplot(2, 4, 5);
@@ -215,89 +230,93 @@ for iSession = sessionz
     
     TempBehData2sort(error,2)=-TempBehData2sort(error,2); % label error trials with negative so that they appear first
     
-    [BehDatasorted j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
-    
+    [BehDatasorted j]= sortrows(TempBehData2sort,[2,16,7]); % final sorting (Correct/Error, abs contrast and RTs)
     
     if strcmp(sortDesign ,'CrrErrContRT')
         
-    %%      
-
-    TempStimDataforR = TempStimData(j,:);
-    tempj = j;
-    tempRT = RT(j,:);
-     StimOutcomeInt = TempBehData(:,14)-TempBehData(:,13); 
-     StimOutcomeInt = StimOutcomeInt(j,:);
-     
-     tempStimOutcomeInt = StimOutcomeInt(j,:);
-    %first go through Stim Data and add 5 meaningless rows for every time
-    %the condition changes (err/crr/stim)
-    
-    
-    indexConditionChange = fliplr(find(diff(BehDatasorted(:,2)))'); % after this trial, the condition (stim, etc) changes 
-    
-    for iIndex = indexConditionChange
+        %%
         
-     TempStimDataforR = insertrows(TempStimDataforR, nan(3,size(TempStimData,2)), iIndex);
-tempj = insertrows(tempj, nan(3,1), iIndex);
-tempRT = insertrows(tempRT, nan(3,1), iIndex);
-tempStimOutcomeInt = insertrows(tempStimOutcomeInt, nan(3,1), iIndex);
-
-BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
-    end
-    
-
-    %then plot all these rows 
-    imagesc((TempStimDataforR(:, 1:7400)),colorRange)
-    hold on;
-
-     trace = 1;
+        TempStimDataforR = TempStimData(j,:);
+        tempj = j;
+        tempRT = RT(j,:);
+        StimOutcomeInt = TempBehData(:,14)-TempBehData(:,13);
+        StimOutcomeInt = StimOutcomeInt(j,:);
         
-     for c = 1:length(TempStimDataforR)
-
-        for ievent=tempRT'
-                
-             if trace <= size(TempStimDataforR,1) & isnan(TempStimDataforR(trace,1))==0
+        tempStimOutcomeInt = StimOutcomeInt(j,:);
+        
+        indexConditionChange = (find(diff(BehDatasorted(:,2)))'); % after this trial, the condition (stim, etc) changes
+        
+        if concatenate == 'y'
+            row2add = 10;
+        elseif concatenate == 'n'
+            row2add = 3;
             
-                H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
-                set(H,'color',[0 0 0],'LineWidth',3)
-
-             end
-            
-            trace  = trace + 1;
-        
-         end
+        end
          
-     end
-     
+      % put a band of nan between different stimulus contrasts (and error/
+      % correct) but not reward sizes
+        for iIndex = fliplr(indexConditionChange)
+            
+            TempStimDataforR = insertrows(TempStimDataforR, nan(row2add,size(TempStimData,2)), iIndex);
+            tempj = insertrows(tempj, nan(row2add,1), iIndex);
+            tempRT = insertrows(tempRT, nan(row2add,1), iIndex);
+            tempStimOutcomeInt = insertrows(tempStimOutcomeInt, nan(row2add,1), iIndex);
+            
+            BehDatasorted = insertrows(BehDatasorted, nan(row2add,size(BehDatasorted,2)), iIndex);
+        
+        end
+         
+        %then plot all these rows
+        imagesc((TempStimDataforR(:, 1:7400)),colorRange)
+        hold on;
         
         trace = 1;
         
-       
-        for ievent=tempStimOutcomeInt' 
+        for c = 1:length(TempStimDataforR)
+            
+            for ievent=tempRT'
+                
+                if trace <= size(TempStimDataforR,1) & isnan(TempStimDataforR(trace,1))==0
+                    
+                    H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+                    set(H,'color',[0 0 0],'LineWidth',3)
+                    
+                end
+                
+                trace  = trace + 1;
+                
+            end
+            
+        end
+        
+         trace = 1;
+        
+        
+        for ievent=tempStimOutcomeInt'
             H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
             
-            if BehDatasorted(trace,9) ==1
-            set(H,'color',[0 1 0],'LineWidth',3)
+            if BehDatasorted(trace,16) ==2
+                set(H,'color',[0 0.8 0],'LineWidth',3)
+            elseif BehDatasorted(trace,16) ==1
+                set(H,'color',[0 1 0],'LineWidth',3)
             else
-            set(H,'color',[1 0.2 0.8],'LineWidth',3)
+                set(H,'color',[1 0.2 0.8],'LineWidth',3)
             end
             
             trace  = trace + 1;
         end
         
-    line([eventOnset eventOnset], [length(tempRT) 1], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
-    text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
-    
-    %create thick green line every time 
-    
-   
-    
-    elseif     strcmp( sortDesign , 'RT')
-    
-
-    imagesc((TempStimData(sortingIndex, 1:7400)),colorRange)
-    
-     trace = 1;
+        line([eventOnset eventOnset], [length(tempRT) 1], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
+        text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
+        
+        %create thick green line every time
+          
+    elseif     strcmp( sortDesign , 'RT') % sort only based on RTs
+        
+        
+        imagesc((TempStimData(sortingIndex, 1:7400)),colorRange)
+        
+        trace = 1;
         
         for ievent=RT(sortingIndex)'
             
@@ -306,9 +325,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
             
             trace  = trace + 1;
         end
-        
-    
-    end
+     end
     
     
     colormap('bluewhitered')
@@ -322,7 +339,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     set(gca, 'TickDir', 'out')
     xlabel('Time (s)', 'FontWeight', 'bold')
     
-    
+   
     %-- STIM,ACTION and OUTCOME RESPONSE RASTERSSSS ---------------------------------------
     
     % ------------- 1.1 raster for stim reponse, max contrast (L+R)
@@ -418,8 +435,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
         
         
     end
-    
-    
+      
     % ------------- 3.1 raster for stim response, 3rd max contrast (L+R)
     
     if length(StimzAbs)>2
@@ -461,9 +477,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
         
         xticklabels([ ])
         yticklabels([ ])
-        
-        
-        
+          
     end
     
     % ----------- 4.1 raster for stim response, 0 contrast
@@ -509,8 +523,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
         yticklabels([ ])
         
     end
-    
-    
+     
     % ------------- 5. line plot; avg stim response over time by contrast
     
     subplot(5, 8, 35);
@@ -518,8 +531,8 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     c=1;
     for istim = StimzAbs'
         
-         tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
-
+        tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
+        
         hold on
         h = plot(nanmean(TempStimData(tempIndex, (eventOnset-abs(sStart*downSample)):(eventOnset+abs(sStop*downSample)))), 'LineWidth', 2)
         
@@ -534,13 +547,13 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
         c=c+1;
     end
     
-%     if length(StimzAbs)==4
-%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
-%     elseif length(StimzAbs)==3
-%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
-%     elseif length(StimzAbs)==2
-%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
-%     end
+    %     if length(StimzAbs)==4
+    %         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
+    %     elseif length(StimzAbs)==3
+    %         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
+    %     elseif length(StimzAbs)==2
+    %         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
+    %     end
     
     xlim([0 abs(sStop*downSample)+abs(sStart*downSample)])
     xticks([1 abs(sStop*downSample)+abs(sStart*downSample)])
@@ -557,8 +570,8 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     c=1;
     for istim = StimzAbs'
         hold on
-         tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
-
+        tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
+        
         h = plot(nanmean(TempActionData(tempIndex, (eventOnset-abs(aStart*downSample)):(eventOnset+abs(aStop*downSample)))), 'LineWidth', 2)
         
         if length(StimzAbs)==4
@@ -572,13 +585,13 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
         c=c+1;
     end
     
-%     if length(StimzAbs)==4
-%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
-%     elseif length(StimzAbs)==3
-%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
-%     elseif length(StimzAbs)==2
-%         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
-%     end
+    %     if length(StimzAbs)==4
+    %         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best')
+    %     elseif length(StimzAbs)==3
+    %         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best')
+    %     elseif length(StimzAbs)==2
+    %         l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best')
+    %     end
     
     xlim([0 abs(aStop*downSample)+abs(aStart*downSample)])
     xticks([1 abs(aStop*downSample)+abs(aStart*downSample)])
@@ -594,8 +607,8 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     c=1;
     for istim = StimzAbs'
         hold on
-                 tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
-
+        tempIndex = intersect(find(abs(TempBehData(:,2))==istim),correct);
+        
         h = plot(nanmean(TempRewardData(tempIndex, (eventOnset-abs(rStart*downSample)):(eventOnset+abs(rStop*downSample)))), 'LineWidth', 2)
         
         if length(StimzAbs)==4
@@ -622,9 +635,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     xticklabels([rStart rStop])
     xlabel('Time (s)', 'FontWeight', 'bold')
     set(gca, 'TickDir', 'out')
-    
-    
-    
+     
     %-- STIM RESPONSE RASTERS 2 (BROKEN BY LARGE/SMALL/NO REWARD) -------------------
     
     
@@ -670,8 +681,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     ylabel('No Reward Trials', 'FontWeight', 'bold')
     set(gca, 'TickDir', 'out')
     
-    
-    
+     
     % -------------- 4. summary avg reward response large/small/error
     
     subplot(5, 8, 39);
@@ -682,7 +692,7 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     hold on;
     plot(nanmean(TempStimData(TempBehData(:,9)==0, eventOnset-abs(sStart*downSample):eventOnset+abs(sStop*downSample))),'color',colorRed(2,:),'LineWidth',2)
     
-%     legend('Large reward','Small reward', 'No reward','location','best')
+    %     legend('Large reward','Small reward', 'No reward','location','best')
     
     xlim([0 abs(sStop*downSample)+abs(sStart*downSample)])
     xticks([1 abs(sStop*downSample)+abs(sStart*downSample)])
@@ -759,18 +769,20 @@ BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     set(gca, 'TickDir', 'out')
     
     
-    
+    % this is something temporary: 
     %%
+    figure
     
+    for ireward = [0 1 2]
+     indexes=mintersect(find(BehDatasorted(:,16)==ireward), find(ismember(TempBehData(:,2),[-0.25 0.25])));
+       
+     hold on 
+     plot(nanmean(TempStimDataforR(indexes,:)))
+    end
+     title('stimulus aligned for 0.25 contrast')
+     xlim([3500 7400])
     
-    % aling to stimulus, sorted based on RT
-    
-    % subplots for different levels of stimuli (average L and R)
-    
-    % subplots (outcome aligned) for large reward, small reward and no
-    % reward
-    
-    % so you will write imagesc
+  
     
     % then call colormap(bluewhitered)
 end
