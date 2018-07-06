@@ -15,19 +15,19 @@ close all
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 % session 5 of ALK068 is chosen to be shown in paper figure
 
-animal_ID = 48
+animal_ID = 51
 animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'n' % y or n (show all trials from single animal)
+concatenate = 'y' % y or n (show all trials from single animal)
 
 sortDesign = 'CrrErrContRT'; % 'RT' or 'CrrErrContRT' sort based on RT or CorrectError Contrst and RTs
 
 smoothFactor = 100;
 
 
-RTLimit = 2; % in s, excluding trials with RT longer than this
+RTLimit = 3; % in s, excluding trials with RT longer than this
 
 sample_rate = 12000;
 downSample = 1200;
@@ -36,7 +36,9 @@ eventOnset = 3700;  % in the saved matrix, the ev
 
 % color range for plotting imagesc data
 colorRange=[-10 12];
-colorRange=[-5 12];
+colorRange=[-5 20];
+%colorRange=[-2 8];
+
 
 
 % ------------------ start stop times for task events in second ------------------
@@ -64,7 +66,7 @@ colorRed = [1 0 0
     0.8 0 0
     0.6 0  0
     0.3 0 0];
-
+% ------------------------------------------------------------------------
 
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
 
@@ -99,7 +101,7 @@ elseif concatenate == 'n'
     
 end
 
-
+% ------------------------------------------------------------------------
 %-- START PLOTTING!!!
 
 for iSession = sessionz
@@ -209,13 +211,11 @@ for iSession = sessionz
     % sort based on correct/error, contrast and then RT
     TempBehData2sort = TempBehData;
     TempBehData2sort(:,2)=abs(TempBehData2sort(:,2)); % sort based on abs of stimulus
-    TempBehData2sort(intersect(error , find (TempBehData2sort(:,2)==0)),2) =0.01; % stupid fix of my code 
+    TempBehData2sort(TempBehData2sort(:,2)==0,2) =0.01; % to separate zero contraat rewarded and unrewarded
     
     TempBehData2sort(error,2)=-TempBehData2sort(error,2); % label error trials with negative so that they appear first
     
-    [i j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
-    
-    % find index for 
+    [BehDatasorted j]= sortrows(TempBehData2sort,[9,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
     
     
     if strcmp(sortDesign ,'CrrErrContRT')
@@ -224,47 +224,37 @@ for iSession = sessionz
 
     TempStimDataforR = TempStimData(j,:);
     tempj = j;
-    
+    tempRT = RT(j,:);
+     StimOutcomeInt = TempBehData(:,14)-TempBehData(:,13); 
+     StimOutcomeInt = StimOutcomeInt(j,:);
+     
+     tempStimOutcomeInt = StimOutcomeInt(j,:);
     %first go through Stim Data and add 5 meaningless rows for every time
     %the condition changes (err/crr/stim)
-    a = 1;
-        for c = 1:(length(i)-1)
-            if i(c,9) ~= i((c+1),9) | i(c,2) ~= i((c+1),2)
-                TempStimDataforR = insertrows(TempStimDataforR, nan(3,size(TempStimData,2)), a);
-                tempj = insertrows(tempj, nan(3,1), a);
-                a=a+3;
-            end
-            a = a+1;
-        end
+    
+    
+    indexConditionChange = fliplr(find(diff(BehDatasorted(:,2)))'); % after this trial, the condition (stim, etc) changes 
+    
+    for iIndex = indexConditionChange
         
-    %then plot all these rows 
-    imagesc((TempStimDataforR(:, 1:6100)),colorRange)
-    hold on;
-%     
-%     % then go through and add a line every time there is a row of ones 
+     TempStimDataforR = insertrows(TempStimDataforR, nan(3,size(TempStimData,2)), iIndex);
+tempj = insertrows(tempj, nan(3,1), iIndex);
+tempRT = insertrows(tempRT, nan(3,1), iIndex);
+tempStimOutcomeInt = insertrows(tempStimOutcomeInt, nan(3,1), iIndex);
 
-    a=1;
-    for c = 1:length(TempStimDataforR)
-
-        
-        if a <= size(TempStimDataforR,1) & isnan(TempStimDataforR(a,1))
-            
-            H=line([1 6100], [a a]);
-            set(H, 'color', 'green', 'LineWidth', 3)
-            a=a+3;
-        end
-        a=a+1;
-        
-        
+BehDatasorted = insertrows(BehDatasorted, nan(3,size(BehDatasorted,2)), iIndex);
     end
     
 
-    %%
+    %then plot all these rows 
+    imagesc((TempStimDataforR(:, 1:7400)),colorRange)
+    hold on;
+
      trace = 1;
         
      for c = 1:length(TempStimDataforR)
 
-        for ievent=RT(j)'
+        for ievent=tempRT'
                 
              if trace <= size(TempStimDataforR,1) & isnan(TempStimDataforR(trace,1))==0
             
@@ -282,16 +272,20 @@ for iSession = sessionz
         
         trace = 1;
         
-        StimOutcomeInt = TempBehData(:,14)-TempBehData(:,13); 
-        for ievent=StimOutcomeInt(j)'
-            
+       
+        for ievent=tempStimOutcomeInt' 
             H=line([downSample*ievent+eventOnset,downSample*ievent+eventOnset+20], [trace, trace]);
+            
+            if BehDatasorted(trace,9) ==1
             set(H,'color',[0 1 0],'LineWidth',3)
+            else
+            set(H,'color',[1 0.2 0.8],'LineWidth',3)
+            end
             
             trace  = trace + 1;
         end
         
-    line([eventOnset eventOnset], [max(sortingIndex) min(sortingIndex)], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
+    line([eventOnset eventOnset], [length(tempRT) 1], 'Color', 'black', 'LineWidth', 1.5); % stim onset line
     text(100, -20, 'Stim', 'FontWeight', 'bold', 'FontSize', 8); %stim line label
     
     %create thick green line every time 
@@ -301,7 +295,7 @@ for iSession = sessionz
     elseif     strcmp( sortDesign , 'RT')
     
 
-    imagesc((TempStimData(sortingIndex, 1:6100)),colorRange)
+    imagesc((TempStimData(sortingIndex, 1:7400)),colorRange)
     
      trace = 1;
         
@@ -319,12 +313,10 @@ for iSession = sessionz
     
     colormap('bluewhitered')
     
-  
-      
     
     ylabel('Trials', 'FontWeight', 'bold')
-    xlim([3500 6100])
-    xticks([3700 4900 6100])
+    xlim([3500 7400])
+    xticks([3700 4900 6100,7400])
     xticklabels({'0','1','2','3'})
     
     set(gca, 'TickDir', 'out')

@@ -61,7 +61,7 @@ for iSession = sessionz
 end
 
 %StimData(:,5400:end) = StimData(:,5400:end) - repmat(mean(StimData (:,5400:5500),2), 1, 13100-5399);
-%StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
+StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
 
 %StimData = StimData - repmat(mean(StimData,2), 1, 13100);
 
@@ -121,9 +121,9 @@ inverted_Matrix_to_row = downsample(inverted_Matrix_to_row,Timereso);
 StimDataSmooth2Visualise = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
 
-%[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
+[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
 
-inverted_Matrix_to_row = zscore(inverted_Matrix_to_row');
+% inverted_Matrix_to_row = zscore(inverted_Matrix_to_row'); not that good
 StimDataSmoothDownSample = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
 t=downsample(t,Timereso);
