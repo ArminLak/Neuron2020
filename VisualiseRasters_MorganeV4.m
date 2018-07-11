@@ -69,6 +69,9 @@ colorRed = [1 0 0
     0.8 0 0
     0.6 0  0
     0.3 0 0];
+rewardColor = [0 0.6 0
+    0 1 0
+    0.8 0 0];
 % ------------------------------------------------------------------------
 
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
@@ -267,7 +270,7 @@ for iSession = sessionz
         end
          
         %then plot all these rows
-        imagesc((TempStimDataforR(:, 1:7400)),colorRange)
+        imagesc((TempStimDataforR(:, 1:7100)),colorRange)
         hold on;
         
         trace = 1;
@@ -314,7 +317,7 @@ for iSession = sessionz
     elseif     strcmp( sortDesign , 'RT') % sort only based on RTs
         
         
-        imagesc((TempStimData(sortingIndex, 1:7400)),colorRange)
+        imagesc((TempStimData(sortingIndex, 1:7100)),colorRange)
         
         trace = 1;
         
@@ -332,8 +335,8 @@ for iSession = sessionz
     
     
     ylabel('Trials', 'FontWeight', 'bold')
-    xlim([3500 7400])
-    xticks([3700 4900 6100,7400])
+    xlim([3500 7100])
+    xticks([3700 4900 6100,7100])
     xticklabels({'0','1','2','3'})
     
     set(gca, 'TickDir', 'out')
@@ -771,6 +774,7 @@ for iSession = sessionz
     
     % this is something temporary: 
     %%
+<<<<<<< HEAD
 %     figure
 %     
 %     for ireward = [0 1 2]
@@ -781,7 +785,28 @@ for iSession = sessionz
 %     end
 %      title('stimulus aligned for 0.25 contrast')
 %      xlim([3500 7400])
+=======
+    figure
     
+    color = 3
+    for ireward = [0 1 2]
+     indexes=mintersect(find(BehDatasorted(:,16)==ireward), find(ismember(TempBehData(:,2),[-0.25 0.25])));
+       
+     hold on 
+     plot(nanmean(TempStimDataforR(indexes,:)), 'color', rewardColor(color,:),'LineWidth',2)
+     color = color-1;
+    end
+    
+     legend('No reward','Small reward', 'Large reward','location','best')
+     title('stimulus aligned for 0.25 contrast')
+     xlim([3500 7100])
+     xticks([3700 4900 6100,7100])
+     xticklabels({'0','1','2','3'})
+     ylabel('Norm {\Delta} F / F', 'FontWeight', 'bold')
+>>>>>>> b0b8d29ca1a91318c1d13308abbc86a863837b76
+    
+     set(gca, 'TickDir', 'out')
+     xlabel('Time (s)', 'FontWeight', 'bold')
   
     
     % then call colormap(bluewhitered)

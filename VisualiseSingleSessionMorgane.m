@@ -2,7 +2,7 @@
 % close all
 
 animal_name = 'ALK071'
-exp_date   = '2018-03-23'
+exp_date   = '2018-03-13'
 exp_series ='1'
 
 %Unilatral or bilateral
@@ -195,8 +195,8 @@ hold on
 % line([90 90], [-2 4])
 
 ax = gca;
-Visstart = 10; % visualise trace from this trial 
-Visstop  = 20;  % visualise trace up to this trial
+Visstart = 60; % visualise trace from this trial 
+Visstop  = 100;  % visualise trace up to this trial
 ymin = -15
 ymax = 27
 ylim([ymin ymax])
