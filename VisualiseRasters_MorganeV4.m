@@ -20,7 +20,7 @@ animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'y' % y or n (show all trials from single animal)
+concatenate = 'n' % y or n (show all trials from single animal)
 
 selectStimulus2Plot = 'y' %(this only works if concatenate = 'y')
 
@@ -771,16 +771,16 @@ for iSession = sessionz
     
     % this is something temporary: 
     %%
-    figure
-    
-    for ireward = [0 1 2]
-     indexes=mintersect(find(BehDatasorted(:,16)==ireward), find(ismember(TempBehData(:,2),[-0.25 0.25])));
-       
-     hold on 
-     plot(nanmean(TempStimDataforR(indexes,:)))
-    end
-     title('stimulus aligned for 0.25 contrast')
-     xlim([3500 7400])
+%     figure
+%     
+%     for ireward = [0 1 2]
+%      indexes=mintersect(find(BehDatasorted(:,16)==ireward), find(ismember(TempBehData(:,2),[-0.25 0.25])));
+%        
+%      hold on 
+%      plot(nanmean(TempStimDataforR(indexes,:)))
+%     end
+%      title('stimulus aligned for 0.25 contrast')
+%      xlim([3500 7400])
     
   
     
