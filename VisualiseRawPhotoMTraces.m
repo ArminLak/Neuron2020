@@ -12,15 +12,15 @@ close all
 % animal_ID = 51
 
 animal_name = 'ALK068'
-exp_date   = '2018-02-08'
-exp_series ='1'
+exp_date   = '2018-01-25'
+exp_series ='8'
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 
 %%
 
-start = 300 % trace time section in seconds
-stop = 330
+start = 320 % trace time section in seconds
+stop = 390
 sample_rate = 12000
 
 %-------------------------------find path, add path and load data----------------------------------
@@ -43,7 +43,7 @@ DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
 TTL = photoMdata.TTL_1;
 
 
-%%
+
 
 figure; hold on
 
@@ -52,8 +52,8 @@ subplot(4, 1, 2);
 plot(AnalogIn2(sample_rate*start : sample_rate*stop));
 xlim([0 (sample_rate*stop - sample_rate*start)])
 xticklabels([]);
-xlabel('Time (s)');
-ylabel('AnalogIn 2');
+xlabel('');
+ylabel('Calcium dependent');
 ax = ylim;
 
 
@@ -62,8 +62,8 @@ subplot(4, 1, 1);
 plot(AnalogIn1(sample_rate*start:sample_rate*stop));
 xlim([0 (sample_rate*stop - sample_rate*start)])
 xticklabels([]);
-xlabel('Time (s)');
-ylabel('AnalogIn 1');
+xlabel('');
+ylabel('Calcium independent');
 ylim(ax);
 
 
@@ -73,7 +73,7 @@ subplot(4, 1, 3);
 plot(DeltaFoverF(sample_rate*start : sample_rate*stop));
 xlim([0 (sample_rate*stop - sample_rate*start)])
 xticklabels([]);
-xlabel('Time (s)');
+xlabel('');
 ylabel('{\Delta} F / F');
 
 
@@ -82,6 +82,7 @@ subplot(4, 1, 4);
 plot(TTL(sample_rate*start : sample_rate*stop));
 xlim([0 (sample_rate*stop - sample_rate*start)])
 xticks(0 : 5*sample_rate : (sample_rate*stop - sample_rate*start));
+yticks(0 : 1 : 1);
 xticklabels(start : 5 : stop);
 xlabel('Time (s)');
 ylabel('Reward');
