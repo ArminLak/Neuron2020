@@ -270,7 +270,7 @@ for iSession = sessionz
         end
          
         %then plot all these rows
-        imagesc((TempStimDataforR(:, 1:7100)),colorRange)
+        imagesc((TempStimDataforR(:, 1:7400)),colorRange)
         hold on;
         
         trace = 1;
@@ -317,7 +317,7 @@ for iSession = sessionz
     elseif     strcmp( sortDesign , 'RT') % sort only based on RTs
         
         
-        imagesc((TempStimData(sortingIndex, 1:7100)),colorRange)
+        imagesc((TempStimData(sortingIndex, 1:7400)),colorRange)
         
         trace = 1;
         
@@ -335,8 +335,8 @@ for iSession = sessionz
     
     
     ylabel('Trials', 'FontWeight', 'bold')
-    xlim([3500 7100])
-    xticks([3700 4900 6100,7100])
+    xlim([3500 7400])
+    xticks([3700 4900 6100,7400])
     xticklabels({'0','1','2','3'})
     
     set(gca, 'TickDir', 'out')
@@ -774,7 +774,7 @@ for iSession = sessionz
     
     % this is something temporary: 
     %%
-<<<<<<< HEAD
+
 %     figure
 %     
 %     for ireward = [0 1 2]
@@ -785,7 +785,7 @@ for iSession = sessionz
 %     end
 %      title('stimulus aligned for 0.25 contrast')
 %      xlim([3500 7400])
-=======
+
     figure
     
     color = 3
@@ -799,11 +799,11 @@ for iSession = sessionz
     
      legend('No reward','Small reward', 'Large reward','location','best')
      title('stimulus aligned for 0.25 contrast')
-     xlim([3500 7100])
-     xticks([3700 4900 6100,7100])
+     xlim([3500 7400])
+     xticks([3700 4900 6100,7400])
      xticklabels({'0','1','2','3'})
      ylabel('Norm {\Delta} F / F', 'FontWeight', 'bold')
->>>>>>> b0b8d29ca1a91318c1d13308abbc86a863837b76
+
     
      set(gca, 'TickDir', 'out')
      xlabel('Time (s)', 'FontWeight', 'bold')
