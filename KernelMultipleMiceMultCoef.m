@@ -7,7 +7,6 @@ Animals = [48 50 51]
 
 load('BehPhotoM_Exp23')
 %%
-%Animals = [48]
 
  ModelArrangement=11
 
@@ -61,6 +60,11 @@ PredictedStim2(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).Predict
 PredictedStim3(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopStimAlign(3,:);
 PredictedStim4(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopStimAlign(4,:);
 
+PredictedAction1(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopActionAlign(1,:);
+PredictedAction2(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopActionAlign(2,:);
+PredictedAction3(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopActionAlign(3,:);
+PredictedAction4(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopActionAlign(4,:);
+
 
 PredictedRewL(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopRewAlignLarge;
 PredictedRewS(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).PredictedPopRewAlignSmall;
@@ -71,22 +75,30 @@ PredictedRewNo(c,:) = BehPhotoM(iAnimal).KernelSummary(ModelArrangement).Predict
 c=c+1;
 end
 
-%
+%%
 figure % generate pop predicted responses
-subplot(1,2,1)
+subplot(1,3,1)
 plot(smooth(nanmean(PredictedStim1)))
 hold on
 plot(smooth(nanmean(PredictedStim2)))
 plot(smooth(nanmean(PredictedStim3)))
 plot(smooth(nanmean(PredictedStim4)))
-xlim([4 33])
+xlim([7 26])
 
-subplot(1,2,2)
+subplot(1,3,2)
+plot(smooth(nanmean(PredictedAction1)))
+hold on
+plot(smooth(nanmean(PredictedAction2)))
+plot(smooth(nanmean(PredictedAction3)))
+plot(smooth(nanmean(PredictedAction4)))
+xlim([4 23])
+
+subplot(1,3,3)
 plot(smooth(nanmean(PredictedRewL)))
 hold on
 plot(smooth(nanmean(PredictedRewS)))
 plot(smooth(nanmean(PredictedRewNo)))
-xlim([6 38])
+xlim([7 26])
 
 
 

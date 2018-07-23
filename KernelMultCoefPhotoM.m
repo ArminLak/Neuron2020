@@ -10,7 +10,7 @@ close all
 
 load('BehPhotoM_Exp23')
 %
-animal_ID = 51
+animal_ID = 50
 
 
 ModelArrangment = 11
@@ -63,8 +63,15 @@ end
 figure
 plot(nanmean(StimData))
 
-%StimData(:,5400:end) = StimData(:,5400:end) - repmat(mean(StimData (:,5400:5500),2), 1, 13100-5399);
+if animal_ID ==48
 StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
+elseif animal_ID ==50
+    
+elseif animal_ID ==51
+    
+    StimData(:,5100:end) = StimData(:,5100:end) - repmat(mean(StimData (:,5100:5500),2), 1, 13100-5099);
+end
+
 
 hold on
 plot(nanmean(StimData))
@@ -129,7 +136,9 @@ StimDataSmooth2Visualise = reshape(inverted_Matrix_to_row', 262,size(BehData,1))
 
 [inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
 
-inverted_Matrix_to_row = inverted_Matrix_to_row - (mean(inverted_Matrix_to_row)/2);
+inverted_Matrix_to_row = inverted_Matrix_to_row - (mean(inverted_Matrix_to_row)/2); 
+% this division number changes for different animals 51: 1.4, 50: 1.7, 48: 
+
 
 
 % inverted_Matrix_to_row = zscore(inverted_Matrix_to_row); %not that good
@@ -274,8 +283,8 @@ for iter = 1 : length(stim_time) -1  % we ingore the last trial
     
     [diff_recover i_recover] = min (abs(t - action_onsetTime(iter)));
     
-    EstimatedSignalAction (iter,:) =predictedSignals(i_recover-10 : i_recover+200);
-    SignalAction (iter,:) =inverted_Matrix_to_row(i_recover-10 : i_recover+200)';
+    EstimatedSignalAction (iter,:) =predictedSignals(i_recover-20 : i_recover+190);
+    SignalAction (iter,:) =inverted_Matrix_to_row(i_recover-20 : i_recover+190)';
     
     [diff_recover i_recover] = min (abs(t - outcome_time(iter)));
     
