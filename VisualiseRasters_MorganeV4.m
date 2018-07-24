@@ -20,7 +20,7 @@ animal_name = animal_ID + 20;
 load('BehPhotoM_Exp23')  % Database with data summary
 
 %%
-concatenate = 'n' % y or n (show all trials from single animal)
+concatenate = 'y' % y or n (show all trials from single animal)
 
 selectStimulus2Plot = 'y' %(this only works if concatenate = 'y')
 
