@@ -11,16 +11,16 @@ close all
 
 % animal_ID = 51
 
-animal_name = 'ALK068'
-exp_date   = '2018-01-25'
-exp_series ='8'
+animal_name = 'ALK071'
+exp_date   = '2018-03-01'
+exp_series ='1'
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 
 %%
 
-start = 320 % trace time section in seconds
-stop = 390
+start = 100 % trace time section in seconds
+stop = 200
 sample_rate = 12000
 
 %-------------------------------find path, add path and load data----------------------------------
@@ -53,8 +53,9 @@ plot(AnalogIn2(sample_rate*start : sample_rate*stop));
 xlim([0 (sample_rate*stop - sample_rate*start)])
 xticklabels([]);
 xlabel('');
-ylabel('Calcium dependent');
-ax = ylim;
+ylabel('Ca dependent');
+% ax = ylim;
+ylim([0.3 0.6]);
 
 
 subplot(4, 1, 1);
@@ -63,8 +64,9 @@ plot(AnalogIn1(sample_rate*start:sample_rate*stop));
 xlim([0 (sample_rate*stop - sample_rate*start)])
 xticklabels([]);
 xlabel('');
-ylabel('Calcium independent');
-ylim(ax);
+ylabel('Ca independent');
+% ylim(ax);
+ylim([0.3 0.6]);
 
 
 

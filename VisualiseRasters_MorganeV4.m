@@ -49,8 +49,8 @@ if animal_ID == 51
 sStart = -0.2; %stimulus
 sStop = 0.8;
 
-aStart = -0.5; %action
-aStop = 0.5;
+aStart = -0.8; %action
+aStop = 0.2;
 
 rStart = -0.2; %reward
 rStop = 0.8;
@@ -469,7 +469,7 @@ for iSession = sessionz
         xticklabels([ ])
         yticklabels([ ])
         
-        % ------------- 3.3 raster for action, 0.25 contrast (L+R)
+        % ------------- 3.3 raster for reward, 0.25 contrast (L+R)
         
         subplot(5, 8, 21);
         
