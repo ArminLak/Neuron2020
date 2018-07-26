@@ -10,7 +10,7 @@ close all
 
 load('BehPhotoM_Exp23')
 %
-animal_ID = 50
+animal_ID = 48
 
 
 ModelArrangment = 11
@@ -18,7 +18,7 @@ ModelArrangment = 11
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
 
 % for plotting only
-RTLimit = 3; % in s, Dont change. excluding trials with RT longer than this
+RTLimit = 2.5; % for visualisng in s, Dont change. excluding trials with RT longer than this
 
 
 Timereso = 50; %this is in unit of 1200 in s. dont change
@@ -70,15 +70,16 @@ plot(nanmean(StimData))
 
 
 
+% for mega raster of paper, comment this section
 
-if animal_ID ==48
-    StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
-elseif animal_ID ==50
-    
-elseif animal_ID ==51
-    
-    StimData(:,5100:end) = StimData(:,5100:end) - repmat(mean(StimData (:,5100:5500),2), 1, 13100-5099);
-end
+% if animal_ID ==48
+%     StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
+% elseif animal_ID ==50
+%     
+% elseif animal_ID ==51
+%     
+%     StimData(:,5100:end) = StimData(:,5100:end) - repmat(mean(StimData (:,5100:5500),2), 1, 13100-5099);
+% end
 
 
 
@@ -148,9 +149,7 @@ StimDataSmooth2Visualise = reshape(inverted_Matrix_to_row', 262,size(BehData,1))
 
 [inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smooo
 
-inverted_Matrix_to_row = inverted_Matrix_to_row - (mean(inverted_Matrix_to_row)/1.4);
-% this division number changes for different animals 51: 1.4, 50: 1.7, 48:1.4
-
+inverted_Matrix_to_row = inverted_Matrix_to_row - (mean(inverted_Matrix_to_row)/1.7);
 
 
 % inverted_Matrix_to_row = zscore(inverted_Matrix_to_row); %not that good
@@ -188,17 +187,15 @@ for fititer=1:1:4
         
         if ModelArrangment ==8
             
-            zeroPadStim (71 -8:71+59-8) =  (fitKernels{2}');
+            zeroPadStim (71+4 :71+47+4) =  (fitKernels{2}');
             
             t_beep = floor((BehData(itrial, 13 ) - BehData(itrial, 12))*24); % 11 s is 262 samples, thus 1 s is 24
-            zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 23-8) = ( fitKernels{1}');
-            
-            
+            zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 31-8) = ( fitKernels{1}');
+             
             t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
-            % zeroPadOutcome(71+t_out-8: 71+t_out-8 +47) = (fitKernels{4}');
-            zeroPadOutcome(71+t_out-8: 71+t_out-8 +87) = (fitKernels{4}'); % for plotting only
-            
-            
+%            zeroPadOutcome(71+t_out-8: 71+t_out-8 +87) = (fitKernels{4}'); % for plotting only
+             zeroPadOutcome(71+t_out: 71+t_out +39) = (fitKernels{4}');
+      
             t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
             t_act(isnan(t_act) )=t_out  -4;
             
@@ -213,6 +210,44 @@ for fititer=1:1:4
             Coefiz(itrial,tofill)= B';
         end
         
+         if ModelArrangment ==9
+            
+            zeroPadStim (71+4 :71+47+4) =  (fitKernels{1}');
+           
+           t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+
+            t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+            t_act(isnan(t_act) )=t_out  -4;
+            
+            zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = (fitKernels{2}');
+            
+            
+            [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadStim',zeroPadAction']);
+            
+            
+            tofill = [2,3];
+            Coefiz(itrial,tofill)= B';
+         end
+        
+         if ModelArrangment ==10
+            
+           
+           t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+
+            t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+            t_act(isnan(t_act) )=t_out  -4;
+            
+            zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = (fitKernels{1}');
+            
+            
+            [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadAction']);
+            
+            
+            tofill = [3];
+            Coefiz(itrial,tofill)= B';
+         end
+        
+         
         if ModelArrangment ==11
             
         
@@ -220,7 +255,7 @@ for fititer=1:1:4
             
              t_beep = floor((BehData(itrial, 13 ) - BehData(itrial, 12))*24); % 13.1 s is 262 samples, thus 1 s is 24
             zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 31-8) = ( fitKernels{1}');
-            
+            %zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 23-8) = ( fitKernels{1}');
             
             t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
             %zeroPadOutcome(71+t_out-8: 71+t_out-8 +47) = (fitKernels{2}');
@@ -237,6 +272,54 @@ for fititer=1:1:4
         end
         
         
+         if ModelArrangment ==12
+            
+            
+            t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+             zeroPadOutcome(71+t_out: 71+t_out +39) = (fitKernels{2}');
+
+            
+            t_act = floor((BehData(itrial, 10 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+            t_act(isnan(t_act) )=t_out  -4;
+            
+            zeroPadAction(71+t_act-20 : 71+t_act-20 +23) = (fitKernels{1}');
+                        
+            [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadAction',zeroPadOutcome']);
+            
+            
+            tofill = [3,4];
+            Coefiz(itrial,tofill)= B';
+         end
+        
+        
+          if ModelArrangment ==13
+            
+            zeroPadStim (71+4 :71+47+4) =  (fitKernels{1}');
+            
+              [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadStim']);
+            
+            
+            tofill = [2];
+            Coefiz(itrial,tofill)= B';
+          end
+        
+         
+            if ModelArrangment == 14
+            
+             
+            t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+             zeroPadOutcome(71+t_out: 71+t_out +39) = (fitKernels{1}');
+      
+        
+            [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadOutcome']);
+            
+            
+            tofill = [4];
+            Coefiz(itrial,tofill)= B';
+            end
+        
+         
+         
         for i=1:length(eventTimes)
             
             % this is for shuffling coef across trials
@@ -324,17 +407,25 @@ correct = BehData(:,9);
 BehDataAbs = BehData;
 BehDataAbs(:,2) = abs(BehDataAbs(:,2));
 
+tempIndex = find(BehDataAbs(:,2)==0.25);  
+
+BehDataAbs = BehDataAbs(tempIndex,:);
+
 [i j] = sortrows(BehDataAbs,[9 2]);
+
+
 figure
 
+
 subplot(1,2,1)
-imagesc(EstimatedSignalStim(j,5:30),[-1 8])
+imagesc(smooth2a(EstimatedSignalStim(j,5:60),0,5),[-1 4])
 title('estimated stim')
 
 subplot(1,2,2)
-imagesc(SignalStim(j,3:30),[-1 8])
+imagesc(SignalStim(j,5:60),[-1 4])
 title('real stim')
 colormap('bluewhitered')
+
 
 
 figure

@@ -2,23 +2,45 @@ clear all
 close all
 
 % specify anial name and list of sessions of interest
+
 % it calcuate trial-by-trial data from each session and stores them in a
 % large strucutre (i.e. BehPhotoM_Exp23.mat)
 
-% if you are happy with it, then save it at the zubjects shared folder
+% if you are happy with it, then save it
+
+% Armin Feb 2018
+% Armin July 2018 added the possbiltiy of saving 2 channels per recoring ( L and R
+% hem)
 
 
-animal_name = 'ALK071'
+animal_name = 'ALK074'
 
-% give a list of sessions
+%Unilatral or bilateral ('Un' or 'Bi')
+Implant = 'Bi'
 
-SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24]; % ALK068 Exp23
-SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24]; % ALK070 Exp23
-SessionList = [10, 11, 12,13, 14,19]; % ALK071 Exp23 % 15-18 are bad
-          
+if strcmp(Implant,'Un')
+    ChanNum =1;
+elseif strcmp(Implant,'Bi')
+    ChanNum =[1 2];
+end;
+
+% give a list of sessions (dont modify these numbers)
+
+% VTA animals, Exp 23
+SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24];           % ALK068 Exp23
+SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24];    % ALK070 Exp23
+SessionList = [10, 11, 12,13, 14,19];                             % ALK071 Exp23 % 15-18 are bad
+
+
+SessionList = [21,22,23,24]; % ALK074, exp 23
+
+%SessionList = [13,14,15,16]; % MMM001, exp 23
+
 
 % This is the structure that will hold the data
-load('BehPhotoM_Exp23.mat')
+
+%load('BehPhotoM_Exp23.mat') % in case it is saved, u can load it to add
+%more animals
 
 %--------------- useful information --------------------------------------
 % task event
@@ -41,58 +63,120 @@ downsampleScale = 10;                                       % factor downsamplin
 
 SessionC = 1;
 for iSession =  SessionList
+    
+    
+    %--------------------------------------------------------------------------
+    % load Beh data and photometry data
+    TrialTimingData = MiceExpInfo.mice(animal_ID).session(iSession).TrialTimingData;
+    %TrialTimingData(TrialTimingData(:,3)==-1,3)=0; % define left choice as 0 (rather than -1)
+    
+    ReactionTime = TrialTimingData(:,10) -TrialTimingData(:,13);
+    
+    Stimz=unique(TrialTimingData(:,2))';
+    StimzAbs=unique(abs(TrialTimingData(:,2)))';
+    
+    % delay for wheel movement
+    FileAlignDelay = MiceExpInfo.mice(animal_ID).session(iSession).AlignDelay;
+    
+    % load photoM data
+    photoMFileName=MiceExpInfo.mice(animal_ID).session(iSession).Neuronfile(1:end-4);
+    %photoMdata = readtable([path2photoM,'\',photoMFileName]);
+    load(photoMFileName);
+    
+    for iChan = ChanNum
+        
+        if iChan == 1
+            DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
+        elseif iChan == 2
+            DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
+        end
+        
+        TimeStamps=photoMdata.Time_s_;
+        
+        
+        %------------------------define event time for event-alinged responses--------------------------
+        
+        event_times = TrialTimingData(:,12); % initial beep onset
+        
+        [Raster_MatrixBeep]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+        
+        event_times = TrialTimingData(:,13); % vis stimulus onset
+        
+        [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+        
+        event_times = TrialTimingData(:,10); % action onset
+        
+        event_times(find(isnan(TrialTimingData(:,10))))= TrialTimingData(find(isnan(TrialTimingData(:,10))),13)+0.2;
+        
+        [Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+        
+        event_times = TrialTimingData(:,14); %reward onset
+        
+        [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+        
+%         if length(ChanNum) == 1
+%             HemChan = [1];
+%         elseif length(ChanNum) == 2
+%             if MiceExpInfo.mice(animal_ID).session(iSession).RChan == 2
+%                 HemChan = [2 1];
+%             elseif MiceExpInfo.mice(animal_ID).session(iSession).RChan == 4
+%                 HemChan = [1 2];
+%                 
+%             end
+%         end
+        
+        BehPhotoM(animal_ID).Session(SessionC).TrialTimingData               =  TrialTimingData;
+        
+        
+        if length(ChanNum) == 1 % only one channel
+            
+            BehPhotoM(animal_ID).Session(SessionC).NeuronBeep    = Raster_MatrixBeep;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronStim    = Raster_MatrixStim;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronAction  = Raster_MatrixAction;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronReward  = Raster_MatrixReward;
+            
+        elseif length(ChanNum) == 2
+            
+            if iChan ==1 && MiceExpInfo.mice(animal_ID).session(iSession).RChan == 2 % Analog2 looks at Right Hem
+                
+                BehPhotoM(animal_ID).Session(SessionC).NeuronBeepR    = Raster_MatrixBeep;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronStimR    = Raster_MatrixStim;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronActionR  = Raster_MatrixAction;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronRewardR  = Raster_MatrixReward;
+            end
+            if iChan ==2 && MiceExpInfo.mice(animal_ID).session(iSession).RChan == 2 % Analog2 looks at Right Hem
+                
+                BehPhotoM(animal_ID).Session(SessionC).NeuronBeep    = Raster_MatrixBeep;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronStim    = Raster_MatrixStim;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronAction  = Raster_MatrixAction;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronReward  = Raster_MatrixReward;
+                
+            end
+            
+            if iChan ==2 && MiceExpInfo.mice(animal_ID).session(iSession).RChan == 4 % Analog2 looks at left Hem
+                
+                BehPhotoM(animal_ID).Session(SessionC).NeuronBeepR    = Raster_MatrixBeep;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronStimR    = Raster_MatrixStim;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronActionR  = Raster_MatrixAction;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronRewardR  = Raster_MatrixReward;
+            end
+            if iChan ==1 && MiceExpInfo.mice(animal_ID).session(iSession).RChan == 4 % Analog2 looks at left Hem
+                
+                BehPhotoM(animal_ID).Session(SessionC).NeuronBeep    = Raster_MatrixBeep;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronStim    = Raster_MatrixStim;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronAction  = Raster_MatrixAction;
+                BehPhotoM(animal_ID).Session(SessionC).NeuronReward  = Raster_MatrixReward;
+                
+            end
+            
+        end
+        
 
-  
-%--------------------------------------------------------------------------
-% load Beh data and photometry data
-TrialTimingData = MiceExpInfo.mice(animal_ID).session(iSession).TrialTimingData;
-%TrialTimingData(TrialTimingData(:,3)==-1,3)=0; % define left choice as 0 (rather than -1)
-
-ReactionTime = TrialTimingData(:,10) -TrialTimingData(:,13);
-
-Stimz=unique(TrialTimingData(:,2))';
-StimzAbs=unique(abs(TrialTimingData(:,2)))';
-
-% delay for wheel movement
-FileAlignDelay = MiceExpInfo.mice(animal_ID).session(iSession).AlignDelay;
-
-% load photoM data
-photoMFileName=MiceExpInfo.mice(animal_ID).session(iSession).Neuronfile(1:end-4);
-%photoMdata = readtable([path2photoM,'\',photoMFileName]);
-load(photoMFileName);
-DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
-TimeStamps=photoMdata.Time_s_;
-
-
-%------------------------define event time for event-alinged responses--------------------------
-
-event_times = TrialTimingData(:,12); % initial beep onset
-
-[Raster_MatrixBeep]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
-
-event_times = TrialTimingData(:,13); % vis stimulus onset
-
-[Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
-
-event_times = TrialTimingData(:,10); % action onset
-
-event_times(find(isnan(TrialTimingData(:,10))))= TrialTimingData(find(isnan(TrialTimingData(:,10))),13)+0.2;
-
-[Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
-
-event_times = TrialTimingData(:,14); %reward onset
-
-[Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
-
-BehPhotoM(animal_ID).Session(SessionC).TrialTimingData =  TrialTimingData;
-BehPhotoM(animal_ID).Session(SessionC).NeuronBeep  = Raster_MatrixBeep;
-BehPhotoM(animal_ID).Session(SessionC).NeuronStim  = Raster_MatrixStim;
-BehPhotoM(animal_ID).Session(SessionC).NeuronAction  = Raster_MatrixAction;
-BehPhotoM(animal_ID).Session(SessionC).NeuronReward  = Raster_MatrixReward;
-
- SessionC = SessionC + 1;
+    end
+    
+    SessionC = SessionC + 1;
 end
- 
+
 
 
 

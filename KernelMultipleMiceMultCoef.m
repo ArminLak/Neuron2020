@@ -9,6 +9,8 @@ load('BehPhotoM_Exp23')
 %%
 
  ModelArrangement=11
+ 
+ 
 
 color = [
     1 0 0         % red
@@ -24,6 +26,20 @@ colorGray = [ 0.8 0.8 0.8
     0.4 0.4 0.4
     0 0 0
     ];
+
+c = 1;
+for iAnimal = Animals
+for iModel = [8 9 10 11 12 13 14]
+% loop over animals and neurons
+
+EVModel(c,iModel)= BehPhotoM(iAnimal).KernelSummary(iModel).EV(2);
+%EVMatrix(:,iModel)=EVModel(:,2);
+
+end
+c = c+1;
+end
+
+
 
 StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
 absStim = unique(abs(StimAllowed));

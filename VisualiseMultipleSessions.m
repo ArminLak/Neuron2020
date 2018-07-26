@@ -5,12 +5,35 @@ close all
 
 % it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
 % Armin Feb 2018
+% Armin July 2018 added bilateral recoding
 
 
-%[48, 50,51]  coresponding to ALK068, 70 and 71
 
+%VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
+% NAc : [57] coresponding to MMM001
+% DMS : [53] coresponding to ALK074
+
+
+% select animal
 animal_ID = 51
+
+% select database
 load('BehPhotoM_Exp23')
+
+%load('BehPhotoM_Exp23_NAc')
+
+%load('BehPhotoM_Exp23_DMS')
+
+% define implant
+Implant = 'Un' 
+
+
+if strcmp(Implant,'Un')
+    ChanNum =1;
+elseif strcmp(Implant,'Bi')
+    ChanNum =[1 2];
+end;
+
 
 RTLimit = 10; % in s, excluding trials with RT longer than this
 
@@ -41,10 +64,23 @@ StimData = [];
 ActionData = [];
 RewardData = [];
 
-sessionz = 1:length(BehPhotoM(animal_ID).Session);
-% if animal_ID == 51 
-% sessionz = [1 2 3 4 5 8]; end % sessions used for ALK071 Exp 23 [1 2 3 4 5 8]
+BeepDataL   = [];
+StimDataL   = [];
+ActionDataL = [];
+RewardDataL = [];
 
+BeepDataR   = [];
+StimDataR   = [];
+ActionDataR = [];
+RewardDataR = [];
+
+
+sessionz = 1:length(BehPhotoM(animal_ID).Session);
+
+
+if strcmp(Implant,'Un')
+
+    iter = 1;
 for iSession = sessionz
     
     TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
@@ -70,21 +106,85 @@ for iSession = sessionz
     
 end
 
-% BeepData = diff(BeepData')';
-% 
-% StimData = diff(StimData')';
-% RewardData = diff(RewardData')';
+elseif strcmp(Implant,'Bi')
+    
+    iter = 2;
+    
+   for iSession = sessionz % left hem
+    
+    TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
+    BehData = [BehData; TempBehData];
+    
+    % left
+    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
+    
+    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
+    
+    TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronAction;
 
+    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+    
+    BeepDataL = [BeepDataL;TempBeepData];
+    
+    StimDataL = [StimDataL;TempStimData];
+    
+    ActionDataL = [ActionDataL;TempActionData];
 
+    RewardDataL = [RewardDataL;TempRewardData];
+     
+    % right
+    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
+    
+    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
+    
+    TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionR;
 
+    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
+    
+    BeepDataR = [BeepDataR;TempBeepData];
+    
+    StimDataR = [StimDataR;TempStimData];
+    
+    ActionDataR = [ActionDataR;TempActionData];
+
+    RewardDataR = [RewardDataR;TempRewardData];
+    
+    
+end
+    
+    
+end
+
+        
 RT = BehData(:,10) - BehData(:,13);
 
-BehData(RT > RTLimit,:) = [];
+toRemove = find ( RT > RTLimit);
+BehData(toRemove,:) = [];
 
-BeepData(RT > RTLimit,:) = [];
-StimData(RT > RTLimit,:) = [];
-ActionData(RT > RTLimit,:) = [];
-RewardData(RT > RTLimit,:) = [];
+for HemIter = 1:iter
+
+    if iter == 2 && HemIter ==1
+      
+    BeepData = BeepDataL;  
+    StimData = StimDataL;   
+    ActionData = ActionDataL;
+    RewardData = RewardDataL; 
+    
+    end
+       
+     if iter == 2 && HemIter ==2
+      
+    BeepData = BeepDataR;    
+    StimData = StimDataR;   
+    ActionData = ActionDataR;
+    RewardData = RewardDataR; 
+    
+     end
+
+BeepData(toRemove,:) = [];
+StimData(toRemove,:) = [];
+ActionData(toRemove,:) = [];
+RewardData(toRemove,:) = [];
 
 
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
@@ -223,6 +323,10 @@ if animal_ID == 51
 %NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3400:3800),2);
 
+else
+    
+NormBinStim = mean(StimData(:,4500:5000),2);
+    
 end
 
 % for derivative
@@ -611,81 +715,94 @@ for thresholdRange = 80 %[60 70 80 90 95]
 
 end
 
-%%
-% Grand Summary data of the animal
-
-
-
 BehPhotoM(animal_ID).GrandSummary.Performance = performance;
-
 BehPhotoM(animal_ID).GrandSummary.RT = RTAv;
-
 BehPhotoM(animal_ID).GrandSummary.AbsStimRaster = AbsStimRaster;
-
 BehPhotoM(animal_ID).GrandSummary.AbsActionRaster = AbsActionRaster;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinStimCorrectErrorNoFold=PopNormBinStimCorrectErrorNoFold;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinStimNoFold = PopNormBinStimBlocksNoFold;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinStimCorrect=PopNormBinStimCorrect;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinStimError=PopNormBinStimError;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinRewardCorrectErrorNoFold=PopNormBinRewardCorrectErrorNoFold;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinRewardNoFold = PopNormBinRewardBlocksNoFold;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinRewardCorrect=PopNormBinRewardCorrect;
-
 BehPhotoM(animal_ID).GrandSummary.PopNormBinRewardError=PopNormBinRewardError;
-
-
 BehPhotoM(animal_ID).GrandSummary.Beep2DACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.BeepAwayDACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==-1,:));
-
 BehPhotoM(animal_ID).GrandSummary.Beep2DAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.BeepAwayDAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==-1,:));
-
-
 BehPhotoM(animal_ID).GrandSummary.Stim2DACorr = nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.StimAwayDACorr = nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==-1,:));
-
 BehPhotoM(animal_ID).GrandSummary.Stim2DAErr = nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.StimAwayDAErr = nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==-1,:));
-
 BehPhotoM(animal_ID).GrandSummary.Rew2DACorr = nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.RewAwayDACorr = nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:));
-
 BehPhotoM(animal_ID).GrandSummary.Rew2DAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:));
 BehPhotoM(animal_ID).GrandSummary.RewAwayDAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:));
-
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterCorrect=AbsStimRasterCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterError=AbsStimRasterError;
-
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrect=AbsStimRasterLargeCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
-
 BehPhotoM(animal_ID).GrandSummary.AbsActionRasterCorrect=AbsActionRasterCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsActionRasterError=AbsActionRasterError;
-
 BehPhotoM(animal_ID).GrandSummary.AbsActionRasterLargeCorrect=AbsActionRasterLargeCorrect;
 BehPhotoM(animal_ID).GrandSummary.AbsActionRasterSmallCorrect = AbsActionRasterSmallCorrect;
-
-
-
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterCorrectREw=AbsStimRasterCorrectREw;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterErrorREw=AbsStimRasterErrorREw;
-
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterLargeCorrectREw=AbsStimRasterLargeCorrectREw;
 BehPhotoM(animal_ID).GrandSummary.AbsStimRasterSmallCorrectREw = AbsStimRasterSmallCorrectREw;
-
 BehPhotoM(animal_ID).GrandSummary.performance_lowDA = performance_lowDA;
 BehPhotoM(animal_ID).GrandSummary.performance_highDA = performance_highDA;
 
+if iter == 2 && HemIter ==2
 
-% where we save the data
-%cd('\\zubjects.cortexlab.net\Lab\Share\Lak\Morgane')
+BehPhotoM(animal_ID).GrandSummaryR.Performance = performance;
+BehPhotoM(animal_ID).GrandSummaryR.RT = RTAv;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRaster = AbsStimRaster;
+BehPhotoM(animal_ID).GrandSummaryR.AbsActionRaster = AbsActionRaster;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimCorrectErrorNoFold=PopNormBinStimCorrectErrorNoFold;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimNoFold = PopNormBinStimBlocksNoFold;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimCorrect=PopNormBinStimCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimError=PopNormBinStimError;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardCorrectErrorNoFold=PopNormBinRewardCorrectErrorNoFold;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardNoFold = PopNormBinRewardBlocksNoFold;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardCorrect=PopNormBinRewardCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardError=PopNormBinRewardError;
+BehPhotoM(animal_ID).GrandSummaryR.Beep2DACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==1,:));
+BehPhotoM(animal_ID).GrandSummaryR.BeepAwayDACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==-1,:));
+BehPhotoM(animal_ID).GrandSummaryR.Beep2DAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==1,:));
+BehPhotoM(animal_ID).GrandSummaryR.BeepAwayDAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==-1,:));
+BehPhotoM(animal_ID).GrandSummaryR.Stim2DACorr = nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:));
+BehPhotoM(animal_ID).GrandSummaryR.StimAwayDACorr = nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==-1,:));
+BehPhotoM(animal_ID).GrandSummaryR.Stim2DAErr = nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==1,:));
+BehPhotoM(animal_ID).GrandSummaryR.StimAwayDAErr = nanmean(StimData(BehData(:,9)==0 & BehData(:,16)==-1,:));
+BehPhotoM(animal_ID).GrandSummaryR.Rew2DACorr = nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==1,:));
+BehPhotoM(animal_ID).GrandSummaryR.RewAwayDACorr = nanmean(RewardData(BehData(:,9)==1 & BehData(:,16)==-1,:));
+BehPhotoM(animal_ID).GrandSummaryR.Rew2DAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==1,:));
+BehPhotoM(animal_ID).GrandSummaryR.RewAwayDAErr = nanmean(RewardData(BehData(:,9)==0 & BehData(:,16)==-1,:));
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterCorrect=AbsStimRasterCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterError=AbsStimRasterError;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterLargeCorrect=AbsStimRasterLargeCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterSmallCorrect = AbsStimRasterSmallCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.AbsActionRasterCorrect=AbsActionRasterCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.AbsActionRasterError=AbsActionRasterError;
+BehPhotoM(animal_ID).GrandSummaryR.AbsActionRasterLargeCorrect=AbsActionRasterLargeCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.AbsActionRasterSmallCorrect = AbsActionRasterSmallCorrect;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterCorrectREw=AbsStimRasterCorrectREw;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterErrorREw=AbsStimRasterErrorREw;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterLargeCorrectREw=AbsStimRasterLargeCorrectREw;
+BehPhotoM(animal_ID).GrandSummaryR.AbsStimRasterSmallCorrectREw = AbsStimRasterSmallCorrectREw;
+BehPhotoM(animal_ID).GrandSummaryR.performance_lowDA = performance_lowDA;
+BehPhotoM(animal_ID).GrandSummaryR.performance_highDA = performance_highDA;
+
+end
+    
+    
+end
+
+%%
+% Grand Summary data of the animal
+
 
 
 
