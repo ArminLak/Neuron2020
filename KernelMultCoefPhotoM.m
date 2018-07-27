@@ -18,7 +18,7 @@ ModelArrangment = 11
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
 
 % for plotting only
-RTLimit = 2.5; % for visualisng in s, Dont change. excluding trials with RT longer than this
+RTLimit = 3; % for visualisng in s, Dont change. excluding trials with RT longer than this
 
 
 Timereso = 50; %this is in unit of 1200 in s. dont change
@@ -90,15 +90,26 @@ plot(nanmean(StimData))
 
 % trial by trial reaction time (in fact reward stim interval)
 RT = BehData(:,14) - BehData(:,13);
+%RT = BehData(:,10) - BehData (:,13); % compute choice reaction time from action-stim interval
+%RT(RT < 0) = nan;   %few trials with error negative RTs
+
+BehData(:,7)= BehData(:,10) - BehData (:,13);  % put these RTs in the matrix
 
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
     (BehData(:,3)==1 & BehData(:,8)==2));
+
 
 BehData(ToLargeR,16)=1;
 
 ToSmallR = setdiff(1:size(BehData,1),ToLargeR)';
 
 BehData(ToSmallR, 16)=-1;
+
+BehData (:,17) = nan;  % adding aquired reward
+    BehData (intersect(ToLargeR,find(BehData(:,9)==1)),17) = 2;
+    BehData (intersect(ToSmallR,find(BehData(:,9)==1)),17) = 1;  
+    BehData (isnan(BehData(:,17)),17)= 0;
+    
 
 abzStim = unique(abs(BehData(:,2)))';
 
@@ -169,9 +180,7 @@ for fititer=1:1:4
     
     
     [fitKernels, predictedSignals,cvErr] = kernelRegression(inverted_Matrix_to_row', t', eventTimes, eventValues, windows , [0], [0 0]);
-    
-    
-    
+     
     Coefiz=ones(length(beep_time),4);
     
     
@@ -407,27 +416,57 @@ correct = BehData(:,9);
 BehDataAbs = BehData;
 BehDataAbs(:,2) = abs(BehDataAbs(:,2));
 
-tempIndex = find(BehDataAbs(:,2)==0.25);  
+tempIndex = find(BehDataAbs(:,2)==0.25);  % abs stimulus to visualise
 
-BehDataAbs = BehDataAbs(tempIndex,:);
-
-[i j] = sortrows(BehDataAbs,[9 2]);
+%BehDataAbs = BehDataAbs(tempIndex,:);
 
 
+
+ BehData2sort = BehDataAbs;
+   % BehData2sort(:,2)=abs(BehData2sort(:,2)); % sort based on abs of stimulus
+    BehData2sort(BehData2sort(:,2)==0,2) =0.01; % to separate zero contraat rewarded and unrewarded
+    
+   % BehData2sort(BehData2sort(:,17)==0,2)=-BehData2sort(BehData2sort(:,17)==0,2); % label error trials with negative so that they appear first
+    
+    [BehDatasorted j]= sortrows(BehData2sort,[17,2,7]); % final sorting (Correct/Error, abs contrast and RTs)
+    
+    
 figure
 
-
+   t_act = 10 + floor((BehData(:, 10 ) - BehData(:, 13))*24); % 11 s is 328 samples, thus 1 s is 30
+           % t_act(isnan(t_act) )=t_out  -4;
+            
+            
 subplot(1,2,1)
-imagesc(smooth2a(EstimatedSignalStim(j,5:60),0,5),[-1 4])
+imagesc(smooth2a(EstimatedSignalStim(j,5:100),0,5),[-1 8])
 title('estimated stim')
 
 subplot(1,2,2)
-imagesc(SignalStim(j,5:60),[-1 4])
+imagesc(smooth2a(SignalStim(j,8:100),0,5),[-1 8])
 title('real stim')
 colormap('bluewhitered')
 
-
-
+hold on
+      trace = 1;
+        
+      %  for c = 1:length(t_act)
+            
+            for ievent=t_act(j)'
+                
+              %  if trace <= size(TempStimDataforR,1) & isnan(TempStimDataforR(trace,1))==0
+                    
+                   % H=line([ievent,ievent+2], [trace, trace]);
+                   % set(H,'color',[0 0 0],'LineWidth',3)
+                    
+                    plot(ievent,trace,'k.')
+              %  end
+                
+                trace  = trace + 1;
+                
+            end
+            
+       % end
+        
 figure
 subplot(1,2,1)
 imagesc(EstimatedSignalOutcome(j,2:50),[0 5])
