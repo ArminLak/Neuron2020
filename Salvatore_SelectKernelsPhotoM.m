@@ -26,10 +26,7 @@ if ModelArrangment ==8
     windows = {[-400 800];[-400 2600];[-1000 200];[-400 2000]}; %
     
      windows = {[-400 1200];[200 2600];[-1000 200];[0 2000]}; %
-     
-   % windows = {[-400 800];[-400 2600];[-1000 200];[-400 4000]}; % for plotting only
-    
-    
+   
 elseif ModelArrangment ==9 % stim, action
     
       eventTimes = {stim_time; action_onsetTime};
@@ -55,8 +52,21 @@ elseif ModelArrangment ==11
     
     windows = {[-400 800];[-400 2600];[-400 2000]}; %
    windows = {[-400 1200];[200 2600];[0 2000]}; %
- 
    
+    %windows = {[-400 1200];[200 3000];[-400 4000]}; % for mega raster plotting
+   
+        eventTimes = {stim_time; outcome_time};
+
+    windows = {[200 2600];[0 2000]}; %
+
+   elseif ModelArrangment ==11.1
+    
+  
+   
+        eventTimes = {stim_time; outcome_time};
+
+    windows = {[200 2600];[0 2000]}; %
+    
 elseif ModelArrangment  ==12
     
     eventTimes = { action_onsetTime; outcome_time};
