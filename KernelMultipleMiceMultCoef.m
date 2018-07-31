@@ -7,8 +7,9 @@ Animals = [48 50 51]
 
 load('BehPhotoM_Exp23')
 %%
+%  ModelArrangement=15 (it is just similar to model 11) for visualing pop PSTH of the model predictions 
 
- ModelArrangement=11
+ ModelArrangement=15
  
  
 
@@ -94,7 +95,7 @@ end
 %%
 figure % generate pop predicted responses
 subplot(1,3,1)
-plot(smooth(nanmean(PredictedStim1)))
+plot(smooth(nanmean(PredictedStim1),10))
 hold on
 plot(smooth(nanmean(PredictedStim2)))
 plot(smooth(nanmean(PredictedStim3)))
@@ -114,7 +115,7 @@ plot(smooth(nanmean(PredictedRewL)))
 hold on
 plot(smooth(nanmean(PredictedRewS)))
 plot(smooth(nanmean(PredictedRewNo)))
-xlim([7 26])
+xlim([1 33])
 
 
 

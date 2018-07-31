@@ -21,7 +21,8 @@ load('BehPhotoM_Exp23')
 animal_ID = 48
 
 
-ModelArrangment = 11
+ModelArrangment = 15 %  ModelArrangement=15 (it is just similar to model 11) for visualing pop PSTH of the model predictions 
+
 
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
 
@@ -283,7 +284,7 @@ for fititer=1:1:4
             
         end
         
-         if ModelArrangment ==11.1
+         if ModelArrangment ==15
             
             
             zeroPadStim (71+4 :71+47+4) =  (fitKernels{1}');
@@ -604,7 +605,6 @@ plot(resp_CorrOutcomeLarge,'g')
 hold on
 plot(resp_CorrOutcomeSmall,'--g')
 
-
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).Kernels = fitKernels;
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrStimLarge = resp_CorrStimLarge;
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrStimLarge = resp_ErrStimLarge;
@@ -619,12 +619,12 @@ BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_ErrOutcomeLarge=resp_Er
 BehPhotoM(animal_ID).KernelSummary(ModelArrangment).resp_CorrOutcomeSmall=resp_CorrOutcomeSmall;
 
 
-%
+%%
 StimzAbs = abs(BehData(1:end-1,2));
 
 StimsAllowed = unique(StimzAbs');
 
-%%
+%
 figure; hold on
 for i=unique(StimzAbs')
     

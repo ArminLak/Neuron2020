@@ -59,10 +59,11 @@ elseif ModelArrangment ==11
 
     windows = {[200 2600];[0 2000]}; %
 
-   elseif ModelArrangment ==11.1
+   elseif ModelArrangment ==15
     
   
-   
+       eventValues = {[];[]};
+
         eventTimes = {stim_time; outcome_time};
 
     windows = {[200 2600];[0 2000]}; %
