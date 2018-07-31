@@ -15,7 +15,7 @@ close all
 
 
 % select animal
-animal_ID = 50
+animal_ID = 51
 
 % select database
 load('BehPhotoM_Exp23')
@@ -68,14 +68,14 @@ end
 correct = find(TempBehData(:,9)==1);
 error = find(TempBehData(:,9)==0);
 
-%% section 2.1 : non parametric for each animal pre- and post- event
+%% section 2.1 : pre vs post STIMULUS non parametric for one animal
 
 
 %pre and post event time windows (seconds):
 preStart = -0.4;
 preStop = 0;
-postStart = 0;
-postStop = 0.05;
+postStart = 0.2;
+postStop = 0.8;
 
 
 %if looking only at e.g. correct trials of 0.5 contrast use this as 1st index of line 86:
@@ -89,18 +89,20 @@ postStimAverages = nanmean(StimData(:, (eventOnset+(postStart*downSample)):(even
 [prepostStimpvalue, prepostStimNullReject] = ranksum(preStimAverages, postStimAverages)
 
 
-%pre-post Outcome significance (only correct trials) ---------------------
-preOutcomeAverages = nanmean(RewardData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
-postOutcomeAverages = nanmean(RewardData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
-
-[prepostOutcomepvalue, prepostOutcometNullReject] = ranksum(preOutcomeAverages, postOutcomeAverages)
-
+%% section 2.2 : pre vs post OUTCOME non parametric for one animal
 
 %pre and post event time windows (seconds):
 preStart = -0.4;
 preStop = 0;
 postStart = 0.2;
-postStop = 0.8;
+postStop = 0.4;
+
+%pre-post Outcome significance (allt trials) ---------------------
+preOutcomeAverages = nanmean(RewardData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+postOutcomeAverages = nanmean(RewardData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+
+[prepostOutcomepvalue, prepostOutcometNullReject] = ranksum(preOutcomeAverages, postOutcomeAverages)
+
 
 %pre-post Reward significance (only correct trials) ---------------------
 preCorrectAverages = nanmean(RewardData(correct, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
@@ -115,70 +117,70 @@ postErrorAverages = nanmean(RewardData(error, (eventOnset+(postStart*downSample)
 
 [prepostErrorpvalue, prepostErrorNullReject] = ranksum(preErrorAverages, postErrorAverages)
 
+%% section 2.3 : pre vs post ACTION non parametric for one animal
 
-%pre and post event time windows (seconds):
-preStart = -0.4;
+% pre and post event time windows (seconds):
+preStart = -0.15;
 preStop = 0;
 postStart = 0;
-postStop = 0.05;
+postStop = 0.15;
 
-%pre-post Action significance ------------------------
+% pre-post Action significance ------------------------
 preActionAverages = nanmean(ActionData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 postActionAverages = nanmean(ActionData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
 [prepostActionpvalue, prepostActionNullReject] = ranksum(preActionAverages, postActionAverages)
 
 
-%% section 2.2 : non parametric test for response large vs small reward same contrast 
+%% section 2.4 : LARGE VS SMALL REWARD non parametric for one animal
 
 %pre and post event time windows (seconds):
-Start = 0.2;
-Stop = 0.8;
+preStart = -0.4;
+preStop = 0;
+postStart = 0.4;
+postStop = 0.8;
 
 largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
 smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
+
+largeRewpreStimAverages = nanmean(StimData(largeRew, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+largeRewpostStimAverages = nanmean(StimData(largeRew, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+smallRewpreStimAverages = nanmean(StimData(smallRew, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+smallRewpostStimAverages = nanmean(StimData(smallRew, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
     
 % large vs small side Stimulus significance -----------------------------------------
-largeRewStimAverages = nanmean(StimData(largeRew, (eventOnset+(Start*downSample)):(eventOnset+(Stop*downSample))), 2);
-smallRewStimAverages = nanmean(StimData(smallRew, (eventOnset+(Start*downSample)):(eventOnset+(Stop*downSample))), 2);
+largeRewStimAverages = largeRewpostStimAverages - largeRewpreStimAverages;
+smallRewStimAverages = smallRewpostStimAverages - smallRewpreStimAverages;
 
 [largesmallStimpvalue, largesmallStimNullReject] = ranksum(largeRewStimAverages, smallRewStimAverages)
 
+%% section 2.5: REWARD VS ERROR non parametric for one animals
 
 
-%% section 3 : linear regressions for contrast sensitivity of response
+
+
+%% section 3.1 : linear regressions for contrast sensitivity of response to stimulus
 
 
 % create list of responses to stim 
 % create list of contrasts in each response to stim 
 
 % ---- stim contrast v stim response regression analysis -----------
-%pre and post event time windows (seconds):
-start = 0.2;
-stop = 0.4;
+% post event time windows (seconds):
+preStart = -0.4;
+preStop = 0;
+postStart = 0;
+postStop = 0.8;
 
-stimResponses = nanmean(StimData(:, eventOnset + (start*downSample): eventOnset + (stop*downSample)), 2);
+
+preStimAverages = nanmean(StimData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+postStimAverages = nanmean(StimData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+stimResponses = postStimAverages - preStimAverages;
 stimContrasts = abs(BehData(:,2));
 
 stimRegStats = regstats( stimContrasts, stimResponses);
 StimContrastFstat = stimRegStats.fstat.f
 StimContrastFstatPVal = stimRegStats.fstat.pval
-
-
-% ---- stim contrast v stim response regression analysis -----------
-%pre and post event time windows (seconds):
-start = 0.2;
-stop = 0.4;
-
-stimResponses = nanmean(StimData(:, eventOnset + (start*downSample): eventOnset + (stop*downSample)), 2);
-stimContrasts = abs(BehData(:,2));
-
-stimRegStats = regstats( stimContrasts, stimResponses);
-StimContrastFstat = stimRegStats.fstat.f
-StimContrastFstatPVal = stimRegStats.fstat.pval
-
-
-
 
 %% section 4: ANOVA for response to large rwd, small rwd, or no rwd
 
