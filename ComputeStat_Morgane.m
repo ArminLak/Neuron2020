@@ -1,7 +1,16 @@
 % this code does all the t-tests and linear regressions for morgane's masters dissertation 
 % inspired by 'VisualiseMultipleSessions'
 
+% Morgane Moss Jul 2018
+
 % to use this code run section 1 and then run whichever section you want according to which tests you want to carry out
+
+% CONTENTS:
+% Section 2: Non-param pre- vs post-event comparisons (including comparing large vs small reward etc)
+% Section 3: Linear regressions for stim response sensitivity to contrast
+% Section 4: ANOVA for large/small/no reward comparisons for stim and outcome
+% Section 5: Non-param point by point comparisons for summary figs (by contrast)
+% Section 6: Comparison of linear regression slopes for correct/error and large/small reward for stim and outcome
 
 
 %% section 1: load and organise data 
@@ -15,7 +24,7 @@ close all
 
 
 % select animal
-animal_ID = 51
+animal_ID = 48
 
 % select database
 load('BehPhotoM_Exp23')
@@ -262,15 +271,67 @@ errorRewAverages = errorPostRewAverages - errorPreRewAverages;
 
 
 
-%% section 5: point-by-point non parametric comparison of STIMULUS response for each contrast, large vs small reward 
+%% section 5.1: point-by-point non parametric comparison of STIMULUS response for each contrast, large vs small reward 
 
-stimz = unique (BehData(:,2));
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.3;
+postStop = 0.7;
+
+stimz = unique (abs(BehData(:,2)));
 
 %find index of large reward trials with -1 contrast 
 largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
 smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
 
-%pre-define responses
+%pre-define responses. these will be organised with 0 contrast in first column and largest contrast in 4th column
+largeRewResponses = [];
+smallRewResponses = [];
+
+
+for istim = stimz'
+
+    tempIndex = intersect(find(BehData(:,2)==istim),largeRew);
+    addThis = nanmean(StimData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [largeRewResponses] = padconcatenation(largeRewResponses, addThis, 2);
+    
+    tempIndex = intersect(find(BehData(:,2)==istim),smallRew);
+    addThis = nanmean(StimData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [smallRewResponses] = padconcatenation(smallRewResponses, addThis, 2);
+    
+end
+
+
+stimContPVals = nan(2, length(stimz));
+stimContPVals(1,:) = stimz;
+
+
+
+for istim = 1:length(stimz)
+    
+    [p] = ranksum(smallRewResponses(:,istim), largeRewResponses(:,istim));
+    stimContPVals(2,istim) = p;
+    
+    
+end
+
+
+%% section 5.2: point-by-point non parametric comparison of REWARD response for each contrast, large vs small reward 
+
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.3;
+postStop = 0.7;
+
+stimz = unique (abs(BehData(:,2)));
+
+%find index of large reward trials with -1 contrast 
+largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
+smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
+
+%pre-define responses. these will be organised with 0 contrast in first column and largest contrast in 4th column
 largeRewResponses = [];
 smallRewResponses = [];
 
@@ -288,11 +349,108 @@ for istim = stimz'
 end
 
 
+stimContPVals = nan(2, length(stimz));
+stimContPVals(1,:) = stimz;
 
 
 
+for istim = 1:length(stimz)
+    
+    [p] = ranksum(smallRewResponses(:,istim), largeRewResponses(:,istim));
+    stimContPVals(2,istim) = p;
+    
+    
+end
 
 
 
+%% section 5.3: point-by-point non parametric comparison of STIMULUS response for correct vs error
 
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.3;
+postStop = 0.7;
+
+stimz = unique (abs(BehData(:,2)));
+
+%find index of correct and error trials
+correct = find(BehData(:,9)==1);
+error = find(BehData(:,9)==0);
+
+%pre-define responses. these will be organised with 0 contrast in first column and largest contrast in 4th column
+correctResponses = [];
+errorResponses = [];
+
+
+for istim = stimz'
+
+    tempIndex = intersect(find(BehData(:,2)==istim),correct);
+    addThis = nanmean(StimData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [correctResponses] = padconcatenation(correctResponses, addThis, 2);
+    
+    tempIndex = intersect(find(BehData(:,2)==istim),error);
+    addThis = nanmean(StimData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [errorResponses] = padconcatenation(errorResponses, addThis, 2);
+    
+end
+
+
+stimOutcomePVals = nan(2, length(stimz));
+stimOutcomePVals(1,:) = stimz;
+
+
+
+for istim = 1:length(stimz)
+    
+    [p] = ranksum(errorResponses(:,istim), correctResponses(:,istim));
+    stimOutcomePVals(2,istim) = p;
+    
+    
+end
+
+%% section 5.4: point-by-point non parametric comparison of OUTCOME response for correct vs error
+
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.3;
+postStop = 0.7;
+
+stimz = unique (abs(BehData(:,2)));
+
+%find index of correct and error trials
+correct = find(BehData(:,9)==1);
+error = find(BehData(:,9)==0);
+
+%pre-define responses. these will be organised with 0 contrast in first column and largest contrast in 4th column
+correctResponses = [];
+errorResponses = [];
+
+
+for istim = stimz'
+
+    tempIndex = intersect(find(BehData(:,2)==istim),correct);
+    addThis = nanmean(RewardData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(RewardData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [correctResponses] = padconcatenation(correctResponses, addThis, 2);
+    
+    tempIndex = intersect(find(BehData(:,2)==istim),error);
+    addThis = nanmean(RewardData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(RewardData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [errorResponses] = padconcatenation(errorResponses, addThis, 2);
+    
+end
+
+
+rewOutcomePVals = nan(2, length(stimz));
+rewOutcomePVals(1,:) = stimz;
+
+
+
+for istim = 1:length(stimz)
+    
+    [p] = ranksum(errorResponses(:,istim), correctResponses(:,istim));
+    rewOutcomePVals(2,istim) = p;
+    
+    
+end
 
