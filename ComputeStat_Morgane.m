@@ -4,6 +4,7 @@
 % Morgane Moss Jul 2018
 
 % to use this code run section 1 and then run whichever section you want according to which tests you want to carry out
+% unless running section 6 in which case no need to run section 1 first :) 
 
 % CONTENTS:
 % Section 2: Non-param pre- vs post-event comparisons (including comparing large vs small reward etc)
@@ -327,7 +328,7 @@ postStop = 0.7;
 
 stimz = unique (abs(BehData(:,2)));
 
-%find index of large reward trials with -1 contrast 
+%find index of large reward / small reward trials
 largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
 smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
 
@@ -453,4 +454,97 @@ for istim = 1:length(stimz)
     
     
 end
+
+%% Section 6: non-parametric comparison of regression slopes for contrast - dependent responses to stimulus for large vs small reward trials
+
+clear all
+close all
+
+% list of animals
+Animals = [48 50 51]
+
+% Animals = 48
+
+sample_rate = 12000;                                        % photoM recording sampling rate
+downSample = 1200;                                       % factor downsampling the Ca responses
+eventOnset = 3700;  % in the saved matrix, the ev
+
+% post event time windows (seconds):
+preStart = -0.4;
+preStop = 0;
+postStart = 0.2;
+postStop = 0.7;
+
+
+load('BehPhotoM_Exp23')
+
+BehData=[];
+StimData=[];
+RewardData=[];
+
+SRewardSlopes = [];
+LRewardSlopes = [];
+
+    LResponses = [];
+    SResponses = [];
+
+% get all sessions for each animal
+
+for animal_ID = Animals
+    sessionz = 1:length(BehPhotoM(animal_ID).Session);
+
+    for iSession = sessionz
+
+        % for each of these, the event is at column 3700
+        % getting all the data from this session
+        BehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
+        StimData   = BehPhotoM(animal_ID).Session(iSession).NeuronStim;
+        RewardData = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+
+        
+        %Only look at trials with abs contrast < 1
+        stimzAllowed = [0.5 0.25 0.12 0];
+        OKTrials = ismember(abs(BehData(:,2)), stimzAllowed);
+        BehData = BehData(OKTrials, :);
+        StimData = StimData(OKTrials, :);
+        RewardData = RewardData(OKTrials, :);
+       
+        
+        % index for large and small reward trials
+        largeRewIndex = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
+        smallRewIndex = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
+        
+        % stim contrast vectors for large and small reward trials
+        LStimz = abs(BehData(largeRewIndex, 2));
+        SStimz = abs(BehData(smallRewIndex, 2));
+
+        % response vectors for large reward and small reward trials
+        LResponses = nanmean(StimData(largeRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(largeRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        SResponses = nanmean(StimData(smallRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(smallRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+
+        % find regression slope for large and small reward trials for this session
+        LSlope = regress( LStimz, LResponses);
+        SSlope = regress( SStimz, SResponses);
+        
+        % and finally add these to the vector of all slopes for L/S trials
+        [LRewardSlopes] = [LRewardSlopes; LSlope];
+        [SRewardSlopes] = [SRewardSlopes; SSlope];
+    end
+
+
+    
+    end
+    
+
+
+% now we have all the large trial regression slops and all the small trial
+% regression slopes. So now we just do a rank sum to find whether they are
+% the same. 
+
+
+[largesmallStimPVal, largesmallStimNullReject] = ranksum(LRewardSlopes, SRewardSlopes)
+
+
+
+
 
