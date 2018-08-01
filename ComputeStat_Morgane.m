@@ -470,10 +470,10 @@ downSample = 1200;                                       % factor downsampling t
 eventOnset = 3700;  % in the saved matrix, the ev
 
 % post event time windows (seconds):
-preStart = -0.4;
+preStart = -0.2;
 preStop = 0;
-postStart = 0.2;
-postStop = 0.7;
+postStart = 0.9;
+postStop = 1.8;
 
 
 load('BehPhotoM_Exp23')
@@ -502,13 +502,6 @@ for animal_ID = Animals
         RewardData = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
 
         
-        %Only look at trials with abs contrast < 1
-        stimzAllowed = [0.5 0.25 0.12 0];
-        OKTrials = ismember(abs(BehData(:,2)), stimzAllowed);
-        BehData = BehData(OKTrials, :);
-        StimData = StimData(OKTrials, :);
-        RewardData = RewardData(OKTrials, :);
-       
         
         % index for large and small reward trials
         largeRewIndex = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
@@ -519,14 +512,14 @@ for animal_ID = Animals
         SStimz = abs(BehData(smallRewIndex, 2));
 
         % response vectors for large reward and small reward trials
-        LResponses = nanmean(StimData(largeRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(largeRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
-        SResponses = nanmean(StimData(smallRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(smallRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        LResponses = nanmean(StimData(largeRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) %- nanmean(StimData(largeRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        SResponses = nanmean(StimData(smallRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) %- nanmean(StimData(smallRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 
         % find regression slope for large and small reward trials for this session
         stats = regstats( LResponses, LStimz);
-        LSlope = stats.beta(1);
+        LSlope = stats.beta(2);
         stats = regstats( SResponses, SStimz);
-        SSlope = stats.beta(1);
+        SSlope = stats.beta(2);
         
         % and finally add these to the vector of all slopes for L/S trials
         [LRewardSlopes] = [LRewardSlopes; LSlope];
@@ -593,15 +586,7 @@ for animal_ID = Animals
         StimData   = BehPhotoM(animal_ID).Session(iSession).NeuronStim;
         RewardData = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
 
-        
-        %Only look at trials with abs contrast < 1
-        stimzAllowed = [0.5 0.25 0.12 0];
-        OKTrials = ismember(abs(BehData(:,2)), stimzAllowed);
-        BehData = BehData(OKTrials, :);
-        StimData = StimData(OKTrials, :);
-        RewardData = RewardData(OKTrials, :);
-       
-        
+         
         % index for large and small reward trials
         largeRewIndex = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
         smallRewIndex = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
@@ -616,9 +601,9 @@ for animal_ID = Animals
 
         % find regression slope for large and small reward trials for this session
         stats = regstats( LResponses, LStimz);
-        LSlope = stats.beta(1);
+        LSlope = stats.beta(2);
         stats = regstats( SResponses, SStimz);
-        SSlope = stats.beta(1);
+        SSlope = stats.beta(2);
         
         % and finally add these to the vector of all slopes for L/S trials
         [LRewardSlopes] = [LRewardSlopes; LSlope];
