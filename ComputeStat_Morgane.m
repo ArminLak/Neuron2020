@@ -455,7 +455,7 @@ for istim = 1:length(stimz)
     
 end
 
-%% Section 6: non-parametric comparison of regression slopes for contrast - dependent responses to stimulus for large vs small reward trials
+%% Section 6.1: non-parametric comparison of regression slopes for contrast - dependent responses to stimulus for large vs small reward trials
 
 clear all
 close all
