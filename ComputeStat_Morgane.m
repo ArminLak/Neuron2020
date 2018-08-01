@@ -65,8 +65,6 @@ end
 % BehData(toRemove,:) = [];
 
 
-correct = find(TempBehData(:,9)==1);
-error = find(TempBehData(:,9)==0);
 
 %% section 2.1 : pre vs post STIMULUS non parametric for one animal
 
@@ -154,18 +152,33 @@ smallRewStimAverages = smallRewpostStimAverages - smallRewpreStimAverages;
 
 [largesmallStimpvalue, largesmallStimNullReject] = ranksum(largeRewStimAverages, smallRewStimAverages)
 
-%% section 2.5: REWARD VS ERROR non parametric for one animals
+%% section 2.5: REWARD VS ERROR non parametric for one animals (stimulus)
+
+%pre and post event time windows (seconds):
+preStart = -0.4;
+preStop = 0;
+postStart = 0.4;
+postStop = 0.8;
+
+correct = find(BehData(:,9)==1);
+error = find(BehData(:,9)==0);
 
 
+correctPreStimAverages = nanmean(StimData(correct, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+correctPostStimAverages = nanmean(StimData(correct, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+errorPreStimAverages = nanmean(StimData(error, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+errorPostStimAverages = nanmean(StimData(error, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+
+
+% correct vs error Stimulus response significance -----------------------------------------
+correctStimAverages = correctPostStimAverages - correctPreStimAverages;
+errorStimAverages = errorPostStimAverages - errorPreStimAverages;
+
+[correrrStimpvalue, correrrStimNullReject] = ranksum(correctStimAverages, errorStimAverages)
 
 
 %% section 3.1 : linear regressions for contrast sensitivity of response to stimulus
 
-
-% create list of responses to stim 
-% create list of contrasts in each response to stim 
-
-% ---- stim contrast v stim response regression analysis -----------
 % post event time windows (seconds):
 preStart = -0.4;
 preStop = 0;
@@ -178,18 +191,72 @@ postStimAverages = nanmean(StimData(:, (eventOnset+(postStart*downSample)):(even
 stimResponses = postStimAverages - preStimAverages;
 stimContrasts = abs(BehData(:,2));
 
+
+% ---- stim contrast v stim response regression analysis -----------
 stimRegStats = regstats( stimContrasts, stimResponses);
 StimContrastFstat = stimRegStats.fstat.f
 StimContrastFstatPVal = stimRegStats.fstat.pval
 
-%% section 4: ANOVA for response to large rwd, small rwd, or no rwd
+%% section 4.1: ANOVA for response to STIM broken by REWARD (large/small/none)
+
+% post event time windows (seconds):
+preStart = -0.4;
+preStop = 0;
+postStart = 0.4;
+postStop = 0.8;
 
 
+%data for large and small reward trials:
+largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
+smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
+largeRewpreStimAverages = nanmean(StimData(largeRew, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+largeRewpostStimAverages = nanmean(StimData(largeRew, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+smallRewpreStimAverages = nanmean(StimData(smallRew, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+smallRewpostStimAverages = nanmean(StimData(smallRew, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+
+% data for error trials:
+error = find(BehData(:,9)==0);
+errorPreStimAverages = nanmean(StimData(error, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+errorPostStimAverages = nanmean(StimData(error, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+ 
 
 
+largeRewStimAverages = largeRewpostStimAverages - largeRewpreStimAverages;
+smallRewStimAverages = smallRewpostStimAverages - smallRewpreStimAverages;
+errorStimAverages = errorPostStimAverages - errorPreStimAverages;
+
+[outcome] = padcat(largeRewStimAverages, smallRewStimAverages, errorStimAverages);
+[p] = anova1(outcome)
 
 
+%% section 4.2: ANOVA for response to OUTCOME broken by REWARD (large/small/none)
+
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.3;
+postStop = 0.7;
 
 
+%data for large and small reward trials:
+largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
+smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
+largePreRewAverages = nanmean(RewardData(largeRew, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+largePostRewAverages = nanmean(RewardData(largeRew, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+smallPreRewAverages = nanmean(RewardData(smallRew, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+smallPostRewAverages = nanmean(RewardData(smallRew, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
+% data for error trials: s0 
+error = find(BehData(:,9)==0);
+errorPreRewAverages = nanmean(RewardData(error, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+errorPostRewAverages = nanmean(RewardData(error, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+ 
+
+
+largeRewAverages = largePostRewAverages - largePreRewAverages;
+smallRewAverages = smallPostRewAverages -  smallPreRewAverages;
+errorRewAverages = errorPostRewAverages - errorPreRewAverages;
+
+[outcome] = padcat(largeRewAverages, smallRewAverages, errorRewAverages);
+[p] = anova1(outcome)
 
