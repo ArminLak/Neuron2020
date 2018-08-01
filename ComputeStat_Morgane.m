@@ -260,3 +260,39 @@ errorRewAverages = errorPostRewAverages - errorPreRewAverages;
 [outcome] = padcat(largeRewAverages, smallRewAverages, errorRewAverages);
 [p] = anova1(outcome)
 
+
+
+%% section 5: point-by-point non parametric comparison of STIMULUS response for each contrast, large vs small reward 
+
+stimz = unique (BehData(:,2));
+
+%find index of large reward trials with -1 contrast 
+largeRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==2)))]);
+smallRew = sort([(intersect(find(BehData(:,9)==1 & BehData(:,3)==1), find(BehData(:,8)==1))); (intersect(find(BehData(:,9)==1 & BehData(:,3)==-1), find(BehData(:,8)==2)))]);
+
+%pre-define responses
+largeRewResponses = [];
+smallRewResponses = [];
+
+
+for istim = stimz'
+
+    tempIndex = intersect(find(BehData(:,2)==istim),largeRew);
+    addThis = nanmean(RewardData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(RewardData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [largeRewResponses] = padconcatenation(largeRewResponses, addThis, 2);
+    
+    tempIndex = intersect(find(BehData(:,2)==istim),smallRew);
+    addThis = nanmean(RewardData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(RewardData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+    [smallRewResponses] = padconcatenation(smallRewResponses, addThis, 2);
+    
+end
+
+
+
+
+
+
+
+
+
+
