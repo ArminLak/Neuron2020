@@ -25,7 +25,7 @@ close all
 
 
 % select animal
-animal_ID = 48
+animal_ID = 51
 
 % select database
 load('BehPhotoM_Exp23')
@@ -39,7 +39,7 @@ eventOnset = 3700;  % in the saved matrix, the ev
 % define implant
 Implant = 'Un' 
 
-RTLimit = 10; % in s, excluding trials with RT longer than this
+RTLimit = 6; % in s, excluding trials with RT longer than this
 
 BehData = [];
 BeepData = [];
@@ -108,6 +108,9 @@ preStart = -0.4;
 preStop = 0;
 postStart = 0.2;
 postStop = 0.4;
+
+correct = find(BehData(:,9)==1);
+error = find(BehData(:,9)==0);
 
 %pre-post Outcome significance (allt trials) ---------------------
 preOutcomeAverages = nanmean(RewardData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
@@ -297,11 +300,11 @@ smallRewResponses = [];
 
 for istim = stimz'
 
-    tempIndex = intersect(find(BehData(:,2)==istim),largeRew);
+    tempIndex = intersect(find(abs(BehData(:,2))==istim),largeRew);
     addThis = nanmean(StimData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
     [largeRewResponses] = padconcatenation(largeRewResponses, addThis, 2);
     
-    tempIndex = intersect(find(BehData(:,2)==istim),smallRew);
+    tempIndex = intersect(find(abs(BehData(:,2))==istim),smallRew);
     addThis = nanmean(StimData(tempIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(tempIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
     [smallRewResponses] = padconcatenation(smallRewResponses, addThis, 2);
     
@@ -473,13 +476,13 @@ sample_rate = 12000;                                        % photoM recording s
 downSample = 1200;                                       % factor downsampling the Ca responses
 eventOnset = 3700;  % in the saved matrix, the ev
 
-RTLimit = 10; % in s, excluding trials with RT longer than this
+RTLimit = 6; % in s, excluding trials with RT longer than this
 
 
 % post event time windows (seconds):
-preStart = -0.3;
+preStart = -0.2;
 preStop = 0;
-postStart = 0.9;
+postStart = 0.7;
 postStop = 1.9;
 
 
@@ -524,8 +527,8 @@ for animal_ID = Animals
         SStimz = abs(BehData(smallRewIndex, 2));
 
         % response vectors for large reward and small reward trials
-        LResponses = nanmean(StimData(largeRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(largeRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
-        SResponses = nanmean(StimData(smallRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2) - nanmean(StimData(smallRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        LResponses = nanmean(StimData(largeRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);% - nanmean(StimData(largeRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        SResponses = nanmean(StimData(smallRewIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2); %- nanmean(StimData(smallRewIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 
         % find regression slope for large and small reward trials for this session
         stats = regstats( LResponses, LStimz);
@@ -566,7 +569,7 @@ sample_rate = 12000;                                        % photoM recording s
 downSample = 1200;                                       % factor downsampling the Ca responses
 eventOnset = 3700;  % in the saved matrix, the ev
 
-RTLimit = 10; % in s, excluding trials with RT longer than this
+RTLimit = 6; % in s, excluding trials with RT longer than this
 
 % post event time windows (seconds):
 preStart = -0.4;
@@ -597,8 +600,15 @@ for animal_ID = Animals
         % for each of these, the event is at column 3700
         % getting all the data from this session
         BehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
-        StimData   = BehPhotoM(animal_ID).Session(iSession).NeuronStim;
         RewardData = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+        
+                
+        RT = BehData(:,10) - BehData(:,13);
+
+        % remove trials where RT > RTLimit (defined above)
+        toRemove = find ( RT > RTLimit);
+        BehData(toRemove,:) = [];
+        RewardData(toRemove,:) = [];
 
          
         % index for large and small reward trials
@@ -638,4 +648,199 @@ for animal_ID = Animals
 [largesmallOutcomePVal, largesmallOutcomeNullReject] = ranksum(LRewardSlopes, SRewardSlopes)
 
 
+
+%% Section 6.3: non-parametric comparison of regression slopes for contrast - dependent responses to stimulus for correct vs error trials
+
+clear all
+close all
+
+% list of animals
+Animals = [48 50 51]
+
+% Animals = 48
+
+sample_rate = 12000;                                        % photoM recording sampling rate
+downSample = 1200;                                       % factor downsampling the Ca responses
+eventOnset = 3700;  % in the saved matrix, the ev
+
+RTLimit = 6; % in s, excluding trials with RT longer than this
+
+
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.7;
+postStop = 1.9;
+
+
+load('BehPhotoM_Exp23')
+
+BehData=[];
+StimData=[];
+
+CorrectSlopes = [];
+ErrorSlopes = [];
+
+CorrectResponses = [];
+ErrorResponses = [];
+CorrectPVals = [];
+ErrorPVals = [];
+
+% get all sessions for each animal
+
+for animal_ID = Animals
+    sessionz = 1:length(BehPhotoM(animal_ID).Session);
+
+    for iSession = sessionz
+
+        % for each of these, the event is at column 3700
+        % getting all the data from this session
+        BehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
+        StimData   = BehPhotoM(animal_ID).Session(iSession).NeuronStim;
+        
+        RT = BehData(:,10) - BehData(:,13);
+
+        % remove trials where RT > RTLimit (defined above)
+        toRemove = find ( RT > RTLimit);
+        BehData(toRemove,:) = [];
+        StimData(toRemove,:) = [];
+
+        
+        % index for correct and error trials
+        correctIndex = find(BehData(:,9)==1);
+        errorIndex = find(BehData(:,9)==0);
+        
+        % stim contrast vectors for large and small reward trials
+        CorrectStimz = abs(BehData(correctIndex, 2));
+        ErrorStimz = abs(BehData(errorIndex, 2));
+
+        % response vectors for large reward and small reward trials
+        CorrectResponses = nanmean(StimData(correctIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2); - nanmean(StimData(correctIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        ErrorResponses = nanmean(StimData(errorIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2); - nanmean(StimData(errorIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+
+        % find regression slope for large and small reward trials for this session
+        stats = regstats( CorrectResponses, CorrectStimz);
+        CSlope = stats.beta(2);
+        CPVal = stats.fstat.pval;
+        stats = regstats( ErrorResponses, ErrorStimz);
+        ESlope = stats.beta(2);
+        EPVal = stats.fstat.pval;
+        
+        % and finally add these to the vector of all slopes for L/S trials
+        [CorrectSlopes] = [CorrectSlopes; CSlope];
+        [ErrorSlopes] = [ErrorSlopes; ESlope];
+        [CorrectPVals] = [CorrectPVals; CPVal];
+        [ErrorPVals] = [ErrorPVals; EPVal];
+    end
+
+
+    
+    end
+
+
+
+% now we have all the large trial regression slops and all the small trial
+% regression slopes. So now we just do a rank sum to find whether they are
+% the same. 
+
+
+[correrrStimPVal, correrrStimNullReject] = ranksum(CorrectSlopes, ErrorSlopes)
+
+
+%% Section 6.4: non-parametric comparison of regression slopes for contrast - dependent responses to outcome for correct vs error trials
+
+clear all
+close all
+
+% list of animals
+Animals = [48 50 51]
+
+% Animals = 48
+
+sample_rate = 12000;                                        % photoM recording sampling rate
+downSample = 1200;                                       % factor downsampling the Ca responses
+eventOnset = 3700;  % in the saved matrix, the ev
+
+RTLimit = 6; % in s, excluding trials with RT longer than this
+
+
+% post event time windows (seconds):
+preStart = -0.2;
+preStop = 0;
+postStart = 0.3;
+postStop = 0.9;
+
+
+load('BehPhotoM_Exp23')
+
+BehData=[];
+RewardData=[];
+
+CorrectSlopes = [];
+ErrorSlopes = [];
+
+CorrectResponses = [];
+ErrorResponses = [];
+CorrectPVals = [];
+ErrorPVals = [];
+
+% get all sessions for each animal
+
+for animal_ID = Animals
+    sessionz = 1:length(BehPhotoM(animal_ID).Session);
+
+    for iSession = sessionz
+
+        % for each of these, the event is at column 3700
+        % getting all the data from this session
+        BehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
+        RewardData = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+        
+        RT = BehData(:,10) - BehData(:,13);
+
+        % remove trials where RT > RTLimit (defined above)
+        toRemove = find ( RT > RTLimit);
+        BehData(toRemove,:) = [];
+        RewardData(toRemove,:) = [];
+
+        
+        % index for correct and error trials
+        correctIndex = find(BehData(:,9)==1);
+        errorIndex = find(BehData(:,9)==0);
+        
+        % stim contrast vectors for large and small reward trials
+        CorrectStimz = abs(BehData(correctIndex, 2));
+        ErrorStimz = abs(BehData(errorIndex, 2));
+
+        % response vectors for large reward and small reward trials
+        CorrectResponses = nanmean(RewardData(correctIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2); - nanmean(RewardData(correctIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+        ErrorResponses = nanmean(RewardData(errorIndex, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2); - nanmean(RewardData(errorIndex, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
+
+        % find regression slope for large and small reward trials for this session
+        stats = regstats( CorrectResponses, CorrectStimz);
+        CSlope = stats.beta(2);
+        CPVal = stats.fstat.pval;
+        stats = regstats( ErrorResponses, ErrorStimz);
+        ESlope = stats.beta(2);
+        EPVal = stats.fstat.pval;
+        
+        % and finally add these to the vector of all slopes for L/S trials
+        [CorrectSlopes] = [CorrectSlopes; CSlope];
+        [ErrorSlopes] = [ErrorSlopes; ESlope];
+        [CorrectPVals] = [CorrectPVals; CPVal];
+        [ErrorPVals] = [ErrorPVals; EPVal];
+    end
+
+
+    
+    end
+
+
+
+% now we have all the large trial regression slops and all the small trial
+% regression slopes. So now we just do a rank sum to find whether they are
+% the same. 
+
+
+[correrrStimPVal, correrrStimNullReject] = ranksum(CorrectSlopes, ErrorSlopes)
 
