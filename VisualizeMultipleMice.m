@@ -237,8 +237,12 @@ ylabel('P(R)')
 title( 'Psychometric curves')
 set(gca,'TickDir','out','Box','off');
 
+
+
 plot(StimAllowed,nanmean(PerBlock1),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 plot(StimAllowed,nanmean(PerBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+
+
 legend('LargeRew@L','LargeRew@R','Location','southeast')
 
 
