@@ -3,7 +3,7 @@
 % Morgane Moss June 2018
 
 clear all
-close all
+% close all
 
 % things to do:
 %1. tickdirection out

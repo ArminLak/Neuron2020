@@ -9,7 +9,7 @@ close all
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 % session 5 of ALK068 is chosen to be shown in paper figure
 
-% animal_ID = 51
+animal_ID = 51
 
 animal_name = 'ALK071'
 exp_date   = '2018-03-01'
@@ -19,8 +19,8 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 
 %%
 
-start = 100 % trace time section in seconds
-stop = 200
+start = 166 % trace time section in seconds
+stop = 186
 sample_rate = 12000
 
 %-------------------------------find path, add path and load data----------------------------------
