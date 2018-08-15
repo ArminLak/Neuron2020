@@ -10,22 +10,22 @@ close all
 
 
 %VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
-% NAc : [57] coresponding to MMM001(Un)
 % DMS : [53, 55] coresponding to ALK074(Bi), ALK075(Bi)
+% NAc : [57] coresponding to MMM001(Un)
 
 
 % select animal
-animal_ID = 53
+animal_ID = 57
 
 % select database
 %load('BehPhotoM_Exp23')
 
-%load('BehPhotoM_Exp23_NAc')
+load('BehPhotoM_Exp23_NAc')
 
-load('BehPhotoM_Exp23_DMS')
+%load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Bi' 
+Implant = 'Un' 
 
 
 if strcmp(Implant,'Un')
@@ -439,8 +439,8 @@ ylabel('Norm response')
 
 % make raster for large/small or correct/error
 
-
-for iStim = 1:length(abzStim)
+c=1;
+for iStim = abzStim
     
     AbsStimRasterCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
     AbsStimRasterError(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));

@@ -72,47 +72,53 @@ elseif strcmp(animal_name,'ALK045')   % 64 chan Holtzman, 4 * 16 linear parallel
 elseif strcmp(animal_name,'ALK052')   % 374 neuropixel,
     chan_order = [];
     animal_ID  = 42;
-     
+    
     chan_order = chan_order  +1;
     
 elseif strcmp(animal_name,'ALK068')   % photometry,
     chan_order = [];
     animal_ID  = 48;
-     
-    chan_order = chan_order  +1;   
     
-    elseif strcmp(animal_name,'ALK070')   % photometry,
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'ALK070')   % photometry,
     chan_order = [];
     animal_ID  = 50;
-     
-    chan_order = chan_order  +1; 
-    elseif strcmp(animal_name,'ALK071')   % photometry,
+    
+    chan_order = chan_order  +1;
+elseif strcmp(animal_name,'ALK071')   % photometry,
     chan_order = [];
     animal_ID  = 51;
-     
-    chan_order = chan_order  +1; 
     
-        elseif strcmp(animal_name,'ALK074')   % photometry,
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'ALK074')   % photometry,
     chan_order = [];
     animal_ID  = 53;
-     
-    chan_order = chan_order  +1; 
     
-     elseif strcmp(animal_name,'ALK075')   % photometry,
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'ALK075')   % photometry,
     chan_order = [];
     animal_ID  = 55;
-     
-    chan_order = chan_order  +1; 
     
-     elseif strcmp(animal_name,'ALK078')   % photometry,
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'ALK078')   % photometry,
     chan_order = [];
     animal_ID  = 56;
-     
-    chan_order = chan_order  +1; 
     
-    elseif strcmp(animal_name,'MMM001')   % photometry,
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'MMM001')   % photometry,
     chan_order = [];
     animal_ID  = 57;
-     
-    chan_order = chan_order  +1; 
+    
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'MMM002')   % photometry,
+    chan_order = [];
+    animal_ID  = 59;
+    
+    chan_order = chan_order  +1;
 end
