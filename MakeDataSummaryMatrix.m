@@ -13,7 +13,7 @@ close all
 % hem)
 
 
-animal_name = 'ALK074'
+animal_name = 'ALK075'
 
 %Unilatral or bilateral ('Un' or 'Bi')
 Implant = 'Bi'
@@ -24,23 +24,33 @@ elseif strcmp(Implant,'Bi')
     ChanNum =[1 2];
 end;
 
-% give a list of sessions (dont modify these numbers)
+% ------ give a list of sessions (don't modify these numbers)
 
 % VTA animals, Exp 23
 SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24];           % ALK068 Exp23
 SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24];    % ALK070 Exp23
 SessionList = [10, 11, 12,13, 14,19];                             % ALK071 Exp23 % 15-18 are bad
 
+% DMS animals Exp 23
+SessionList = [21,22,23,24,25,26,27]; % ALK074, exp 23
+SessionList = [15, 16,17,18,19];      % ALK075, exp 23
 
-SessionList = [21,22,23,24]; % ALK074, exp 23
+% NAc animals Exp 23
 
-%SessionList = [13,14,15,16]; % MMM001, exp 23
+% SessionList = [13,14,15,16, 18, 19, 20, 21, 22, 23, 24, 25]; % MMM001, exp 23
 
+% ------------------------------------------------------------------------
 
 % This is the structure that will hold the data
 
-%load('BehPhotoM_Exp23.mat') % in case it is saved, u can load it to add
+%select database in case it is saved, u can load it to add
 %more animals
+
+%load('BehPhotoM_Exp23')
+
+%load('BehPhotoM_Exp23_NAc')
+
+load('BehPhotoM_Exp23_DMS')
 
 %--------------- useful information --------------------------------------
 % task event

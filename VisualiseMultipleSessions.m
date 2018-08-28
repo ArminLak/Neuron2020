@@ -10,17 +10,17 @@ close all
 
 
 %VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
-% NAc : [57] coresponding to MMM001
-% DMS : [53] coresponding to ALK074
+% DMS : [53, 55] coresponding to ALK074(Bi), ALK075(Bi)
+% NAc : [57] coresponding to MMM001(Un)
 
 
 % select animal
-animal_ID = 51
+animal_ID = 57
 
 % select database
-load('BehPhotoM_Exp23')
+%load('BehPhotoM_Exp23')
 
-%load('BehPhotoM_Exp23_NAc')
+load('BehPhotoM_Exp23_NAc')
 
 %load('BehPhotoM_Exp23_DMS')
 
@@ -35,7 +35,7 @@ elseif strcmp(Implant,'Bi')
 end;
 
 
-RTLimit = 10; % in s, excluding trials with RT longer than this
+RTLimit = 6; % in s, excluding trials with RT longer than this
 
 color = [
     1 0 0         % red
@@ -437,12 +437,10 @@ title('Stimulus Align')
 xlabel('Contrast')
 ylabel('Norm response')
 
-% for 2 middle stimuli, make raster for large/small or correct/error
-c=1;
-middleStim =abzStim(2:3);
-middleStim =abzStim(1:4);
+% make raster for large/small or correct/error
 
-for iStim = middleStim
+c=1;
+for iStim = abzStim
     
     AbsStimRasterCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
     AbsStimRasterError(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
@@ -463,7 +461,7 @@ end
 
 %plot((AbsStimRasterCorrect(2,:)),'g','LineWidth',2)
 %plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
-for i = 1:4
+for i = 1:length(abzStim)
     
     subplot(6,3,3); hold on
 
@@ -516,7 +514,7 @@ ylabel('Norm response')
 c=1;
 
 
-for iStim = abzStim(1:4)
+for iStim = abzStim
     
     AbsStimRasterCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
     AbsStimRasterErrorREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
@@ -528,7 +526,7 @@ for iStim = abzStim(1:4)
     c=c+1;
 end
     
-for i = 1:4
+for i = 1:length(abzStim)
     
     subplot(6,3,15); hold on
 
