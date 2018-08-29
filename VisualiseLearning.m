@@ -1,7 +1,7 @@
 clear all
 % close all
 
-animal_name = 'MMM002'
+animal_name = 'MMM001'
 
 
 
