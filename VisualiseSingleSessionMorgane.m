@@ -36,15 +36,7 @@ postAlign = ((sample_rate/downsampleScale)*abs(start)+200):((sample_rate/downsam
 
 %---------------- colors for plotting-------------------------------------
 
-colorGray4 = [0.8 0.8 0.8
-    0.6 0.6 0.6
-    0.3 0.3 0.3
-    0 0 0];
-colorGray3 = [0.8 0.8 0.8
-    0.4 0.4 0.4
-    0 0 0];
-colorGray2 = [0.7 0.7 0.7
-    0 0 0];
+
 colorGreen = [0 1 0
     0 0.8 0
     0 0.6 0
