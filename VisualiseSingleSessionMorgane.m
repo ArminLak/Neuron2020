@@ -1,8 +1,8 @@
 % clear all
 % close all
 
-animal_name = 'ALK075'
-exp_date   = '2018-05-14'
+animal_name = 'MMM002'
+exp_date   = '2018-08-22'
 exp_series ='1'
 
 %Unilatral or bilateral

@@ -11,11 +11,11 @@ close all
 
 %VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
 % DMS : [53, 55] coresponding to ALK074(Bi), ALK075(Bi)
-% NAc : [57] coresponding to MMM001(Un)
+% NAc : [56, 57] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un)
 
 
 % select animal
-animal_ID = 57
+animal_ID = 59
 
 % select database
 %load('BehPhotoM_Exp23')
@@ -325,7 +325,7 @@ NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3400:3800),2);
 
 else
     
-NormBinStim = mean(StimData(:,4500:5000),2);
+NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3400:3800),2);
     
 end
 
