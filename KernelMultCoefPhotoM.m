@@ -16,9 +16,11 @@ close all
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-load('BehPhotoM_Exp23')
+%load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23_NAc.mat')
+
 %
-animal_ID = 48
+animal_ID = 56
 
 
 ModelArrangment = 15 %  ModelArrangement=15 (it is just similar to model 11) for visualing pop PSTH of the model predictions 

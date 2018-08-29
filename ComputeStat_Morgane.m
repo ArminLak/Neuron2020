@@ -25,7 +25,7 @@ close all
 
 
 % select animal
-animal_ID = 51
+animal_ID = 48
 
 % select database
 load('BehPhotoM_Exp23')
@@ -116,35 +116,35 @@ error = find(BehData(:,9)==0);
 preOutcomeAverages = nanmean(RewardData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 postOutcomeAverages = nanmean(RewardData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
-[prepostOutcomepvalue, prepostOutcometNullReject] = ranksum(preOutcomeAverages, postOutcomeAverages)
+[prepostOutcomepvalue, prepostOutcometNullReject] = signrank(preOutcomeAverages, postOutcomeAverages)
 
 
 %pre-post Reward significance (only correct trials) ---------------------
 preCorrectAverages = nanmean(RewardData(correct, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 postCorrectAverages = nanmean(RewardData(correct, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
-[prepostCorrectpvalue, prepostCorrectNullReject] = ranksum(preCorrectAverages, postCorrectAverages)
+[prepostCorrectpvalue, prepostCorrectNullReject] = signrank(preCorrectAverages, postCorrectAverages)
 
 
 %pre-post Error significance (only error trials) ------------------------
 preErrorAverages = nanmean(RewardData(error, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 postErrorAverages = nanmean(RewardData(error, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
-[prepostErrorpvalue, prepostErrorNullReject] = ranksum(preErrorAverages, postErrorAverages)
+[prepostErrorpvalue, prepostErrorNullReject] = signrank(preErrorAverages, postErrorAverages)
 
 %% section 2.3 : pre vs post ACTION non parametric for one animal
 
 % pre and post event time windows (seconds):
-preStart = -0.15;
+preStart = -0.5;
 preStop = 0;
 postStart = 0;
-postStop = 0.15;
+postStop = 0.05;
 
 % pre-post Action significance ------------------------
 preActionAverages = nanmean(ActionData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 postActionAverages = nanmean(ActionData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
-[prepostActionpvalue, prepostActionNullReject] = ranksum(preActionAverages, postActionAverages)
+[prepostActionpvalue, prepostActionNullReject] = signrank(preActionAverages, postActionAverages)
 
 
 %% section 2.4 : LARGE VS SMALL REWARD non parametric for one animal
