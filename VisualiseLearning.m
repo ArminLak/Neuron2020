@@ -1,13 +1,33 @@
 clear all
-close all
+% close all
 
-animal_name = 'MMM001'
+animal_name = 'MMM002'
+
+
+
 
 if animal_name == 'MMM001'
     exp_dates   = [{'2018-07-09', '2018-07-10', '2018-07-11', '2018-07-12', '2018-07-16'}];
     exp_series =[{'1', '1', '1', '1', '3'}];
     ylimrwd = [-1.5 2];
-elseif animal_name == 'ALK
+    ylimstim = [-1 2];
+elseif animal_name == 'ALK071'
+    exp_dates   = [{'2018-02-23', '2018-02-27', '2018-02-28', '2018-03-01', '2018-03-02'}];
+    exp_series =[{'1', '1', '1', '1', '3'}];
+    ylimrwd = [-1 15];
+    ylimstim = [-2 8];
+elseif animal_name == 'ALK070'
+    exp_dates   = [{'2018-01-24', '2018-01-25', '2018-01-29', '2018-01-30'}];
+    exp_series =[{'1', '3', '2', '2'}];
+    ylimrwd = [-1 2];
+    ylimstim = [-1 2];
+elseif animal_name == 'MMM002'
+    exp_dates   = [{'2018-08-01', '2018-08-02', '2018-08-06', '2018-08-07', '2018-08-08', '2018-08-10'}];
+    exp_series =[{'1', '1', '1', '1', '1', '2'}];
+    ylimrwd = [-3 5];
+    ylimstim = [-1 3];
+end
+
 
 %--------------- useful information --------------------------------------
 % task event
@@ -137,7 +157,7 @@ for iSession = 1:numel(exp_dates)
         title('Stimulus response')
     end
     
-    ylim([-1 2])
+    ylim(ylimstim)
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([''])
@@ -162,7 +182,7 @@ for iSession = 1:numel(exp_dates)
         title('Reward response')
     end
     
-    ylim([-1.5 2])
+    ylim(ylimrwd)
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([''])
