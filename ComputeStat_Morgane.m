@@ -25,7 +25,7 @@ close all
 
 
 % select animal
-animal_ID = 48
+animal_ID = 51
 
 % select database
 load('BehPhotoM_Exp23')
@@ -135,16 +135,16 @@ postErrorAverages = nanmean(RewardData(error, (eventOnset+(postStart*downSample)
 %% section 2.3 : pre vs post ACTION non parametric for one animal
 
 % pre and post event time windows (seconds):
-preStart = -0.5;
-preStop = 0;
+preStart = -0.1; %-0.6
+preStop =  0 ;
 postStart = 0;
-postStop = 0.05;
+postStop = 0.1; %0.6 %for ALK070
 
 % pre-post Action significance ------------------------
 preActionAverages = nanmean(ActionData(:, (eventOnset+(preStart*downSample)):(eventOnset+(preStop*downSample))), 2);
 postActionAverages = nanmean(ActionData(:, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
 
-[prepostActionpvalue, prepostActionNullReject] = signrank(preActionAverages, postActionAverages)
+[prepostActionpvalue, prepostActionNullReject, zval] = ranksum(preActionAverages, postActionAverages)
 
 
 %% section 2.4 : LARGE VS SMALL REWARD non parametric for one animal
@@ -461,6 +461,20 @@ for istim = 1:length(stimz)
     
     
 end
+%% Section 5.5: Compare post-stimulus trials for stimuli on the right and on the left
+
+postStart = 0;
+postStop = 0.8;
+
+Left  = find( BehData(:,3)==-1 & abs(BehData(:,2))==0);
+
+Right  = find( BehData(:,3)==1 & abs(BehData(:,2))==0);
+
+postStimAveragesLeft = nanmean(StimData(Left, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+postStimAveragesRight = nanmean(StimData(Right, (eventOnset+(postStart*downSample)):(eventOnset+(postStop*downSample))), 2);
+
+[p h zval] = ranksum ( postStimAveragesLeft,postStimAveragesRight)
+
 
 %% Section 6.1: non-parametric comparison of regression slopes for contrast - dependent responses to stimulus for large vs small reward trials
 
