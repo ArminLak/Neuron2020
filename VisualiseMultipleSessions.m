@@ -11,11 +11,11 @@ close all
 
 %VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
 % DMS : [53, 55] coresponding to ALK074(Bi), ALK075(Bi)
-% NAc : [56, 57] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un)
+% NAc : [56, 57,59] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un)
 
 
 % select animal
-animal_ID = 59
+animal_ID = 56
 
 % select database
 %load('BehPhotoM_Exp23')
@@ -25,7 +25,7 @@ load('BehPhotoM_Exp23_NAc')
 %load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Un' 
+Implant = 'Bi' 
 
 
 if strcmp(Implant,'Un')
@@ -311,17 +311,31 @@ ylabel('Norm response')
 if animal_ID == 48 
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
 
-end
 
-if animal_ID == 50 
+
+elseif animal_ID == 50 
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3100:3400),2);
 
-end
 
-if animal_ID == 51
+elseif animal_ID == 51
 
 %NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
 NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3400:3800),2);
+
+
+elseif animal_ID == 56
+    
+NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3100:3500),2);
+
+
+elseif animal_ID == 57
+    
+NormBinStim = mean(StimData(:,4300:5000),2)- mean(StimData(:,3400:3800),2);
+
+elseif animal_ID == 59
+    
+NormBinStim = mean(StimData(:,4400:4800),2);
+
 
 else
     
@@ -554,6 +568,18 @@ end
 
 if animal_ID == 50
 NormBinReward = mean(RewardData(:,4100:5000),2) - mean(RewardData(:,3800:3900),2);
+end
+
+if animal_ID == 56
+NormBinReward = mean(RewardData(:,4000:4800),2) - mean(RewardData(:,3400:3800),2);
+end
+
+if animal_ID == 57
+NormBinReward = mean(RewardData(:,4000:4800),2) - mean(RewardData(:,3200:3700),2);
+end
+
+if animal_ID == 59
+NormBinReward = mean(RewardData(:,4000:4800),2);
 end
 
 

@@ -2,13 +2,22 @@ clear all
 close all
 
 % list of animals
-Animals = [48 50 51]
+%Animals = [48 50 51]
 
-load('BehPhotoM_Exp23')
+%load('BehPhotoM_Exp23')
+
+
+Animals = [56, 57,59]
+
+load('BehPhotoM_Exp23_NAc')
+
+
 
 TimingVisualise = [-0.2 0.8
                   -0.8, 0.2
                   -0.2, 0.8]; % stim, action, reward in s
+              
+              
               sampleRate = 1200;
               StartTime = 3700; % saved in the database.
 
@@ -66,6 +75,12 @@ GrandPopRewBin = nan(4,4,length(Animals));
 c=1;
 
 for iAnimal = Animals
+    
+    if iAnimal == 56  % we will use R hem of this animal (left hem gives the same results)
+        
+        BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
+    end
+    
     
     PerBlock1(c,:)=BehPhotoM(iAnimal).GrandSummary.Performance(1,:);
     RTBlock1(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(1,:);

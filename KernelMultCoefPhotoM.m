@@ -6,24 +6,47 @@ close all
 
 % it also plots mega raster for the paper. For this change the following:
 % put RTLimit = 3
-% comment around line 75
+% comment around line 85
 % set model to 11
 % in the selectkernel code, set windows for the plotting
 % under section dealing with model 11 (in this code), select the line which
 % has correct windows duration
 
+% model 11: for real analysis 
+% model 11 with modified RT, and kernel duration for mega raster in the
+% paper
+% model 15 for pop PSTH of model prediction
 
+% includes regression stats for regressing coefficents on chosenValue and
+% RPE
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-%load('BehPhotoM_Exp23')
-load('BehPhotoM_Exp23_NAc.mat')
+load('BehPhotoM_Exp23')
+%load('BehPhotoM_Exp23_NAc.mat')
 
 %
-animal_ID = 56
+animal_ID = 51
 
+if animal_ID ==48
+animal_name = 'ALK068'
+elseif animal_ID ==50
+animal_name = 'ALK070'
+elseif animal_ID ==51
+animal_name = 'ALK071'
+elseif animal_ID ==56
+animal_name = 'ALK078'
 
-ModelArrangment = 15 %  ModelArrangement=15 (it is just similar to model 11) for visualing pop PSTH of the model predictions 
+elseif animal_ID ==57
+animal_name = 'MMM001'
+
+elseif animal_ID ==56
+animal_name = 'MMM002'
+
+end
+    
+
+ModelArrangment = 11 %  ModelArrangement=15 (it is just similar to model 11) for visualing pop PSTH of the model predictions 
 
 
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
@@ -68,6 +91,14 @@ for iSession = sessionz
     TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
     TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
     TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+    
+    if animal_ID ==56 % for ALK078 we use right hem data 
+    
+    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
+    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
+    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
+    end
+    
     
     BeepData = [BeepData;TempBeepData];
     StimData = [StimData;TempStimData];
@@ -370,7 +401,74 @@ for fititer=1:1:4
     
 end
 
+%%
+          % this part is fitting the correct RL model on choices, using saved
+          %  parameters.
+            ExpID='23';
+            
+            CrossVal= LoadSavedRLFits (animal_name, ExpID);
+            
+            
+            FullModelParamZ(1,:)=CrossVal.Results(1,1).TopModelParams;
+            FullModelParamZ(2,:)=CrossVal.Results(1,2).TopModelParams;
+            
+            FullModelParam = nanmean(FullModelParamZ);
+            iter=10;
+            
+            TempBehData=BehData;
+            
+            TempBehData(:,10)=BehData(:,9);
+            
+            BehFitData.data = TempBehData(:,1:15);
+            
+            [data_models, action, ~, ~, ~ ] = RunPOMDP_GS_NLL_withLapse(BehFitData,FullModelParam,iter);
+            
+            
+            ChosenVal = [];
+            
+            ChosenVal(data_models(:,3)==-1) =    data_models(data_models(:,3)==-1,17) ;
+            ChosenVal(data_models(:,3)==1) =     data_models(data_models(:,3)==1,18) ;
+            
+      
+            RPE = data_models(:,21)' ;
+            
+            
+            % regress coeffients on chosen value and RPEs
+              iChosenValRange = linspace (min(ChosenVal)+0.1, max(ChosenVal)-0.1,9);
+     
+            iChosenValInt = iChosenValRange(2) - iChosenValRange(1);
+             
+            iChosenValCount = 1;
+            for iChosenVal = iChosenValRange (1:end-1)
+                
+                indi = intersect(find(ChosenVal > iChosenVal ),find(ChosenVal < (iChosenVal + iChosenValInt))) ;
+                
+                DAvsChosenValBIN (iChosenValCount)    = nanmean(Coefiz(indi,2));
+  
+                iChosenValCount = iChosenValCount + 1;
+            end
+            
+             stat_ChosenVal=regstats(DAvsChosenValBIN,iChosenValRange (1:end-1))
+            
+              iRPERange = linspace (min(RPE)+0.1, max(RPE)-0.1,9);
+           
 
+           iRPERangeInt = iRPERange(2) - iRPERange(1);
+             
+            iRPECount = 1;
+            for iRPE = iRPERange (1:end-1)
+                
+                indi = intersect(find(RPE > iRPE ),find(RPE < (iRPE + iRPERangeInt))) ;
+                
+                DAvsRPEBIN (iRPECount)     = nanmean(Coefiz(indi,4));
+  
+                iRPECount = iRPECount + 1;
+            end
+            
+       stat_RPE=regstats(DAvsRPEBIN,iRPERange (1:end-1))
+%%
+          
+            
 figure
 
 plot(t,smooth(inverted_Matrix_to_row' + randn(1,length(inverted_Matrix_to_row)),20));

@@ -1,9 +1,9 @@
-% clear all
-% close all
+ clear all
+ close all
 
 animal_name = 'MMM002'
-exp_date   = '2018-08-22'
-exp_series ='1'
+exp_date   = '2018-08-15'
+exp_series ='3'
 
 %Unilatral or bilateral
 Implant = 'Un'  % or 'Bi'  % in progress
@@ -20,8 +20,8 @@ start = -1 % s this should be -1 or less
 stop=1     % s
 
 % original data is sammple 12K per s. We downsample 10 times making it 1.2K
-% per s. We define 2 s before and 2 s after the event (4 * 1.2k) we stay
-% conservative by keeping 4700 of 4800 (so event is at 2320  sample)
+% per s. We define 3 s before and 8 s after the event (11 * 1.2k) we stay
+% conservative by keeping 13700 of 13800 (so event is at 3700  sample)
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
@@ -45,6 +45,11 @@ colorRed = [1 0 0
     0.8 0 0
     0.6 0  0
     0.3 0 0];
+
+colorGray4 = [0.8 0.8 0.8
+    0.6 0.6 0.6
+    0.3 0.3 0.3
+    0 0 0];
 %-------------------------------find path, add path and load data----------------------------------
 % read animals' ID
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
