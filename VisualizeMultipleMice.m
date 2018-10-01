@@ -2,15 +2,19 @@ clear all
 close all
 
 % list of animals
-%Animals = [48 50 51]
+Animals = [48 50 51]
 
-%load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23')
 
 
-Animals = [56, 57,59]
+%Animals = [56, 57 59]
 
-load('BehPhotoM_Exp23_NAc')
+%load('BehPhotoM_Exp23_NAc')
 
+
+%Animals = [53,55]
+
+%load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8
