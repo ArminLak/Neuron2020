@@ -38,8 +38,9 @@ SessionList = [15, 16,17,18,19];      % ALK075, exp 23
 % NAc animals Exp 23
 
  SessionList = [13,14,15,16, 18, 19, 20, 21, 22, 23, 24, 25]; % MMM001, exp 23
- SessionList = [4:13];  % ALK078, exp 23, important: this is temp
- SessionList = [11:18]; % MMM002, exp 23, 
+ SessionList = [23:32];  % ALK078, 
+ SessionList = [15,16,17,18,20,21,22,23]; % MMM002, exp 23, 
+ %SessionList = [19,20,21,22,23]; % MMM002, exp 23, 
 
 
 % ------------------------------------------------------------------------
