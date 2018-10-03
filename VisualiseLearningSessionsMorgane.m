@@ -6,41 +6,39 @@
 clear all
 close all
 
-animal_name = 'ALK071'
+animal_name = 'ALK068'
 
 
 
-if animal_name == 'ALK068'
-    SessionList = [1, 2, 3, 4, 5, 6];
-    ylimrwd = [-2 2];
-    ylimstim = [-1 2.5];
-    load('BehPhotoM_Exp23')                                   % load beh data databseB
-    
-elseif animal_name == 'ALK070'
-    SessionList = [1, 2, 3, 4, 5, 6];
-    ylimrwd = [-2 2];
-    ylimstim = [-1 1.5];
-    load('BehPhotoM_Exp23')                                   % load beh data databse
-    
-elseif animal_name == 'ALK071'
-    SessionList = [1, 2, 3, 4, 5, 6];
-    ylimrwd = [-8 15];
-    ylimstim = [-3 6];
-    load('BehPhotoM_Exp23')                                   % load beh data databse
 
-elseif animal_name == 'MMM001'
+if animal_name == 'MMM001'
     SessionList = [1, 2, 3, 5, 7]; % to review: error with session 6
+%     exp_dates   = [{'2018-07-09', '2018-07-10', '2018-07-11', '2018-07-12', '2018-07-16'}];
+%     exp_series =[{'1', '1', '1', '1', '3'}];
     ylimrwd = [-3 6];
     ylimstim = [-3 2];
-    load('BehPhotoM_Exp23_NAc')                                   % load beh data databse
- 
-
+elseif animal_name == 'ALK071'
+    SessionList = [1, 3, 4, 5];
+%     exp_dates   = [{'2018-02-23', '2018-02-27', '2018-02-28', '2018-03-01', '2018-03-02'}];
+%     exp_series =[{'1', '1', '1', '1', '3'}];
+    ylimrwd = [-1 15];
+    ylimstim = [-2 8];
+elseif animal_name == 'ALK070'
+    SessionList = [1, 2, 3, 4, 5];
+%     exp_dates   = [{'2018-01-24', '2018-01-25', '2018-01-29', '2018-01-30'}];
+%     exp_series =[{'1', '3', '2', '2'}];
+    ylimrwd = [-1 2];
+    ylimstim = [-1 2];
 elseif animal_name == 'MMM002'
     SessionList = [1, 2, 3, 4, 5, 6, 7];
+%     exp_dates   = [{'2018-08-01', '2018-08-02', '2018-08-06', '2018-08-07', '2018-08-08', '2018-08-10'}];
+%     exp_series =[{'1', '1', '1', '1', '1', '2'}];
     ylimrwd = [-4 7];
     ylimstim = [-3 3];
-    load('BehPhotoM_Exp23_NAc')                                   % load beh data databse
-
+elseif animal_name == 'ALK068'
+    SessionList = [1, 2, 3, 5, 6];
+    ylimrwd = [-4 4];
+    ylimstim = [-1 3];
 end
 
 
@@ -56,7 +54,7 @@ start = 0 % s this should be -1 or less
 stop = 2    % s
 
 
-
+load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
 
@@ -96,24 +94,32 @@ for iSession = SessionList
     TargetSession = iSession
  
     % load Beh data and photometry data
-    TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
+    TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData;
     
-    NeuronStim = BehPhotoM(animal_ID).Session(TargetSession).NeuronStim;
-    NeuronStim = NeuronStim(:, (3+start)*sample_rate/downsampleScale:(3+stop)*sample_rate/downsampleScale);
-    
-    NeuronReward = BehPhotoM(animal_ID).Session(TargetSession).NeuronReward;
-    NeuronReward = NeuronReward(:, (3+start)*sample_rate/downsampleScale:(3+stop)*sample_rate/downsampleScale);
-        
     StimzAbs=unique(abs(TrialTimingData(:,2)))';
+    
+    % delay for wheel movement
+    FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 
+    % load photoM data
+    photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
+    load(photoMFileName);
+    
+    DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
+    TimeStamps=photoMdata.Time_s_;
+    
+    
     % ------------------- stimulus plot ------------------------------
+    
+    event_times = TrialTimingData(:,13); % stimulus onset
+    [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
     subplot(length(SessionList), 2, plotnum ); hold on
     
     
     c=1;
     for istim = StimzAbs
-        h = plot(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray4(c,:),'LineWidth',2)
+        h = plot(nanmean(Raster_MatrixStim(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray4(c,:),'LineWidth',2)
 
         if length(StimzAbs)==4
             set(h, 'color', colorGray4(c,:));
@@ -129,11 +135,11 @@ for iSession = SessionList
     end
     
     if length(StimzAbs)==4
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
+        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','best');
     elseif length(StimzAbs)==3
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
+        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','best');
     elseif length(StimzAbs)==2
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
+        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'best');
     end
     
     
@@ -146,7 +152,6 @@ for iSession = SessionList
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([''])
     ylabel('{\Delta} F / F')
-    
     if plotnum == length(SessionList)*2 - 1
         xlabel ('Time (s)')
         xticklabels([start:1:stop])
@@ -158,29 +163,18 @@ for iSession = SessionList
     
     % ------------------- reward plot --------------------------------
     
+    event_times = TrialTimingData(:,14); %reward onset
+    [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+    
     subplot(length(SessionList), 2, plotnum ); hold on
+    
+    plot(nanmean(Raster_MatrixReward(TrialTimingData(:,9)==1,:)), 'green', 'LineWidth', 2)
+    plot(nanmean(Raster_MatrixReward(TrialTimingData(:,9)==0,:)), 'red', 'LineWidth', 2)
     
     if plotnum == 2
         title('Reward response')
     end
     
-   if numel(StimzAbs) > 2
-        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5]);
-        correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,:))), 'green', 'LineWidth', 2)  % plot for stim = max stim 
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,:))), 'green', 'LineWidth', 2)  % plot for stim = min stim 
-   elseif numel(StimzAbs) == 2
-        correcteasy = abs(TrialTimingData(:,2)==[1]);
-        correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,:))), 'green', 'LineWidth', 2)  % plot for stim = max stim 
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,:))), 'green', 'LineWidth', 2)  % plot for stim = min stim 
-   elseif numel(StimzAbs) == 1
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1,:)), 'green', 'LineWidth', 2)
-   end
-    
-    hold on; 
-    plot(nanmean(NeuronReward(TrialTimingData(:,9)==0,:)), 'red', 'LineWidth', 2)
-
     ylim(ylimrwd)
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])

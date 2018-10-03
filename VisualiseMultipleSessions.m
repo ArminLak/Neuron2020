@@ -18,7 +18,7 @@ close all
 animal_ID = 56
 
 % select database
-%load('BehPhotoM_Exp23')
+% load('BehPhotoM_Exp23')
 
 load('BehPhotoM_Exp23_NAc')
 
