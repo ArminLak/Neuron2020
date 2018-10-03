@@ -6,8 +6,9 @@
 clear all
 close all
 
-animal_name = 'ALK071'
+animal_name = 'ALK068'
 
+z = 'y' % option to z-score data 
 
 
 if animal_name == 'ALK068'
@@ -18,7 +19,7 @@ if animal_name == 'ALK068'
     
 elseif animal_name == 'ALK070'
     SessionList = [1, 2, 3, 4, 5, 6];
-    ylimrwd = [-2 2];
+    ylimrwd = [-2 3];
     ylimstim = [-1 1.5];
     load('BehPhotoM_Exp23')                                   % load beh data databse
     
@@ -33,7 +34,6 @@ elseif animal_name == 'MMM001'
     ylimrwd = [-3 6];
     ylimstim = [-3 2];
     load('BehPhotoM_Exp23_NAc')                                   % load beh data databse
- 
 
 elseif animal_name == 'MMM002'
     SessionList = [1, 2, 3, 4, 5, 6, 7];
@@ -42,6 +42,12 @@ elseif animal_name == 'MMM002'
     load('BehPhotoM_Exp23_NAc')                                   % load beh data databse
 
 end
+
+if z == 'y'
+    ylimstim = [-3 3];
+    ylimrwd = [-3 3];
+end
+
 
 
 %--------------- useful information --------------------------------------
@@ -55,7 +61,7 @@ end
 start = 0 % s this should be -1 or less
 stop = 2    % s
 
-
+ 
 
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
@@ -77,7 +83,10 @@ colorGray3 = [0.8 0.8 0.8
     0 0 0];
 colorGray2 = [0.7 0.7 0.7
     0 0 0];
-
+colorGreen = [0 1 0
+    0 0.8 0
+    0 0.6 0
+    0  0.3 0];
 
 %-------------------------------find path, add path and load data----------------------------------
 % read animals' ID
@@ -113,8 +122,13 @@ for iSession = SessionList
     
     c=1;
     for istim = StimzAbs
-        h = plot(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray4(c,:),'LineWidth',2)
-
+        if z == 'y'
+            h = plot(zscore(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim,:))),'color',colorGray4(c,:),'LineWidth',2)
+        elseif z == 'n'
+            h = plot(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray4(c,:),'LineWidth',2)
+        end
+        
+        
         if length(StimzAbs)==4
             set(h, 'color', colorGray4(c,:));
         elseif length(StimzAbs)==3
@@ -128,17 +142,18 @@ for iSession = SessionList
         c=c+1;
     end
     
-    if length(StimzAbs)==4
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
-    elseif length(StimzAbs)==3
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
-    elseif length(StimzAbs)==2
-        l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
-    end
+
     
     
     if plotnum == 1
         title('Stimulus response')
+        if length(StimzAbs)==4
+            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
+        elseif length(StimzAbs)==3
+            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
+        elseif length(StimzAbs)==2
+            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
+        end
     end
     
     ylim(ylimstim)
@@ -160,22 +175,36 @@ for iSession = SessionList
     
     subplot(length(SessionList), 2, plotnum ); hold on
     
-    if plotnum == 2
-        title('Reward response')
-    end
+
     
    if numel(StimzAbs) > 2
         correcteasy = abs(TrialTimingData(:,2)==[1, 0.5]);
         correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,:))), 'green', 'LineWidth', 2)  % plot for stim = max stim 
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,:))), 'green', 'LineWidth', 2)  % plot for stim = min stim 
+        if z == 'n'
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1,:)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1,:)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+        elseif z == 'y'
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1,:))), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1,:))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+        end
+        
    elseif numel(StimzAbs) == 2
         correcteasy = abs(TrialTimingData(:,2)==[1]);
-        correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,:))), 'green', 'LineWidth', 2)  % plot for stim = max stim 
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,:))), 'green', 'LineWidth', 2)  % plot for stim = min stim 
+        correcthard = abs(TrialTimingData(:,2)==[0.5, 0.25, 0.12, 0]);
+        if z == 'n'
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1,:)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1,:)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+        elseif z == 'y'
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1,:))), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1,:))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+        end
+        
    elseif numel(StimzAbs) == 1
-        plot(nanmean(NeuronReward(TrialTimingData(:,9)==1,:)), 'green', 'LineWidth', 2)
+        if z == 'n'
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1,:)), 'color', colorGreen(3,:), 'LineWidth', 2)
+        elseif z == 'y'
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1,:))), 'color', colorGreen(3,:), 'LineWidth', 2)
+        end
    end
     
     hold on; 
@@ -185,6 +214,11 @@ for iSession = SessionList
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([''])
+    
+    if plotnum == 2
+        title('Reward response')
+        legend('Easy & correct', 'Hard & correct', 'Error', 'location', 'northeast')
+    end
 
     if plotnum == length(SessionList)*2
         xlabel ('Time (s)')
