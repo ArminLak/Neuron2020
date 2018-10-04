@@ -6,28 +6,28 @@
 clear all
 close all
 
-animal_name = 'ALK068'
+animal_name = 'ALK070'
 
-z = 'y' % option to z-score data 
+z = 'n' % option to z-score data 
 
 
 if animal_name == 'ALK068'
-    SessionList = [1, 2, 3, 4, 5, 6];
+    SessionList = [1:11];
     ylimrwd = [-2 2];
     ylimstim = [-1 2.5];
-    load('BehPhotoM_Exp23')                                   % load beh data databseB
+    load('BehPhotoM_Exp7_VTA')                                   % load beh data databseB
     
 elseif animal_name == 'ALK070'
-    SessionList = [1, 2, 3, 4, 5, 6];
+    SessionList = [1:9]; %weaker signal in sessions 10 and 11 
     ylimrwd = [-2 3];
     ylimstim = [-1 1.5];
-    load('BehPhotoM_Exp23')                                   % load beh data databse
+    load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
     
 elseif animal_name == 'ALK071'
-    SessionList = [1, 2, 3, 4, 5, 6];
+    SessionList = [1:9];
     ylimrwd = [-8 15];
     ylimstim = [-3 6];
-    load('BehPhotoM_Exp23')                                   % load beh data databse
+    load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
 
 elseif animal_name == 'MMM001'
     SessionList = [1, 2, 3, 5, 7]; % to review: error with session 6
@@ -43,7 +43,7 @@ elseif animal_name == 'MMM002'
 
 end
 
-if z == 'n'
+if z == 'y'
     ylimstim = [-3 3];
     ylimrwd = [-3 3];
 end
@@ -114,44 +114,53 @@ for iSession = SessionList
  
     % load Beh data and photometry data
     TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
+    TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
     
     NeuronStim = BehPhotoM(animal_ID).Session(TargetSession).NeuronStim;
+    NeuronStimCor = NeuronStim(TrialTimingData(:,9)==1, :);
     
     NeuronReward = BehPhotoM(animal_ID).Session(TargetSession).NeuronReward;
+    NeuronRewardCor = NeuronReward(TrialTimingData(:,9)==1, :);
         
-    StimzAbs=unique(abs(TrialTimingData(:,2)))';
+    %StimzAbs=unique(abs(TrialTimingData(:,2)))';
+    StimzAbs = [0 0.12 0.25 0.5 1.0];
 
     % ------------------- stimulus plot ------------------------------
 
     subplot(length(SessionList), 2, plotnum ); hold on
     
     
-    c=1;
+  %  c=4;
+    
+    
     for stimcount = 1:length(StimzAbs)
+        stimcolumn = 6 - stimcount; % column 1 will be stim 1.0 and column 5 will be stim 0
         istim = StimzAbs(stimcount);
         
         if z == 'y'
-            h = plot(zscore(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim, start2stop))),'color',colorGray4(c,:),'LineWidth',2)
+            h = plot(zscore(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==istim, start2stop))),'color',colorGray4(stimcount,:),'LineWidth',2)
         elseif z == 'n'
-            h = plot(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim, start2stop)),'color',colorGray4(c,:),'LineWidth',2)
+            h = plot(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==istim, start2stop)),'color',colorGray4(stimcount,:),'LineWidth',2)
         end
         
-        StimResponseSummary(TargetSession,stimcount)  = nanmean(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim, postAlignStim))) - nanmean(nanmean(NeuronStim(abs(TrialTimingData(:,2))==istim, preAlignStim))); %difference between before and after; indicator of relative signal change 
-        RwdResponseSummary(TargetSession,stimcount)  = nanmean(nanmean(NeuronReward(abs(TrialTimingData(:,2))==istim, postAlignRwd))) - nanmean(nanmean(NeuronReward(abs(TrialTimingData(:,2))==istim, preAlignRwd))); %difference between before and after; indicator of relative signal change 
+        StimResponseSummary(TargetSession,stimcolumn)  = nanmean(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), postAlignStim)))...
+            - nanmean(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), preAlignStim))); %difference between before and after; indicator of relative signal change 
+        RwdResponseSummary(TargetSession,stimcolumn)  = nanmean(nanmean(NeuronRewardCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), postAlignRwd))) ...
+            - nanmean(nanmean(NeuronRewardCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), preAlignRwd))); %difference between before and after; indicator of relative signal change 
 
         
         
         if length(StimzAbs)==4
-            set(h, 'color', colorGray4(c,:));
+            set(h, 'color', colorGray4(stimcount,:));
         elseif length(StimzAbs)==3
-            set(h, 'color', colorGray3(c,:));
+            set(h, 'color', colorGray3(stimcount,:));
         elseif length(StimzAbs)==2
-            set(h, 'color', colorGray2(c,:));
+            set(h, 'color', colorGray2(stimcount,:));
         elseif length(StimzAbs)==1
             set(h, 'color', colorGray2(2,:));
         end
 
-        c=c+1;
+   %     c=c-1;
     end
     
 
@@ -249,23 +258,23 @@ end
 figure; hold on 
 
 subplot(1, 2, 1) % stim first 
-c = 2;
-for i = 1 %:size(StimResponseSummary, 2)
+c = 1;
+for i = 1:size(StimResponseSummary, 2)
     
-    plot(StimResponseSummary(:, i), 'o-', 'color', colorGray4(c,:))
+    plot(StimResponseSummary(:, i), 'o-', 'color', colorGray4(c,:), 'markerFaceColor', colorGray4(c,:), 'MarkerSize', 3.5, 'LineWidth', 1)
     
     c = c+1;
     
     hold on
     
 end
-c = 2;
+c = 1;
 
 subplot(1, 2, 2) % reward second 
 
-for i = 1 %:size(StimResponseSummary, 2)
+for i = 1:size(StimResponseSummary, 2)
     
-    plot(RwdResponseSummary(:, i), 'o-', 'color', colorGray4(c,:))
+    plot(RwdResponseSummary(:, i), 'o-', 'color', colorGray4(c,:), 'markerFaceColor', colorGray4(c,:), 'MarkerSize', 3.5, 'LineWidth', 1)
     
     c = c+1;
     

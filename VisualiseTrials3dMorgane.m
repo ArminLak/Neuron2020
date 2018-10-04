@@ -6,11 +6,11 @@
 clear all
 % close all
 
-animal_name = 'MMM002'
+animal_name = 'ALK071'
 
 
 if animal_name == 'MMM001'
-    SessionList = [1, 2, 3, 4, 5, 7]; % to review: error with session 6
+    SessionList = [1, 2, 3, 4, 5, 6, 7]; % to review: error with session 6
 %     exp_dates   = [{'2018-07-09', '2018-07-10', '2018-07-11', '2018-07-12', '2018-07-16'}];
 %     exp_series =[{'1', '1', '1', '1', '3'}];
 elseif animal_name == 'ALK071'
@@ -20,17 +20,22 @@ elseif animal_name == 'ALK070'
 elseif animal_name == 'MMM002'
     SessionList = [1, 2, 3, 4, 5, 6, 7];
 elseif animal_name == 'ALK068'
-    SessionList = [1, 3, 5, 6];
+    SessionList = [1, 2, 3, 4, 5, 6];
 end
 
 start = 0 % s this should be -1 or less
 stop = 2    % s
+event_time = 3 % this is when the event happens in the neuron file
+
 
 SmoothFactor = 10
 
-load('MiceExpInfoPhotoM')                                   % load beh data databse
+load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
+
+
+start2stop = (event_time+start)*sample_rate/downsampleScale:(event_time+stop)*sample_rate/downsampleScale; %window of interest
 
 % read animals' ID
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
@@ -43,25 +48,17 @@ Zrew = [];
 for TargetSession = SessionList 
     
 % load Beh data and photometry data
-    TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData;
+  
+    TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
+    TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
+    
+    NeuronStim = BehPhotoM(animal_ID).Session(TargetSession).NeuronStim;
+    NeuronStimCor = NeuronStim(TrialTimingData(:,9)==1, :);
+    
+    NeuronReward = BehPhotoM(animal_ID).Session(TargetSession).NeuronReward;
+    NeuronRewardCor = NeuronReward(TrialTimingData(:,9)==1, :);
     
     StimzAbs=unique(abs(TrialTimingData(:,2)))';
-    
-    % delay for wheel movement
-    FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
-
-    % load photoM data
-    photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
-    load(photoMFileName);
-    
-    DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
-    TimeStamps=photoMdata.Time_s_;
-    
-    event_times = TrialTimingData(:,13); % stimulus onset
-    [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
-    
-    event_times = TrialTimingData(:,14); %reward onset
-    [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
     
 %     tempZ = tempRaster_MatrixStim'; % get trial # on x axis, time on y axis
     
@@ -69,8 +66,8 @@ for TargetSession = SessionList
 %     tempZ = smooth2a(tempZ, SmoothFactor);
 %     tempZ = flipud(tempZ); % get y axis to read left to right
     
-    Zstim = [Zstim; Raster_MatrixStim]; % 
-    Zrew = [Zrew; Raster_MatrixReward];
+    Zstim = [Zstim; NeuronStimCor(:, start2stop)]; % 
+    Zrew = [Zrew; NeuronRewardCor(:, start2stop)];
 
 end
 
