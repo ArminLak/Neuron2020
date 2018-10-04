@@ -13,7 +13,7 @@ close all
 % hem)
 
 
-animal_name = 'MMM002'
+animal_name = 'ALK071'
 
 %Unilatral or bilateral ('Un' or 'Bi')
 Implant = 'Un'
@@ -42,6 +42,12 @@ SessionList = [15, 16,17,18,19];      % ALK075, exp 23
  SessionList = [15,16,17,18,20,21,22,23]; % MMM002, exp 23, 
  %SessionList = [19,20,21,22,23]; % MMM002, exp 23, 
 
+ 
+ % Naive learning VTA animals
+SessionList = [1,3,5:13]; % ALk068, Exp 7
+SessionList = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]; % ALk070, Exp 7
+SessionList = [1:9]; %ALK071 Exp 7
+
 
 % ------------------------------------------------------------------------
 
@@ -52,9 +58,12 @@ SessionList = [15, 16,17,18,19];      % ALK075, exp 23
 
 %load('BehPhotoM_Exp23')
 
-load('BehPhotoM_Exp23_NAc')
+%load('BehPhotoM_Exp23_NAc')
 
 %load('BehPhotoM_Exp23_DMS')
+
+load('BehPhotoM_Exp7_VTA')
+
 
 %--------------- useful information --------------------------------------
 % task event
