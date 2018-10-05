@@ -1,4 +1,4 @@
-% See how performance and response size changes with stimulus contrast (and later: across sessions)
+% See how response to stimulus changes with overall performance across sessions
 % Morgane Moss Oct 2018
 
 clear all
@@ -13,7 +13,7 @@ load('BehPhotoM_Exp7_VTA')  % load beh data database
 
 %%
 
-SessionList = [1:9]; %for now keep this one number 
+SessionList = [1:11]; %for now keep this one number 
 
 
 StimPerformance = nan(max(SessionList), 5); % 1 to 5 are 0, 0.12, 0.25, 0.5, 1.0 contrast levels. 
@@ -29,6 +29,7 @@ downsampleScale = 10;                                       % factor downsamplin
 preAlignStim = (event_time-0.4)*sample_rate/downsampleScale : (event_time-0)*sample_rate/downsampleScale;
 postAlignStim = (event_time+0.2)*sample_rate/downsampleScale : (event_time+0.8)*sample_rate/downsampleScale;
 
+%%
 % ------------- create performance matrix --------------------------------
 % columns are stim 0 , 0.12 , 0.25, 0.5, 1 (blanks are nan)
 % rows are sessions in order 
@@ -55,24 +56,19 @@ end
 StimPerformance(StimPerformance == 0) = nan;
 
 
-
-%%
 % ---------- scatter --------- 
 
 figure; hold on 
-c = 1;
 
 for isession = SessionList
     
     for stimcount = 1:length(StimzAbs)
         
-        if StimResponse(isession, stimcount) > 0
-            plot(StimPerformance(isession, stimcount), StimzAbs(stimcount), 'o', 'color', [1-StimResponse(isession, stimcount) 1-StimResponse(isession, stimcount) 1-StimResponse(isession, stimcount)],...
-            'markerFaceColor', [1-StimResponse(isession, stimcount) 1-StimResponse(isession, stimcount) 1-StimResponse(isession, stimcount)])
-        elseif StimResponse(isession, stimcount) < 0
-            plot(StimPerformance(isession, stimcount), StimzAbs(stimcount), 'o', 'color', [0 0 1+StimResponse(isession, stimcount)], ...
-                'markerFacecolor', [0 0 1+StimResponse(isession, stimcount)])
-        end
+        c = (isession-1)/max(SessionList);
+        
+        % first session = black, last session = lightest 
+        
+        plot(StimPerformance(isession, stimcount), StimResponse(isession, stimcount), 'o', 'color', [c c c], 'MarkerFaceColor', [c c c])
         
     end
     
@@ -80,14 +76,6 @@ for isession = SessionList
 end
 
 xlabel('P(correct)')
-yticks([0 0.12 0.25 0.5 1.0])
-ylabel('Stim contrast')
-
-
-%%
-% ------ heat map --------
-
-
-
+ylabel('Response to stimulus')
 
 
