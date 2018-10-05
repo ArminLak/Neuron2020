@@ -6,7 +6,7 @@
 clear all
 close all
 
-animal_name = 'ALK070'
+animal_name = 'ALK068'
 
 z = 'n' % option to z-score data 
 
@@ -29,19 +29,28 @@ elseif animal_name == 'ALK071'
     ylimstim = [-3 6];
     load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
 
-elseif animal_name == 'MMM001'
-    SessionList = [1, 2, 3, 5, 7]; % to review: error with session 6
-    ylimrwd = [-3 6];
-    ylimstim = [-3 2];
-    load('BehPhotoM_Exp23_NAc')                                   % load beh data databse
 
-elseif animal_name == 'MMM002'
-    SessionList = [1, 2, 3, 4, 5, 6, 7];
-    ylimrwd = [-4 7];
-    ylimstim = [-3 3];
-    load('BehPhotoM_Exp23_NAc')                                   % load beh data databse
+elseif animal_name == 'ALK074'
+    SessionList = [1:11];
+    ylimrwd = [-5 15];
+    ylimstim = [-5 15];
+    load('BehPhotoM_Exp7_DMS')
 
+    
+    elseif animal_name == 'ALK075'
+    SessionList = [1:11];
+    ylimrwd = [-0.5 1];
+    ylimstim = [-.5 1];
+    load('BehPhotoM_Exp7_DMS')
+
+     elseif animal_name == 'MMM001'
+    SessionList = [1:11];
+    ylimrwd = [-1 2];
+    ylimstim = [-1 2];
+    load('BehPhotoM_Exp7_NAc')
 end
+
+
 
 if z == 'y'
     ylimstim = [-3 3];
@@ -118,7 +127,7 @@ for iSession = SessionList
     %StimzAbs=unique(abs(TrialTimingData(:,2)))';
     StimzAbs = [0 0.12 0.25 0.5 1.0];
 
-    % ------------------- stimulus plot ------------------------------
+    % ------------------- Grans summary ------------------------------
 
     subplot(length(SessionList), 2, plotnum ); hold on
     
