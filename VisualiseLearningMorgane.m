@@ -58,13 +58,6 @@ if z == 'y'
 end
 
 
-
-%--------------- useful information --------------------------------------
-% task event
-% 10: action time
-% 12: beep 
-% 13: stimulus 
-% 14: reward
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
 start = -1 % s this should be -1 or less
@@ -143,7 +136,7 @@ for iSession = SessionList
     
     
     for stimcount = 1:length(StimzAbs)
-        stimcolumn = 6 - stimcount; % column 1 will be stim 1.0 and column 5 will be stim 0
+        stimcolumn = 6 - stimcount; % % column 1 is 0 contrast and column 5 is 1.0 contrast
         istim = StimzAbs(stimcount);
         
         if z == 'y'
