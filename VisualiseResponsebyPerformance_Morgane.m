@@ -4,7 +4,7 @@
 clear all
 % close all
 
-animal_name = 'ALK070'
+animal_name = 'ALK071'
 
 load('BehPhotoM_Exp7_VTA')  % load beh data database 
 
@@ -13,7 +13,7 @@ load('BehPhotoM_Exp7_VTA')  % load beh data database
 
 %%
 
-SessionList = [1:11]; %for now keep this one number 
+SessionList = 1:length(BehPhotoM(animal_ID).Session); %for now keep this one number 
 
 
 StimPerformance = nan(max(SessionList), 5); % 1 to 5 are 0, 0.12, 0.25, 0.5, 1.0 contrast levels. 
@@ -41,13 +41,13 @@ for isession = SessionList
     NeuronStim = BehPhotoM(animal_ID).Session(isession).NeuronStim; % load photom data 
 
     for stimcount = 1:length(StimzAbs)
-        istim = StimzAbs(stimcount)
+        istim = StimzAbs(stimcount);
 
         StimPerformance(isession, stimcount) = length(find(abs(TrialTimingDataCor(:,2))==istim))...
             / length(find(abs(TrialTimingData(:,2))==istim)); % get P(correct)
         
-        StimResponse(isession, stimcount) = nanmean(nanmean(NeuronStim(abs(TrialTimingDataCor(:,2))==istim, postAlignStim)))...
-            - nanmean(nanmean(NeuronStim(abs(TrialTimingDataCor(:,2))==istim, preAlignStim))); %difference between before and after; indicator of relative signal change 
+        StimResponse(isession, stimcount) = nanmean(nanmean(NeuronStim(intersect(find(abs(TrialTimingData(:,2))==istim), find(TrialTimingData(:,9)==1)), postAlignStim)))...
+            - nanmean(nanmean(NeuronStim(intersect(find(abs(TrialTimingData(:,2))==istim), find(TrialTimingData(:,9)==1)), preAlignStim))); %difference between before and after; indicator of relative signal change 
 
     end
 
@@ -68,14 +68,50 @@ for isession = SessionList
         
         % first session = black, last session = lightest 
         
-        plot(StimPerformance(isession, stimcount), StimResponse(isession, stimcount), 'o', 'color', [c c c], 'MarkerFaceColor', [c c c])
+        plot(StimResponse(isession, stimcount), StimPerformance(isession, stimcount), 'o', 'color', [c c c], 'MarkerFaceColor', [c c c], 'MarkerSize', 12)
         
     end
     
     
 end
 
-xlabel('P(correct)')
-ylabel('Response to stimulus')
+ylabel('P(correct)')
+xlabel('Response to stimulus')
+
+%% compute performance-response correlation for naive, middle and adanced
+
+
+    SessNum = ceil(length(SessionList)/3);
+
+    BinSessions= 1:SessNum:length(SessionList);
+    
+    if strcmp(animal_name,'ALK071')
+        SessNum=4; BinSessions=[1 6 9]; end
+
+     c= 1; 
+    for iBin = BinSessions(1:3)
+
+        if c < 3
+        Response=StimResponse(iBin:SessNum+iBin-1,:);
+        Performance=StimPerformance(iBin:SessNum+iBin-1,:);
+
+        else
+Response=StimResponse(iBin:end,:);
+        Performance=StimPerformance(iBin:end,:);
+            
+        end            
+        ResponsenoNan= Response(find(~isnan(Response)));
+        PerformanceNoNan= Performance(find(~isnan(Performance)));
+        
+        
+        CorEstimates (c)=corr(ResponsenoNan(:),PerformanceNoNan(:))
+c=c+1;
+    end
+
+    figure
+    bar(CorEstimates)
+
+   
+
 
 

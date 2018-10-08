@@ -6,14 +6,14 @@
 clear all
 close all
 
-animal_name = 'ALK068'
+animal_name = 'ALK071'
 
 z = 'n' % option to z-score data 
 
 
 if animal_name == 'ALK068'
     SessionList = [1:11];
-    ylimrwd = [-2 2];
+    ylimrwd = [-3 3];
     ylimstim = [-1 2.5];
     load('BehPhotoM_Exp7_VTA')                                   % load beh data databseB
     
@@ -25,8 +25,8 @@ elseif animal_name == 'ALK070'
     
 elseif animal_name == 'ALK071'
     SessionList = [1:9];
-    ylimrwd = [-8 15];
-    ylimstim = [-3 6];
+    ylimrwd = [-8 25];
+    ylimstim = [-4 11];
     load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
 
 
@@ -103,10 +103,11 @@ colorGreen = [0 1 0
 StimResponseSummary = nan(max(SessionList), 5); % 1 to 5 are 0, 0.12, 0.25, 0.5, 1.0
 RwdResponseSummary = nan(max(SessionList), 5);
 
+%%
+
 % ---- start figure ----
 figure; 
 plotnum = 1;
-
 
 % loop through each session in the list
 
@@ -170,12 +171,15 @@ for iSession = SessionList
     
     if plotnum == 1
         title('Stimulus response')
+    end
+    
+    if plotnum == 2*length(SessionList)-1
         if length(StimzAbs)==4
-            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
+            legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
         elseif length(StimzAbs)==3
-            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
+            legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
         elseif length(StimzAbs)==2
-            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
+            legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
         end
     end
     
@@ -203,8 +207,8 @@ for iSession = SessionList
 
     
    if numel(StimzAbs) > 2
-        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5]);
-        correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
+        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
+        correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
@@ -214,8 +218,8 @@ for iSession = SessionList
         end
         
    elseif numel(StimzAbs) == 2
-        correcteasy = abs(TrialTimingData(:,2)==[1]);
-        correcthard = abs(TrialTimingData(:,2)==[0.5, 0.25, 0.12, 0]);
+        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
+        correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
