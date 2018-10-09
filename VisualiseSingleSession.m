@@ -137,7 +137,7 @@ subplot(6,2,1); % psych curve
 
 plot(Stimz, performance,'k')
 
-subplot(6,2,2); % psych curve
+subplot(6,2,2); % reaction times 
 
 plot(Stimz, RT,'k')
 

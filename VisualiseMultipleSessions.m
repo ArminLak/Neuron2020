@@ -718,7 +718,7 @@ BehData01 (BehData01(:,3)==-1,3) = 0;
 cz = 1;
 for thresholdRange = 80 %[60 70 80 90 95]
 
-    DA_threshold = percentile(NormBinStim, thresholdRange);
+    DA_threshold = prctile(NormBinStim, thresholdRange);
     
     
     c = 1;
