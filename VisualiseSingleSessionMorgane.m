@@ -23,6 +23,11 @@ stop=1     % s
 % per s. We define 3 s before and 8 s after the event (11 * 1.2k) we stay
 % conservative by keeping 13700 of 13800 (so event is at 3700  sample)
 
+
+load('BehPhotoM_Exp7_VTA')
+load('BehPhotoM_Exp23_NAc') %MMM002, MMM001, ALK078 (bi)
+load('BehPhotoM_Exp23_DMS') % ALK074(bi), ALK075 (bi)
+load('BehPhotoM_Exp23') %ALK068, 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
