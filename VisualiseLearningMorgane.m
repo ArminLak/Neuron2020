@@ -3,9 +3,12 @@
 % Morgane August 2018
 
 
+% to do instead of z-scoring normalise to max response 
+
 clear all
 close all
 
+<<<<<<< HEAD
 animal_name = 'MMM002'
 
 z = 'n' % option to z-score data
@@ -53,11 +56,58 @@ elseif animal_name == 'MMM002'
     ylimstim = [-2 5];
     load('BehPhotoM_Exp7_NAc')
 end
+=======
+% animal_name= ['ALK068'];
+animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
+% animal_ID_list = [48, 50, 51];
+SessionList = [1:9];
+load('BehPhotoM_Exp7_VTA')
+
+z = 'y' %#ok<NOPTS> % option to z-score data / must be y if averaging animals 
+
+
+% if strcmp(animal_name,'ALK068')
+%     SessionList = [1:11];
+%     ylimrwd = [-3 3];
+%     ylimstim = [-1 2.5];
+%     load('BehPhotoM_Exp7_VTA')                                   % load beh data databseB
+%     
+% elseif strcmp(animal_name,'ALK070')
+%     SessionList = [1:9]; %weaker signal in sessions 10 and 11 
+%     ylimrwd = [-2 3];
+%     ylimstim = [-1 1.5];
+%     load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
+%     
+% elseif strcmp(animal_name, 'ALK071')
+%     SessionList = [1:9];
+%     ylimrwd = [-8 25];
+%     ylimstim = [-4 11];
+%     load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
+% 
+% elseif strcmp(animal_name,'ALK074')
+%     SessionList = [1:11];
+%     ylimrwd = [-5 15];
+%     ylimstim = [-5 15];
+%     load('BehPhotoM_Exp7_DMS')
+% 
+% elseif strcmp(animal_name, 'ALK075')
+%     SessionList = [1:11];
+%     ylimrwd = [-0.5 1];
+%     ylimstim = [-.5 1];
+%     load('BehPhotoM_Exp7_DMS')
+% 
+% elseif strcmp(animal_name, 'MMM001')
+%     SessionList = [1:11];
+%     ylimrwd = [-1 2];
+%     ylimstim = [-1 2];
+%     load('BehPhotoM_Exp7_NAc')
+% end
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
 
 
 
 if z == 'y'
-    ylimstim = [-3 3];
+    ylimstim = [-2 3];
     ylimrwd = [-3 3];
 end
 
@@ -72,6 +122,7 @@ sample_rate = 12000;                                        % photoM recording s
 downsampleScale = 10;                                       % factor downsampling the Ca responses
 
 start2stop = (event_time+start)*sample_rate/downsampleScale:(event_time+stop)*sample_rate/downsampleScale; %window of interest
+
 
 
 % event is at 3 seconds i.e. point 3600
@@ -98,26 +149,161 @@ colorGreen = [0 1 0
     0 0.6 0
     0  0.3 0];
 
-%-------------------------------find path, add path and load data----------------------------------
-% read animals' ID
-[animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
 
 % -------- prep for summary figures --------
 
-StimResponseSummary = nan(max(SessionList), 5); % 1 to 5 are 0, 0.12, 0.25, 0.5, 1.0
-RwdResponseSummary = nan(max(SessionList), 5);
+StimzAbs = [1.0 0.5 0.25 0.12 0];
+StimResponseAvg = nan(length(StimzAbs)*length(animal_list)*length(SessionList), length(start2stop)) ;
+RwdResponseAvg = nan(3*length(animal_list)*length(SessionList), length(start2stop)) ;
 
+
+% ---- grand summary matrix for avg across animals figure ----
+% e.g. 3 animals, 5 stim levels =>
+    % every 5 rows is one animal, one session
+    % every 15 rows is all 3 animals, one session 
+    % every 5 rows correspond to the stim levels 
+    
+stimStartRow = 1:length(StimzAbs):length(StimzAbs)*length(animal_list);
+rwdStartRow = 1: 3 : 3*length(animal_list);
+
+for animalcount = 1:length(animal_list)
+    animal_name = animal_list(animalcount);
+    [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
+
+    
+%     SessionList = 1:length(BehPhotoM(animal_ID).Session);
+    stimRow = stimStartRow(animalcount);
+    rwdRow = rwdStartRow(animalcount);
+    for iSession = SessionList
+
+        TargetSession = iSession;
+
+        TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
+        TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
+
+        NeuronStim = BehPhotoM(animal_ID).Session(TargetSession).NeuronStim;
+        NeuronStimCor = NeuronStim(TrialTimingData(:,9)==1, :);
+
+        NeuronReward = BehPhotoM(animal_ID).Session(TargetSession).NeuronReward;
+        NeuronRewardCor = NeuronReward(TrialTimingData(:,9)==1, :);
+
+        for stimcount = 1:length(StimzAbs) % fat stim matrix
+            istim = StimzAbs(stimcount);
+            StimResponseAvg(stimRow,:) = zscore(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==istim, start2stop)));
+
+            stimRow = stimRow + 1;
+        end
+        stimRow = stimRow + 10;
+            
+        % rwd matrix : correct easy/hard (2 separate rows)
+        if numel(unique(abs(TrialTimingData(:, 2)))) > 2
+            correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
+            correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
+            RwdResponseAvg(rwdRow,:) = zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)));
+            rwdRow = rwdRow+1;
+            RwdResponseAvg(rwdRow,:) = zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)));
+        elseif numel(unique(abs(TrialTimingData(:, 2)))) == 2
+            correcteasy = abs(TrialTimingData(:,2)==[1]);
+            correcthard = abs(TrialTimingData(:,2)==[0.5, 0.25, 0.12, 0]);
+            RwdResponseAvg(rwdRow,:) = zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)));
+            rwdRow = rwdRow + 1;
+            RwdResponseAvg(rwdRow,:) = zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)));
+        else 
+            RwdResponseAvg(rwdRow,:) = zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1, start2stop)));
+            rwdRow = rwdRow+1;
+        end
+        rwdRow = rwdRow + 1;
+        % error trials : separate row 
+        RwdResponseAvg(rwdRow,:) = zscore(nanmean(NeuronReward(TrialTimingData(:,9)==0, start2stop)));
+           
+            rwdRow = rwdRow + 7;
+        
+    end
+        
+end
+
+
+%%
+% ------ figure for avg across animals -------------------
+
+<<<<<<< HEAD
 % ---- start figure ----
 figure;
+=======
+figure; hold on
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
 plotnum = 1;
+title('average across animals')
+
+stimSess = 1 : length(StimzAbs) : length(StimzAbs)*numel(animal_list);
+rwdSess = 1 : 3 : 3*numel(animal_list);
 
 
+for isession = 1:length(SessionList)
+
+    c = 5;
+    
+    % first stim on LHS 
+    subplot(length(SessionList), 2, plotnum)
+    for stimcount = 1:length(StimzAbs) % stim resp averages plots 
+        hold on;
+        plot(nanmean(StimResponseAvg(stimSess, :)),'color',colorGray4(c,:),'LineWidth',2)
+        stimSess = stimSess + 1;
+        c = c-1;
+        
+        ylim(ylimstim)
+        xlim([0 (stop-start)* sample_rate]/downsampleScale)
+        xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+        xticklabels([''])          
+    
+        if plotnum == length(SessionList)*2 - 1
+            ylabel('Z({\Delta} F / F)')
+            xlabel ('Time (s)')
+            xticklabels([start:1:stop])
+        end
+        
+    end
+    
+    plotnum = plotnum + 1; % now reward RHS -----------
+
+    subplot(length(SessionList), 2, plotnum)
+    hold on
+        plot(nanmean(RwdResponseAvg(rwdSess, :)), 'color', colorGreen(3,:), 'LineWidth', 2)
+        plot(nanmean(RwdResponseAvg(rwdSess+1, :)), 'color', colorGreen(2,:), 'LineWidth', 2)
+        plot(nanmean(RwdResponseAvg(rwdSess+2, :)), 'red', 'LineWidth', 2)
+    ylim(ylimrwd)
+    xlim([0 (stop-start)* sample_rate]/downsampleScale)
+    xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+    xticklabels([''])          
+
+    if plotnum == length(SessionList)*2
+        ylabel('Z({\Delta} F / F)')
+        xlabel ('Time (s)')
+        xticklabels([start:1:stop])
+        
+    end % ----------- end of reward RHS
+    
+    plotnum = plotnum + 1;
+    
+stimSess = stimSess + 10;
+rwdSess = rwdSess + 9;
+
+end
+
+
+
+%% for one animal only 
 % loop through each session in the list
 
 for iSession = SessionList
     
+<<<<<<< HEAD
     TargetSession = iSession
     
+=======
+    TargetSession = iSession;
+ 
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
     % load Beh data and photometry data
     TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
     TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
@@ -174,12 +360,15 @@ for iSession = SessionList
     
     if plotnum == 1
         title('Stimulus response')
+    end
+    
+    if plotnum == 2*length(SessionList)-1
         if length(StimzAbs)==4
-            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
+            legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),num2str(StimzAbs(4)),'location','northeast');
         elseif length(StimzAbs)==3
-            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
+            legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), num2str(StimzAbs(3)),'location','northeast');
         elseif length(StimzAbs)==2
-            l = legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
+            legend(num2str(StimzAbs(1)), num2str(StimzAbs(2)), 'location', 'northeast');
         end
     end
     
@@ -205,10 +394,16 @@ for iSession = SessionList
     subplot(length(SessionList), 2, plotnum ); hold on
     
     
+<<<<<<< HEAD
     
     if numel(StimzAbs) > 2
         correcteasy = abs(TrialTimingData(:,2)==[1, 0.5]);
         correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
+=======
+   if numel(unique(abs(TrialTimingData(:, 2)))) > 2
+        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
+        correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
@@ -217,9 +412,15 @@ for iSession = SessionList
             plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         end
         
+<<<<<<< HEAD
     elseif numel(StimzAbs) == 2
         correcteasy = abs(TrialTimingData(:,2)==[1]);
         correcthard = abs(TrialTimingData(:,2)==[0.5, 0.25, 0.12, 0]);
+=======
+   elseif numel(unique(abs(TrialTimingData(:, 2)))) == 2
+        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
+        correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
@@ -228,7 +429,11 @@ for iSession = SessionList
             plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         end
         
+<<<<<<< HEAD
     elseif numel(StimzAbs) == 1
+=======
+   elseif numel(unique(abs(TrialTimingData(:, 2)))) == 1
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)
         elseif z == 'y'
