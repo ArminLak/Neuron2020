@@ -8,6 +8,55 @@
 clear all
 close all
 
+<<<<<<< HEAD
+animal_name = 'MMM002'
+
+z = 'n' % option to z-score data
+
+
+if animal_name == 'ALK068'
+    SessionList = [1:11];
+    ylimrwd = [-2 2];
+    ylimstim = [-1 2.5];
+    load('BehPhotoM_Exp7_VTA')                                   % load beh data databseB
+    
+elseif animal_name == 'ALK070'
+    SessionList = [1:9]; %weaker signal in sessions 10 and 11
+    ylimrwd = [-2 3];
+    ylimstim = [-1 1.5];
+    load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
+    
+elseif animal_name == 'ALK071'
+    SessionList = [1:9];
+    ylimrwd = [-8 15];
+    ylimstim = [-3 6];
+    load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
+    
+elseif animal_name == 'ALK074'
+    SessionList = [1:11];
+    ylimrwd = [-5 15];
+    ylimstim = [-5 15];
+    load('BehPhotoM_Exp7_DMS')
+     
+elseif animal_name == 'ALK075'
+    SessionList = [1:11];
+    ylimrwd = [-0.5 1];
+    ylimstim = [-.5 1];
+    load('BehPhotoM_Exp7_DMS')
+    
+elseif animal_name == 'MMM001'
+    SessionList = [1:11];
+    ylimrwd = [-1 2];
+    ylimstim = [-1 2];
+    load('BehPhotoM_Exp7_NAc')
+    
+elseif animal_name == 'MMM002'
+    SessionList = [1:11];
+    ylimrwd = [-2 5];
+    ylimstim = [-2 5];
+    load('BehPhotoM_Exp7_NAc')
+end
+=======
 % animal_name= ['ALK068'];
 animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
 % animal_ID_list = [48, 50, 51];
@@ -53,6 +102,7 @@ z = 'y' %#ok<NOPTS> % option to z-score data / must be y if averaging animals
 %     ylimstim = [-1 2];
 %     load('BehPhotoM_Exp7_NAc')
 % end
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
 
 
 
@@ -84,7 +134,7 @@ postAlignRwd = (event_time+0.2)*sample_rate/downsampleScale : (event_time+0.8)*s
 
 
 % plot colours
-colorGray4 = [0.8 0.8 0.8 %lightest 
+colorGray4 = [0.8 0.8 0.8 %lightest
     0.6 0.6 0.6
     0.4 0.4 0.4
     0.2 0.2 0.2
@@ -176,7 +226,12 @@ end
 %%
 % ------ figure for avg across animals -------------------
 
+<<<<<<< HEAD
+% ---- start figure ----
+figure;
+=======
 figure; hold on
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
 plotnum = 1;
 title('average across animals')
 
@@ -242,8 +297,13 @@ end
 
 for iSession = SessionList
     
+<<<<<<< HEAD
+    TargetSession = iSession
+    
+=======
     TargetSession = iSession;
  
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
     % load Beh data and photometry data
     TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
     TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
@@ -253,16 +313,16 @@ for iSession = SessionList
     
     NeuronReward = BehPhotoM(animal_ID).Session(TargetSession).NeuronReward;
     NeuronRewardCor = NeuronReward(TrialTimingData(:,9)==1, :);
-        
+    
     %StimzAbs=unique(abs(TrialTimingData(:,2)))';
     StimzAbs = [0 0.12 0.25 0.5 1.0];
-
+    
     % ------------------- Grans summary ------------------------------
-
+    
     subplot(length(SessionList), 2, plotnum ); hold on
     
     
-  %  c=4;
+    %  c=4;
     
     
     for stimcount = 1:length(StimzAbs)
@@ -276,10 +336,10 @@ for iSession = SessionList
         end
         
         StimResponseSummary(TargetSession,stimcolumn)  = nanmean(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), postAlignStim)))...
-            - nanmean(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), preAlignStim))); %difference between before and after; indicator of relative signal change 
+            - nanmean(nanmean(NeuronStimCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), preAlignStim))); %difference between before and after; indicator of relative signal change
         RwdResponseSummary(TargetSession,stimcolumn)  = nanmean(nanmean(NeuronRewardCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), postAlignRwd))) ...
-            - nanmean(nanmean(NeuronRewardCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), preAlignRwd))); %difference between before and after; indicator of relative signal change 
-
+            - nanmean(nanmean(NeuronRewardCor(abs(TrialTimingDataCor(:,2))==StimzAbs(stimcolumn), preAlignRwd))); %difference between before and after; indicator of relative signal change
+        
         
         
         if length(StimzAbs)==4
@@ -291,11 +351,11 @@ for iSession = SessionList
         elseif length(StimzAbs)==1
             set(h, 'color', colorGray2(2,:));
         end
-
-   %     c=c-1;
+        
+        %     c=c-1;
     end
     
-
+    
     
     
     if plotnum == 1
@@ -322,7 +382,7 @@ for iSession = SessionList
         xlabel ('Time (s)')
         xticklabels([start:1:stop])
     end
-
+    
     plotnum = plotnum + 1;
     
     
@@ -333,41 +393,57 @@ for iSession = SessionList
     
     subplot(length(SessionList), 2, plotnum ); hold on
     
-
     
+<<<<<<< HEAD
+    
+    if numel(StimzAbs) > 2
+        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5]);
+        correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
+=======
    if numel(unique(abs(TrialTimingData(:, 2)))) > 2
         correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
         correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
-            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
-            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         elseif z == 'y'
-            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop))), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
-            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop))), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         end
         
+<<<<<<< HEAD
+    elseif numel(StimzAbs) == 2
+        correcteasy = abs(TrialTimingData(:,2)==[1]);
+        correcthard = abs(TrialTimingData(:,2)==[0.5, 0.25, 0.12, 0]);
+=======
    elseif numel(unique(abs(TrialTimingData(:, 2)))) == 2
         correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
         correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
-            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
-            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
+            plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         elseif z == 'y'
-            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop))), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim 
-            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim 
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop))), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
+            plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         end
         
+<<<<<<< HEAD
+    elseif numel(StimzAbs) == 1
+=======
    elseif numel(unique(abs(TrialTimingData(:, 2)))) == 1
+>>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)
         elseif z == 'y'
             plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1, start2stop))), 'color', colorGreen(3,:), 'LineWidth', 2)
         end
-   end
+    end
     
-    hold on; 
-    plot(nanmean(NeuronReward(TrialTimingData(:,9)==0, start2stop)), 'red', 'LineWidth', 2) % plot error trials 
-
+    hold on;
+    plot(nanmean(NeuronReward(TrialTimingData(:,9)==0, start2stop)), 'red', 'LineWidth', 2) % plot error trials
+    
     ylim(ylimrwd)
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
@@ -377,22 +453,22 @@ for iSession = SessionList
         title('Reward response')
         legend('Easy & correct', 'Hard & correct', 'Error', 'location', 'northeast')
     end
-
+    
     if plotnum == length(SessionList)*2
         xlabel ('Time (s)')
         xticklabels([start:1:stop])
     end
     
     plotnum = plotnum + 1;
-
-
+    
+    
 end
 %%
 % ---- plot summaries ----
 
-figure; hold on 
+figure; hold on
 
-subplot(1, 2, 1) % stim first 
+subplot(1, 2, 1) % stim first
 c = 1;
 for i = 1:size(StimResponseSummary, 2)
     
@@ -405,7 +481,7 @@ for i = 1:size(StimResponseSummary, 2)
 end
 c = 1;
 
-subplot(1, 2, 2) % reward second 
+subplot(1, 2, 2) % reward second
 
 for i = 1:size(StimResponseSummary, 2)
     

@@ -13,7 +13,7 @@ close all
 % hem)
 
 
-animal_name = 'MMM001'
+animal_name = 'MMM002'
 
 %Unilatral or bilateral ('Un' or 'Bi')
 Implant = 'Un'
@@ -53,6 +53,7 @@ SessionList = [1:14]; %ALK075 Exp 7
 
  % Naive learning NAc animals
 SessionList = [1:12]; %MMM001 Exp 7
+SessionList = [1:10]; %MMM002 Exp 7
 
 %%
 % ------------------------------------------------------------------------
@@ -71,6 +72,8 @@ SessionList = [1:12]; %MMM001 Exp 7
 %load('BehPhotoM_Exp7_VTA')
 
 %load('BehPhotoM_Exp7_DMS')
+
+load('BehPhotoM_Exp7_NAc')
 
 %--------------- useful information --------------------------------------
 % task event
