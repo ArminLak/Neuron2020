@@ -15,7 +15,7 @@ close all
 
 
 % select animal
-animal_ID = 53
+animal_ID = 55
 
 % select database
 % load('BehPhotoM_Exp23')
@@ -75,7 +75,7 @@ ActionDataR = [];
 RewardDataR = [];
 
 
-sessionz = 2%:length(BehPhotoM(animal_ID).Session);
+sessionz = 1:length(BehPhotoM(animal_ID).Session);
 
 
 if strcmp(Implant,'Un')
