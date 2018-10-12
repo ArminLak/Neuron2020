@@ -8,7 +8,7 @@
 clear all
 close all
 
-<<<<<<< HEAD
+
 animal_name = 'MMM002'
 
 z = 'n' % option to z-score data
@@ -51,58 +51,19 @@ elseif animal_name == 'MMM001'
     load('BehPhotoM_Exp7_NAc')
     
 elseif animal_name == 'MMM002'
-    SessionList = [1:11];
+    SessionList = [1:10];
     ylimrwd = [-2 5];
     ylimstim = [-2 5];
     load('BehPhotoM_Exp7_NAc')
 end
-=======
+
 % animal_name= ['ALK068'];
 animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
-% animal_ID_list = [48, 50, 51];
-SessionList = [1:9];
-load('BehPhotoM_Exp7_VTA')
+ animal_ID_list_VTA = [48, 50, 51];
 
-z = 'y' %#ok<NOPTS> % option to z-score data / must be y if averaging animals 
+%animal_list= {'MMM002'};
 
-
-% if strcmp(animal_name,'ALK068')
-%     SessionList = [1:11];
-%     ylimrwd = [-3 3];
-%     ylimstim = [-1 2.5];
-%     load('BehPhotoM_Exp7_VTA')                                   % load beh data databseB
-%     
-% elseif strcmp(animal_name,'ALK070')
-%     SessionList = [1:9]; %weaker signal in sessions 10 and 11 
-%     ylimrwd = [-2 3];
-%     ylimstim = [-1 1.5];
-%     load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
-%     
-% elseif strcmp(animal_name, 'ALK071')
-%     SessionList = [1:9];
-%     ylimrwd = [-8 25];
-%     ylimstim = [-4 11];
-%     load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
-% 
-% elseif strcmp(animal_name,'ALK074')
-%     SessionList = [1:11];
-%     ylimrwd = [-5 15];
-%     ylimstim = [-5 15];
-%     load('BehPhotoM_Exp7_DMS')
-% 
-% elseif strcmp(animal_name, 'ALK075')
-%     SessionList = [1:11];
-%     ylimrwd = [-0.5 1];
-%     ylimstim = [-.5 1];
-%     load('BehPhotoM_Exp7_DMS')
-% 
-% elseif strcmp(animal_name, 'MMM001')
-%     SessionList = [1:11];
-%     ylimrwd = [-1 2];
-%     ylimstim = [-1 2];
-%     load('BehPhotoM_Exp7_NAc')
-% end
->>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
+z = 'y'  % option to z-score data / must be y if averaging animals 
 
 
 
@@ -170,8 +131,17 @@ for animalcount = 1:length(animal_list)
     animal_name = animal_list(animalcount);
     [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
 
-    
-%     SessionList = 1:length(BehPhotoM(animal_ID).Session);
+    if ismember(animal_ID,animal_ID_list_VTA)
+            load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
+
+    elseif ismember(animal_ID,animal_ID_list_NAc)
+        
+            elseif ismember(animal_ID,animal_ID_list_DMS)
+                
+    end
+
+        
+     SessionList = 1:length(BehPhotoM(animal_ID).Session);
     stimRow = stimStartRow(animalcount);
     rwdRow = rwdStartRow(animalcount);
     for iSession = SessionList
@@ -226,12 +196,10 @@ end
 %%
 % ------ figure for avg across animals -------------------
 
-<<<<<<< HEAD
+
 % ---- start figure ----
-figure;
-=======
+
 figure; hold on
->>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
 plotnum = 1;
 title('average across animals')
 
@@ -263,8 +231,8 @@ for isession = 1:length(SessionList)
         end
         
     end
-    
-    plotnum = plotnum + 1; % now reward RHS -----------
+        plotnum = plotnum + 1;
+
 
     subplot(length(SessionList), 2, plotnum)
     hold on
@@ -297,13 +265,9 @@ end
 
 for iSession = SessionList
     
-<<<<<<< HEAD
-    TargetSession = iSession
-    
-=======
+
     TargetSession = iSession;
  
->>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
     % load Beh data and photometry data
     TrialTimingData = BehPhotoM(animal_ID).Session(TargetSession).TrialTimingData;
     TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
@@ -319,7 +283,7 @@ for iSession = SessionList
     
     % ------------------- Grans summary ------------------------------
     
-    subplot(length(SessionList), 2, plotnum ); hold on
+    subplot(length(SessionList), 2, plotnum-1 ); hold on
     
     
     %  c=4;
@@ -356,8 +320,6 @@ for iSession = SessionList
     end
     
     
-    
-    
     if plotnum == 1
         title('Stimulus response')
     end
@@ -387,23 +349,15 @@ for iSession = SessionList
     
     
     
-    
-    
     % ------------------- reward plot --------------------------------
     
     subplot(length(SessionList), 2, plotnum ); hold on
     
     
-<<<<<<< HEAD
-    
-    if numel(StimzAbs) > 2
-        correcteasy = abs(TrialTimingData(:,2)==[1, 0.5]);
-        correcthard = abs(TrialTimingData(:,2)==[0.25, 0.12, 0]);
-=======
+
    if numel(unique(abs(TrialTimingData(:, 2)))) > 2
         correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
         correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
->>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
@@ -412,15 +366,10 @@ for iSession = SessionList
             plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         end
         
-<<<<<<< HEAD
-    elseif numel(StimzAbs) == 2
-        correcteasy = abs(TrialTimingData(:,2)==[1]);
-        correcthard = abs(TrialTimingData(:,2)==[0.5, 0.25, 0.12, 0]);
-=======
+
    elseif numel(unique(abs(TrialTimingData(:, 2)))) == 2
         correcteasy = abs(TrialTimingData(:,2)==[1, 0.5, 0.25]);
         correcthard = abs(TrialTimingData(:,2)==[ 0.12, 0]);
->>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcteasy,2)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)  % plot for stim = max stim
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop)), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
@@ -429,11 +378,8 @@ for iSession = SessionList
             plot(zscore(nanmean(NeuronReward(TrialTimingData(:,9)==1 & sum(correcthard,2)==1, start2stop))), 'color', colorGreen(2,:), 'LineWidth', 2)  % plot for stim = min stim
         end
         
-<<<<<<< HEAD
-    elseif numel(StimzAbs) == 1
-=======
+
    elseif numel(unique(abs(TrialTimingData(:, 2)))) == 1
->>>>>>> fde2c5f41f3f69eb704c36aa00875984951200ad
         if z == 'n'
             plot(nanmean(NeuronReward(TrialTimingData(:,9)==1, start2stop)), 'color', colorGreen(3,:), 'LineWidth', 2)
         elseif z == 'y'
