@@ -15,17 +15,17 @@ close all
 
 
 % select animal
-animal_ID = 53
+animal_ID = 59
 
 % select database
 % load('BehPhotoM_Exp23')
 
-%load('BehPhotoM_Exp23_NAc')
+load('BehPhotoM_Exp23_NAc')
 
-load('BehPhotoM_Exp23_DMS')
+% load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Bi' 
+Implant = 'Un' 
 
 
 if strcmp(Implant,'Un')
@@ -297,7 +297,7 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 subplot(6,3,16);
-title('Stimulus Align')
+title('Action Align')
 
 xlim([3000 4400])
 
@@ -456,18 +456,18 @@ ylabel('Norm response')
 c=1;
 for iStim = abzStim
     
-    AbsStimRasterCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
-    AbsStimRasterError(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
+    AbsStimRasterCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :),1);
+    AbsStimRasterError(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :),1);
     
-    AbsStimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
-    AbsStimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
+    AbsStimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
+    AbsStimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
    
     
-     AbsActionRasterCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
-    AbsActionRasterError(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
+     AbsActionRasterCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :),1);
+    AbsActionRasterError(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :),1);
     
-    AbsActionRasterLargeCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
-    AbsActionRasterSmallCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
+    AbsActionRasterLargeCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
+    AbsActionRasterSmallCorrect(c,:)=nanmean(ActionData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
    
     
     c=c+1;
@@ -510,7 +510,7 @@ set(gca, 'XTick', [3700, 4300, 4900]);
 set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
-
+legend('Large reward', 'Small reward')
 
 %% Reward figure
 
@@ -530,11 +530,11 @@ c=1;
 
 for iStim = abzStim
     
-    AbsStimRasterCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :));
-    AbsStimRasterErrorREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :));
+    AbsStimRasterCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==1, :),1);
+    AbsStimRasterErrorREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,9)==0, :),1);
     
-    AbsStimRasterLargeCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :));
-    AbsStimRasterSmallCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :));
+    AbsStimRasterLargeCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
+    AbsStimRasterSmallCorrectREw(c,:)=nanmean(RewardData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
     
     
     c=c+1;
@@ -551,11 +551,11 @@ plot(smooth(AbsStimRasterErrorREw(i,:),70),'color',colorRed(i,:),'LineWidth',2)
 end
 
 
-%xlim([3500 4900])
-%ylim([-2 2])
+xlim([3500 4900])
+ylim([-2 2])
 
-%set(gca, 'XTick', [3700, 4300, 4900]);
-%set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 title('Outcome Align')
 xlabel('Time (s)')
 ylabel('Norm response')
@@ -706,7 +706,7 @@ set(gca, 'TickDir','out','Box','off');
 
 xlabel('Contrast')
 ylabel('Norm response')
-
+xlim([0 0.5])
 title('Outcome Align')
 legend('shortRT','longRT')
 %%
