@@ -74,6 +74,18 @@ colorRed = [ 0.8 0.8 0.8
     1 0.4 0.4
     1 0 0];
 
+stimcolors = [
+    1 0.2 0.6
+    1 0.4 0.7
+    1 0.6 0.8
+    1 0.8 0.9
+%     0.9 0.8 1
+    0.8 0.6 1
+    0.7 0.4 1
+    0.6 0.2 1];
+
+errorRed = [1 0.2 0.2];
+
 
 %%
 BehData = [];
@@ -237,7 +249,7 @@ for iBlock = [1 2]
     
 end
 
-subplot(6,3,1); hold on
+subplot(4,2,1); hold on
 xlabel('Contrast')
 ylabel('P(R)')
 title( 'Psychometric curves')
@@ -248,7 +260,7 @@ plot(unique(BehData(:,2))',performance(2,:),'color',[1 0.6 0.2],'LineWidth',2,'M
 legend('LargeRew@L','LargeRew@R','Location','southeast')
 
 
-subplot(6,3,2); hold on
+subplot(4,2,2); hold on
 xlabel('Contrast')
 ylabel('Norm RT')
 title( 'Reaction Time')
@@ -266,14 +278,18 @@ plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker',
 c=1;
 for iStim = abzStim
     
-    AbsStimRaster(c,:)=nanmean(StimData((BehData(:,2))==iStim, :));
-    AbsActionRaster(c,:)=nanmean(ActionData((BehData(:,2))==iStim, :));
+    StimRaster(c,:)=nanmean(StimData((BehData(:,2))==iStim, :));
+    ActionRaster(c,:)=nanmean(ActionData((BehData(:,2))==iStim, :));
+    RewardRaster(c,:) = nanmean(RewardData((BehData(:,2))==iStim, :));
     
-    subplot(6,3,13); hold on
-    plot((AbsStimRaster(c,:)),'color',colorGray(c,:),'LineWidth',2)
+    subplot(4,2,3); hold on
+    plot((StimRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
     
-    subplot(6,3,16); hold on
-    plot((AbsActionRaster(c,:)),'color',colorGray(c,:),'LineWidth',2)
+    subplot(4,2,5); hold on
+    plot((ActionRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    
+    subplot(4,2,7); hold on
+    plot((RewardRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
     
     
     c=c+1;
@@ -297,7 +313,7 @@ elseif length(abzStim)==5
 
     
 end
-subplot(6,3,13);
+subplot(4, 2,3);
 title('Stimulus Align')
 
 xlim([3500 4900])
@@ -308,7 +324,7 @@ set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
-subplot(6,3,16);
+subplot(4, 2, 5);
 title('Action Align')
 
 xlim([3000 4400])
@@ -319,8 +335,77 @@ set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
-%%
+subplot(4, 2, 7);
+title('Outcome Align')
 
+xlim([3000 4400])
+
+
+set(gca, 'XTick', [3000, 3700, 4400]);
+set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+
+
+%% Error/Correct , small/large , left/right
+
+subplot(4, 2, 4)
+icorrect = find(BehData(:,9)==1);
+ierror = find(BehData(:,9)==0);
+irightchoice = find(BehData(:,3)==1);
+ileftchoice = find(BehData(:,3)==-1);
+ileftblock = find(BehData(:,8)==1);
+irightblock = find(BehData(:,8)==2);
+plotnum = 4;
+M = {StimData, ActionData, RewardData};
+
+for i = 1:3 
+
+    data = M{i};
+    subplot(4, 2,plotnum); hold on
+    plot(nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)), 'LineWidth', 2, 'color', stimcolors(1,:)) %correct large L
+    plot(nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)), 'LineWidth', 2, 'color', stimcolors(end,:)) %correct large R
+    plot(nanmean(data(mintersect(icorrect, ileftchoice, irightblock),:)), '--', 'LineWidth', 2, 'color', stimcolors(1,:)) %correct small L
+    plot(nanmean(data(mintersect(icorrect, irightchoice, ileftblock),:)), '--', 'LineWidth', 2, 'color', stimcolors(end,:)) %correct small R
+   plot(nanmean(data(mintersect(ierror, ileftchoice),:)), 'LineWidth', 2, 'color', [0.4 0 0.2]) %error L
+   plot(nanmean(data(mintersect(ierror, irightchoice), :)), 'LineWidth', 2, 'color', [0.2 0 0.4]) %error R 
+   
+
+    plotnum = plotnum + 2;
+end
+
+subplot(4, 2,4);
+title('Stimulus Align')
+
+xlim([3500 4900])
+
+
+set(gca, 'XTick', [3700, 4300, 4900]);
+set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+
+subplot(4, 2, 6);
+title('Action Align')
+
+xlim([3000 4400])
+set(gca, 'XTick', [3000, 3700, 4400]);
+set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+
+subplot(4, 2, 8);
+title('Outcome Align')
+
+xlim([3000 4400])
+
+
+set(gca, 'XTick', [3000, 3700, 4400]);
+set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+xlabel('Time (s)')
+ylabel('Norm response')
+
+legend('Large + L', 'Large + R', 'Small + L', 'Small + R', 'Error + L', 'Error + R')
 
 end
 
