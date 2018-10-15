@@ -15,11 +15,20 @@ close all
 animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
 
 
-% animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
+ animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
+ 
+ 
+ %animal_list= [{'ALK074', 'ALK075'}];
+ 
+ %animal_list= [{'ALK074'}];
 
  animal_ID_list_VTA = [48  50  51];
 
 animal_ID_list_NAc =[56, 57,59];
+
+animal_ID_list_DMS =[53, 55];
+
+
 
 % ------------------------------------------------------------------------
 % start and stop of time axis for plot (in second before and after the event)
@@ -77,6 +86,7 @@ for animalcount = 1:length(animal_list)
                     load('BehPhotoM_Exp7_NAc')                                   % load beh data databse
 
             elseif ismember(animal_ID,animal_ID_list_DMS)
+                    load('BehPhotoM_Exp7_DMS')                                   % load beh data databse
                 
     end
 
@@ -90,6 +100,8 @@ for animalcount = 1:length(animal_list)
 
 
         NeuronStim = BehPhotoM(animal_ID).Session(iSession).NeuronStim;
+        %NeuronStim = BehPhotoM(animal_ID).Session(iSession).NeuronAction;
+        
         
          NeuronStimTurned=NeuronStim';
         NeuronStimVector=NeuronStimTurned(:);
@@ -134,7 +146,35 @@ end
 
 %%
 figure
+
+if length(animal_list)==1
 for i=1:9
+    
+    subplot(9,2,2*i-1); hold on
+    for istim =1:5
+        
+plot(nanmean(squeeze(NeuronStimCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
+
+    
+    end
+        xlim([3500 4500])
+        ylim([-2 2])
+
+    subplot(9,2,2*i); hold on
+    for istim =1:5
+        
+plot(nanmean(squeeze(NeuronRewardCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
+
+    
+    end
+            ylim([-2 2])
+
+    xlim([3500 4500])
+end
+
+else
+   
+    for i=1:9
     
     subplot(9,2,2*i-1); hold on
     for istim =1:5
@@ -156,7 +196,7 @@ plot(nanmean(squeeze(NeuronRewardCor(:,i,istim,:))),'color',colorGray4(istim,:))
             ylim([-2 2])
 
     xlim([3500 4500])
+    end
 end
-
-
+    
 
