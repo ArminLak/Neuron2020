@@ -15,14 +15,14 @@ close all
 
 
 % select animal
-animal_ID = 53
+animal_ID = 57
 
 % select database
 % load('BehPhotoM_Exp23')
 
-%load('BehPhotoM_Exp23_NAc')
+load('BehPhotoM_Exp23_NAc')
 
- load('BehPhotoM_Exp23_DMS')
+ %load('BehPhotoM_Exp23_DMS')
 
 % define implant
 Implant = 'Bi' 
