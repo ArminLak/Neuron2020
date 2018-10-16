@@ -15,17 +15,17 @@ close all
 
 
 % select animal
-animal_ID = 57
+animal_ID = 59
 
 % select database
 % load('BehPhotoM_Exp23')
 
 load('BehPhotoM_Exp23_NAc')
 
- %load('BehPhotoM_Exp23_DMS')
+% load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Bi' 
+Implant = 'Un' 
 
 
 if strcmp(Implant,'Un')
@@ -107,6 +107,15 @@ RewardDataR = [];
 
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
 
+if animal_ID == 55 % excluding one bad session from ALK075
+    sessionz = 2:length(BehPhotoM(animal_ID).Session);
+elseif  animal_ID == 56 % excluding from ALK078
+    sessionz = [1 2 5 6 7 8 9 10];
+elseif animal_ID == 57 % excluding from MMM001
+    sessionz = [1:7, 9:12];
+elseif animal_ID == 59 % excluding from MMM002
+    sessionz = [1, 4:length(BehPhotoM(animal_ID).Session)];
+end
 
 if strcmp(Implant,'Un')
 
