@@ -15,17 +15,17 @@ close all
 
 
 % select animal
-animal_ID = 59
+animal_ID = 53
 
 % select database
 % load('BehPhotoM_Exp23')
 
-load('BehPhotoM_Exp23_NAc')
+% load('BehPhotoM_Exp23_NAc')
 
-% load('BehPhotoM_Exp23_DMS')
+load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Un' 
+Implant = 'Bi' 
 
 
 if strcmp(Implant,'Un')
@@ -225,6 +225,13 @@ StimData(toRemove,:) = [];
 ActionData(toRemove,:) = [];
 RewardData(toRemove,:) = [];
 
+BeepDataNorm = BeepData ./ max(max(BeepData));
+StimDataNorm = StimData ./ max(max(StimData));
+ActionDataNorm = ActionData ./ max(max(ActionData));
+RewardDataNorm = RewardData ./ max(max(RewardData));
+
+
+
 
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
     (BehData(:,3)==1 & BehData(:,8)==2));
@@ -283,22 +290,23 @@ plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker',
 
 
 %% Stimulus fig panels
+% figure; hold on 
 
 c=1;
 for iStim = abzStim
     
-    StimRaster(c,:)=nanmean(StimData((BehData(:,2))==iStim, :));
-    ActionRaster(c,:)=nanmean(ActionData((BehData(:,2))==iStim, :));
-    RewardRaster(c,:) = nanmean(RewardData((BehData(:,2))==iStim, :));
+    StimNormRaster(c,:)=nanmean(StimDataNorm((BehData(:,2))==iStim, :));
+    ActionNormRaster(c,:)=nanmean(ActionDataNorm((BehData(:,2))==iStim, :));
+    RewardNormRaster(c,:) = nanmean(RewardDataNorm((BehData(:,2))==iStim, :));
     
     subplot(4,2,3); hold on
-    plot((StimRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    plot((StimNormRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
     
     subplot(4,2,5); hold on
-    plot((ActionRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    plot((ActionNormRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
     
     subplot(4,2,7); hold on
-    plot((RewardRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    plot((RewardNormRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
     
     
     c=c+1;
