@@ -1,11 +1,13 @@
 clear all
 close all
 
-% give animal name and it will plot data averaged across all session
+% give animal name and it will plot data averaged across all session -
+% separating for left and right stimuli and left and right hemispheres
+% figure 1 = left hemisphere =) enjoy 
 
 % it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
-% Armin Feb 2018
-% Armin July 2018 added bilateral recoding
+% adapted from Armin 2018
+% Morgane October 2018
 
 
 
@@ -225,13 +227,18 @@ StimData(toRemove,:) = [];
 ActionData(toRemove,:) = [];
 RewardData(toRemove,:) = [];
 
-BeepDataNorm = BeepData ./ max(max(BeepData));
-StimDataNorm = StimData ./ max(max(StimData));
-ActionDataNorm = ActionData ./ max(max(ActionData));
-RewardDataNorm = RewardData ./ max(max(RewardData));
+abzStim = unique(abs(BehData(:,2)))';
+% to plots rasters for all stimuli
+abzStim = unique(BehData(:,2))';
 
 
 
+BeepDataNorm = BeepData;
+StimDataNorm = StimData;
+ActionDataNorm = ActionData;
+RewardDataNorm = RewardData;
+
+c = 1;
 
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
     (BehData(:,3)==1 & BehData(:,8)==2));
@@ -242,10 +249,7 @@ ToSmallR = setdiff(1:size(BehData,1),ToLargeR)';
 
 BehData(ToSmallR, 16)=-1;
 
-abzStim = unique(abs(BehData(:,2)))';
 
-% to plots rasters for all stimuli
-abzStim = unique(BehData(:,2))';
 
 
 figure; hold on
@@ -291,7 +295,9 @@ plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker',
 
 %% Stimulus fig panels
 % figure; hold on 
-
+StimNormRaster = [];
+ActionNormRaster = [];
+RewardNormRaster = [];
 c=1;
 for iStim = abzStim
     
@@ -300,13 +306,13 @@ for iStim = abzStim
     RewardNormRaster(c,:) = nanmean(RewardDataNorm((BehData(:,2))==iStim, :));
     
     subplot(4,2,3); hold on
-    plot((StimNormRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    plot((StimNormRaster(c,:)./max(max(StimNormRaster))),'color',stimcolors(c,:),'LineWidth',2)
     
     subplot(4,2,5); hold on
-    plot((ActionNormRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    plot((ActionNormRaster(c,:)./max(max(ActionNormRaster))),'color',stimcolors(c,:),'LineWidth',2)
     
     subplot(4,2,7); hold on
-    plot((RewardNormRaster(c,:)),'color',stimcolors(c,:),'LineWidth',2)
+    plot((RewardNormRaster(c,:)./max(max(RewardNormRaster))),'color',stimcolors(c,:),'LineWidth',2)
     
     
     c=c+1;
@@ -333,11 +339,11 @@ end
 subplot(4, 2,3);
 title('Stimulus Align')
 
-xlim([3500 4900])
+xlim([3500 4500])
 
 
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+set(gca, 'XTick', [3700, 4500]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
@@ -355,11 +361,11 @@ ylabel('Norm response')
 subplot(4, 2, 7);
 title('Outcome Align')
 
-xlim([3000 4400])
+xlim([3500 4500])
 
 
-set(gca, 'XTick', [3000, 3700, 4400]);
-set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+set(gca, 'XTick', [3700, 4500]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
@@ -374,53 +380,58 @@ ileftchoice = find(BehData(:,3)==-1);
 ileftblock = find(BehData(:,8)==1);
 irightblock = find(BehData(:,8)==2);
 plotnum = 4;
-M = {StimData, ActionData, RewardData};
 
-for i = 1:3 
 
+TempRasterNorm = [];
+
+M = {StimDataNorm, ActionDataNorm, RewardDataNorm};
+
+for i = 1:3
     data = M{i};
-    subplot(4, 2,plotnum); hold on
-    plot(nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)), 'LineWidth', 2, 'color', stimcolors(1,:)) %correct large L
-    plot(nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)), 'LineWidth', 2, 'color', stimcolors(end,:)) %correct large R
-    plot(nanmean(data(mintersect(icorrect, ileftchoice, irightblock),:)), '--', 'LineWidth', 2, 'color', stimcolors(1,:)) %correct small L
-    plot(nanmean(data(mintersect(icorrect, irightchoice, ileftblock),:)), '--', 'LineWidth', 2, 'color', stimcolors(end,:)) %correct small R
-   plot(nanmean(data(mintersect(ierror, ileftchoice),:)), 'LineWidth', 2, 'color', [0.4 0 0.2]) %error L
-   plot(nanmean(data(mintersect(ierror, irightchoice), :)), 'LineWidth', 2, 'color', [0.2 0 0.4]) %error R 
-   
+    TempRasterNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
+    TempRasterNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
+    TempRasterNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
+    TempRasterNorm(4,:) = nanmean(data(mintersect(icorrect, irightchoice, ileftblock), :)); %correct small R choice
+    TempRasterNorm(5,:) = nanmean(data(mintersect(ierror, ileftchoice), :)); %error L choice
+    TempRasterNorm(6,:) = nanmean(data(mintersect(ierror, irightchoice), :)); %error R choice
+    i = i+1;
+    
+    subplot(4, 2, plotnum); hold on
+        plot(TempRasterNorm(1,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', stimcolors(1,:)) %correct large L
+        plot(TempRasterNorm(2,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', stimcolors(end,:)) %correct large R
+        plot(TempRasterNorm(3,:)./max(max(TempRasterNorm)), '--', 'LineWidth', 2, 'color', stimcolors(1,:)) %correct small L
+        plot(TempRasterNorm(4,:)./max(max(TempRasterNorm)), '--', 'LineWidth', 2, 'color', stimcolors(end,:)) %correct small R
+        plot(TempRasterNorm(5,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', [0.4 0 0.2]) %error L
+        plot(TempRasterNorm(6,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', [0.2 0 0.4]) %error R 
 
-    plotnum = plotnum + 2;
+    plotnum = plotnum +2;
+
 end
 
+
 subplot(4, 2,4);
-title('Stimulus Align')
-
-xlim([3500 4900])
-
-
-set(gca, 'XTick', [3700, 4300, 4900]);
-set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
-xlabel('Time (s)')
-ylabel('Norm response')
+    title('Stimulus Align')
+    xlim([3500 4500])
+    set(gca, 'XTick', [3700, 4500]);
+    set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
 
 subplot(4, 2, 6);
-title('Action Align')
-
-xlim([3000 4400])
-set(gca, 'XTick', [3000, 3700, 4400]);
-set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
-xlabel('Time (s)')
-ylabel('Norm response')
+    title('Action Align')
+    xlim([3000 4400])
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
 
 subplot(4, 2, 8);
-title('Outcome Align')
-
-xlim([3000 4400])
-
-
-set(gca, 'XTick', [3000, 3700, 4400]);
-set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
-xlabel('Time (s)')
-ylabel('Norm response')
+    title('Outcome Align')
+    xlim([3500 4500])
+    set(gca, 'XTick', [3700, 4500]);
+    set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
 
 legend('Large + L', 'Large + R', 'Small + L', 'Small + R', 'Error + L', 'Error + R')
 
