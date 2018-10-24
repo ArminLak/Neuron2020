@@ -9,73 +9,22 @@ close all
 % Morgane October 2018
 
 
-% animal_ID = 59
-% select animal list 
-animal_list = [48, 50, 51] %corresponding to VTA: ALK068, 70 and 71
-animal_list = [56, 57, 59] %#ok<NOPTS> %corresponding to NAc: ALK078(Bi), MMM001(Un), MMM002(Un)
-% animal_list = [53, 55] %corresponding to DMS: ALK074(Bi), ALK075(Bi)
+% animal_list = [48, 50, 51] %corresponding to VTA: ALK068, 70 and 71
+% animal_list = [56, 57, 59] %#ok<NOPTS> %corresponding to NAc: ALK078(Bi), MMM001(Un), MMM002(Un)
+% animal_list = [53]%, 55] %corresponding to DMS: ALK074(Bi), ALK075(Bi)
 
-% select database
+animal_list = 56
+
 % load('BehPhotoM_Exp23')
 load('BehPhotoM_Exp23_NAc')
 % load('BehPhotoM_Exp23_DMS')
 
-% if strcmp(Implant,'Un')
-%     ChanNum =1;
-% elseif strcmp(Implant,'Bi')
-%     ChanNum =[1 2];
-% end
+RTLimit = 6; 
 
-RTLimit = 6; % in s, excluding trials with RT longer than this
+[stimcolors] = getColors();
 
-color = [
-    1 0 0         % red
-    1 0.5 0       % orange
-    1 1 0         % yellow
-    0.5 1 0.5     % light green
-    0 1 1         % light blue
-    0  0.5 1      % medium blue
-    0 0 1];       % blue
-
-colorGray = [ 0.8 0.8 0.8
-    0.6 0.6 0.6
-    0.4 0.4 0.4
-    0 0 0];
-
-colorGray = [ 0.8 0.8 0.8
-    0.6 0.6 0.6
-    0.4 0.4 0.4
-    0 0 0
-     1 0.8 0.8
-    1 0.6 0.6
-    1 0.4 0.4
-    1 0 0];
-
-colorRed = [ 1 0.8 0.8
-    1 0.6 0.6
-    1 0.4 0.4
-    1 0 0];
-
-colorRed = [ 0.8 0.8 0.8
-    0.6 0.6 0.6
-    0.4 0.4 0.4
-    0 0 0
-     1 0.8 0.8
-    1 0.6 0.6
-    1 0.4 0.4
-    1 0 0];
-
-stimcolors = [
-    1 0.2 0.6
-    1 0.4 0.7
-    1 0.6 0.8
-    1 0.8 0.9
-%     0.9 0.8 1
-    0.8 0.6 1
-    0.7 0.4 1
-    0.6 0.2 1];
-
-errorRed = [1 0.2 0.2];
+StimCtrl = 'y';
+StimOI = 0.25; %control stim abs  contrast in RHS plots
 
 
 %%
@@ -216,17 +165,28 @@ for animal_ID = animal_list
         
         
     %------ b) normalise left hem : err/corr large/small L/R choice -
+        tempBehData = BehData;
         
-        icorrect = find(BehData(:,9)==1);
-        ierror = find(BehData(:,9)==0);
-        irightchoice = find(BehData(:,3)==1);
-        ileftchoice = find(BehData(:,3)==-1);
-        ileftblock = find(BehData(:,8)==1);
-        irightblock = find(BehData(:,8)==2);
+        if StimCtrl == 'y'
+            stimExclude = find(abs(BehData(:,2))~= StimOI);
+            tempBehData(stimExclude,:) = [];
+        end
+        
+        icorrect = find(tempBehData(:,9)==1);
+        ierror = find(tempBehData(:,9)==0);
+        irightchoice = find(tempBehData(:,3)==1);
+        ileftchoice = find(tempBehData(:,3)==-1);
+        ileftblock = find(tempBehData(:,8)==1);
+        irightblock = find(tempBehData(:,8)==2);
+        
         M = {StimDataL, ActionDataL, RewardDataL};
         
         for i = 1:3
             data = M{i};
+            if StimCtrl == 'y'
+                data(stimExclude,:) = [];
+            end
+            TempRestNorm = [];
             TempRespNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
             TempRespNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
             TempRespNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
@@ -236,15 +196,15 @@ for animal_ID = animal_list
             
 
             for j = 1:size(TempRespNorm,1)
-                TempRespNorm(j,:) = TempStimNorm(j,:)./max(max(TempRespNorm));
+                TempRespNorm(j,:) = TempRespNorm(j,:)./max(max(TempRespNorm));
             end
             
             if i == 1
-                StimNormSeqL = (StimNormSeqL*(animal_count-1) + TempRespNorm)./animal_count; % if this doesn't work then just do if for if i = 1, stim data = this etc. .
+                StimNormSeqL = (StimNormSeqL*(animal_count-1) + TempRespNorm)./animal_count;
             elseif i == 2
-                ActionNormSeqL = (ActionNormSeqL*(animal_count-1) + TempRespNorm)./animal_count; % if this doesn't work then just do if for if i = 1, stim data = this etc. .
+                ActionNormSeqL = (ActionNormSeqL*(animal_count-1) + TempRespNorm)./animal_count; 
             elseif i == 3
-                RewardNormSeqL = (RewardNormSeqL*(animal_count-1) + TempRespNorm)./animal_count; % if this doesn't work then just do if for if i = 1, stim data = this etc. .
+                RewardNormSeqL = (RewardNormSeqL*(animal_count-1) + TempRespNorm)./animal_count; 
                
             end
             
@@ -315,18 +275,30 @@ for animal_ID = animal_list
         
         
         %------ b) normalise right hem : err/corr large/small L/R choice -
+         tempBehData = BehData;
+                 
+        if StimCtrl == 'y' %&& strcmp(Implant, 'Right')
+            stimExclude = find(abs(BehData(:,2))~= StimOI);
+            tempBehData(stimExclude,:) = [];
+        end
         
-        icorrect = find(BehData(:,9)==1);
-        ierror = find(BehData(:,9)==0);
-        irightchoice = find(BehData(:,3)==1);
-        ileftchoice = find(BehData(:,3)==-1);
-        ileftblock = find(BehData(:,8)==1);
-        irightblock = find(BehData(:,8)==2);
+        icorrect = find(tempBehData(:,9)==1);
+        ierror = find(tempBehData(:,9)==0);
+        irightchoice = find(tempBehData(:,3)==1);
+        ileftchoice = find(tempBehData(:,3)==-1);
+        ileftblock = find(tempBehData(:,8)==1);
+        irightblock = find(tempBehData(:,8)==2);
         M = {StimDataR, ActionDataR, RewardDataR};
-        Z = {StimNormSeqR, ActionNormSeqR, RewardNormSeqR};
         
         for i = 1:3
             data = M{i};
+            
+            if StimCtrl == 'y'
+                data(stimExclude,:) = [];
+            end
+%             data(abs(BehData(2,:))~= 0.25,:) = [];
+
+            TempRestNorm = [];
             TempRespNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
             TempRespNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
             TempRespNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
@@ -334,15 +306,19 @@ for animal_ID = animal_list
             TempRespNorm(5,:) = nanmean(data(mintersect(ierror, ileftchoice), :)); %error L choice
             TempRespNorm(6,:) = nanmean(data(mintersect(ierror, irightchoice), :)); %error R choice
             
-            data = Z{i};
-            for j = 1:size(TempRespNorm,1)
-                TempRespNorm(j,:) = TempStimNorm(j,:)./max(max(TempRespNorm));
+            for j = 1:6
+                TempRespNorm(j,:) = TempRespNorm(j,:)./max(max(TempRespNorm));
             end
             
-            Z{i} = (Z{i}*(animal_count-1) + TempRespNorm)./animal_count; % if this doesn't work then just do if for if i = 1, stim data = this etc. .
-            
+            if i == 1
+                StimNormSeqR = (StimNormSeqR*(animal_count-1) + TempRespNorm)./animal_count;
+            elseif i == 2
+                ActionNormSeqR = (ActionNormSeqR*(animal_count-1) + TempRespNorm)./animal_count; 
+            elseif i == 3
+                RewardNormSeqR = (RewardNormSeqR*(animal_count-1) + TempRespNorm)./animal_count;
+               
+            end            
         end
-        
         
         %note all data is now defined as being L or R
         
@@ -354,47 +330,68 @@ end
 
 %%
 
+
+if nbi ==1 || nright > 0 && nleft >0
+    iter = 2;
+    disp('figure 1 = left hem. figure 2 = right hem')
+elseif nright > 0 && nleft == 0 && nbi ==0
+    iter = 1;
+    disp('right hem only')
+    StimNormStimz = StimNormStimzR;   
+    ActionNormStimz = ActionNormStimzR;
+    RewardNormStimz = RewardNormStimzR; 
+    StimNormSeq = StimNormSeqR;
+    ActionNormSeq = ActionNormSeqR;
+    RewardNormSeq = RewardNormSeqR;  
+elseif nleft > 0 && nright == 0 && nbi ==0
+    iter = 1;
+    disp('left hem only')  
+    StimNormStimz = StimNormStimzL;   
+    ActionNormStimz = ActionNormStimzL;
+    RewardNormStimz = RewardNormStimzL; 
+    StimNormSeq = StimNormSeqL;
+    ActionNormSeq = ActionNormSeqL;
+    RewardNormSeq = RewardNormSeqL;
+end
+    
+    
 for HemIter = 1:iter
 
     if iter == 2 && HemIter ==1
       
-    BeepData = BeepDataL;  
-    StimData = StimDataL;   
-    ActionData = ActionDataL;
-    RewardData = RewardDataL; 
+    StimNormStimz = StimNormStimzL;   
+    ActionNormStimz = ActionNormStimzL;
+    RewardNormStimz = RewardNormStimzL; 
+    StimNormSeq = StimNormSeqL;
+    ActionNormSeq = ActionNormSeqL;
+    RewardNormSeq = RewardNormSeqL;
     
     end
        
      if iter == 2 && HemIter ==2
       
-    BeepData = BeepDataR;    
-    StimData = StimDataR;   
-    ActionData = ActionDataR;
-    RewardData = RewardDataR; 
+    StimNormStimz = StimNormStimzR;   
+    ActionNormStimz = ActionNormStimzR;
+    RewardNormStimz = RewardNormStimzR; 
+    StimNormSeq = StimNormSeqR;
+    ActionNormSeq = ActionNormSeqR;
+    RewardNormSeq = RewardNormSeqR; 
     
      end
 
-
-abzStim = unique(abs(BehData(:,2)))';
-% to plots rasters for all stimuli
-abzStim = unique(BehData(:,2))';
-
-c = 1;
-
 ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
     (BehData(:,3)==1 & BehData(:,8)==2));
-
 BehData(ToLargeR,16)=1;
-
 ToSmallR = setdiff(1:size(BehData,1),ToLargeR)';
-
 BehData(ToSmallR, 16)=-1;
 
 
-
+abzStim = unique(BehData(:,2))';
 
 figure; hold on
 
+%1........ psychometric .....................................
+c = 1;
 for iBlock = [1 2]
     
     TempData = BehData(BehData(:,8)==iBlock,:);
@@ -420,7 +417,7 @@ plot(unique(BehData(:,2))',performance(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,
 plot(unique(BehData(:,2))',performance(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 legend('LargeRew@L','LargeRew@R','Location','southeast')
 
-
+%2............ reaction times .......................................
 subplot(4,2,2); hold on
 xlabel('Contrast')
 ylabel('Norm RT')
@@ -433,56 +430,40 @@ plot(unique(BehData(:,2))',RTAv(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker
 plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
 
 
+%3.................. event responses separated by stim (LHS plots) ....
 
-%% Stimulus fig panels
-% figure; hold on 
-StimNormRaster = [];
-ActionNormRaster = [];
-RewardNormRaster = [];
-c=1;
-for iStim = abzStim
-    
-    StimNormRaster(c,:)=nanmean(StimData((BehData(:,2))==iStim, :));
-    ActionNormRaster(c,:)=nanmean(ActionData((BehData(:,2))==iStim, :));
-    RewardNormRaster(c,:) = nanmean(RewardData((BehData(:,2))==iStim, :));
+for c = 1:length(fullStim)
     
     subplot(4,2,3); hold on
-    plot((StimNormRaster(c,:)./max(max(StimNormRaster))),'color',stimcolors(c,:),'LineWidth',2)
-    
-    subplot(4,2,5); hold on
-    plot((ActionNormRaster(c,:)./max(max(ActionNormRaster))),'color',stimcolors(c,:),'LineWidth',2)
-    
-    subplot(4,2,7); hold on
-    plot((RewardNormRaster(c,:)./max(max(RewardNormRaster))),'color',stimcolors(c,:),'LineWidth',2)
-    
-    
-    c=c+1;
+        plot(StimNormStimz(c,:),'color',stimcolors(c,:),'LineWidth',2)
+        
+    subplot (4,2,5); hold on
+        plot(ActionNormStimz(c,:),'color',stimcolors(c,:),'LineWidth',2)
+        
+    subplot (4,2,7); hold on 
+        plot(RewardNormStimz(c,:),'color',stimcolors(c,:),'LineWidth',2)
 end
 
-if length(abzStim)==3
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)))
+if length(fullStim)==3
+    legend (num2str(fullStim(1)),num2str(fullStim(2)),num2str(fullStim(3)))
     
-elseif  length(abzStim)==4
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)))
+elseif  length(fullStim)==4
+    legend (num2str(fullStim(1)),num2str(fullStim(2)),num2str(fullStim(3)),num2str(fullStim(4)))
     
-elseif length(abzStim)==5
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)))
+elseif length(fullStim)==5
+    legend (num2str(fullStim(1)),num2str(fullStim(2)),num2str(fullStim(3)),num2str(fullStim(4)),num2str(fullStim(5)))
 
-    elseif length(abzStim)==6
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),num2str(abzStim(5)),num2str(abzStim(6)))
+    elseif length(fullStim)==6
+    legend (num2str(fullStim(1)),num2str(fullStim(2)),num2str(fullStim(3)),num2str(fullStim(4)),num2str(fullStim(5)),num2str(fullStim(6)))
 
-    elseif length(abzStim)==7
-    legend (num2str(abzStim(1)),num2str(abzStim(2)),num2str(abzStim(3)),num2str(abzStim(4)),...
-        num2str(abzStim(5)),num2str(abzStim(6)),num2str(abzStim(7)))
-
-    
+    elseif length(fullStim)==7
+    legend (num2str(fullStim(1)),num2str(fullStim(2)),num2str(fullStim(3)),num2str(fullStim(4)),...
+        num2str(fullStim(5)),num2str(fullStim(6)),num2str(fullStim(7)))
 end
+
 subplot(4, 2,3);
 title('Stimulus Align')
-
 xlim([3500 4500])
-
-
 set(gca, 'XTick', [3700, 4500]);
 set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 xlabel('Time (s)')
@@ -490,10 +471,7 @@ ylabel('Norm response')
 
 subplot(4, 2, 5);
 title('Action Align')
-
-xlim([3000 4400])
-
-
+xlim([2900 3900])
 set(gca, 'XTick', [3000, 3700, 4400]);
 set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
 xlabel('Time (s)')
@@ -501,54 +479,29 @@ ylabel('Norm response')
 
 subplot(4, 2, 7);
 title('Outcome Align')
-
 xlim([3500 4500])
-
-
 set(gca, 'XTick', [3700, 4500]);
 set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
+%4......... err/corr large/small right/left choice (RHS plots)........
 
-%% Error/Correct , small/large , left/right
-
-subplot(4, 2, 4)
-icorrect = find(BehData(:,9)==1);
-ierror = find(BehData(:,9)==0);
-irightchoice = find(BehData(:,3)==1);
-ileftchoice = find(BehData(:,3)==-1);
-ileftblock = find(BehData(:,8)==1);
-irightblock = find(BehData(:,8)==2);
 plotnum = 4;
-
-
-TempRasterNorm = [];
-
-M = {StimData, ActionData, RewardData};
-
+M = {StimNormSeq, ActionNormSeq, RewardNormSeq};
 for i = 1:3
     data = M{i};
-    TempRasterNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
-    TempRasterNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
-    TempRasterNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
-    TempRasterNorm(4,:) = nanmean(data(mintersect(icorrect, irightchoice, ileftblock), :)); %correct small R choice
-    TempRasterNorm(5,:) = nanmean(data(mintersect(ierror, ileftchoice), :)); %error L choice
-    TempRasterNorm(6,:) = nanmean(data(mintersect(ierror, irightchoice), :)); %error R choice
-    i = i+1;
+    subplot(4,2,plotnum); hold on
+    plot(data(1,:), 'LineWidth', 2, 'color', stimcolors(1,:))
+    plot(data(2,:), 'LineWidth', 2, 'color', stimcolors(end,:))
+    plot(data(3,:), '--', 'LineWidth', 2, 'color', stimcolors(1,:))
+    plot(data(4,:), '--', 'LineWidth', 2, 'color', stimcolors(end,:))
+    plot(data(5,:), 'LineWidth', 2, 'color', [0.4 0 0.2])
+    plot(data(6,:), 'LineWidth', 2, 'color', [0.2 0 0.4])
+
+    plotnum = plotnum + 2;
     
-    subplot(4, 2, plotnum); hold on
-        plot(TempRasterNorm(1,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', stimcolors(1,:)) %correct large L
-        plot(TempRasterNorm(2,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', stimcolors(end,:)) %correct large R
-        plot(TempRasterNorm(3,:)./max(max(TempRasterNorm)), '--', 'LineWidth', 2, 'color', stimcolors(1,:)) %correct small L
-        plot(TempRasterNorm(4,:)./max(max(TempRasterNorm)), '--', 'LineWidth', 2, 'color', stimcolors(end,:)) %correct small R
-        plot(TempRasterNorm(5,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', [0.4 0 0.2]) %error L
-        plot(TempRasterNorm(6,:)./max(max(TempRasterNorm)), 'LineWidth', 2, 'color', [0.2 0 0.4]) %error R 
-
-    plotnum = plotnum +2;
-
 end
-
 
 subplot(4, 2,4);
     title('Stimulus Align')
@@ -579,4 +532,57 @@ legend('Large + L', 'Large + R', 'Small + L', 'Small + R', 'Error + L', 'Error +
 end
 
 
+function [stimcolors] = getColors()
+
+color = [
+    1 0 0         % red
+    1 0.5 0       % orange
+    1 1 0         % yellow
+    0.5 1 0.5     % light green
+    0 1 1         % light blue
+    0  0.5 1      % medium blue
+    0 0 1];       % blue
+
+colorGray = [ 0.8 0.8 0.8
+    0.6 0.6 0.6
+    0.4 0.4 0.4
+    0 0 0];
+
+colorGray = [ 0.8 0.8 0.8
+    0.6 0.6 0.6
+    0.4 0.4 0.4
+    0 0 0
+     1 0.8 0.8
+    1 0.6 0.6
+    1 0.4 0.4
+    1 0 0];
+
+colorRed = [ 1 0.8 0.8
+    1 0.6 0.6
+    1 0.4 0.4
+    1 0 0];
+
+colorRed = [ 0.8 0.8 0.8
+    0.6 0.6 0.6
+    0.4 0.4 0.4
+    0 0 0
+     1 0.8 0.8
+    1 0.6 0.6
+    1 0.4 0.4
+    1 0 0];
+
+stimcolors = [
+    1 0.2 0.6
+    1 0.4 0.7
+    1 0.6 0.8
+    1 0.8 0.9
+%     0.9 0.8 1
+    0.8 0.6 1
+    0.7 0.4 1
+    0.6 0.2 1];
+
+errorRed = [1 0.2 0.2];
+
+
+end
 
