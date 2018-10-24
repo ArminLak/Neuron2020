@@ -3,7 +3,7 @@
 % Morgane August 2018
 
 
-% to do instead of z-scoring normalise to max response 
+% to do instead of z-scoring normalise to max response
 
 clear all
 close all
@@ -15,14 +15,14 @@ close all
 animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
 
 
- animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
- 
- 
- %animal_list= [{'ALK074', 'ALK075'}];
- 
- %animal_list= [{'ALK074'}];
+animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
 
- animal_ID_list_VTA = [48  50  51];
+
+%animal_list= [{'ALK074', 'ALK075'}];
+
+%animal_list= [{'ALK074'}];
+
+animal_ID_list_VTA = [48  50  51];
 
 animal_ID_list_NAc =[56, 57,59];
 
@@ -73,74 +73,95 @@ NeuronRewardCor=nan(length(animal_list),20,5,13100);
 NeuronStimCor =nan(length(animal_list),20,5,13100);
 NeuronStimErr =nan(length(animal_list),20,5,13100);
 
+NeuronActionCor =nan(length(animal_list),20,5,13100);
+NeuronActionErr =nan(length(animal_list),20,5,13100);
 
 
 for animalcount = 1:length(animal_list)
     animal_name = animal_list(animalcount);
     [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
-
+    
     if ismember(animal_ID,animal_ID_list_VTA)
-            load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
-
+        load('BehPhotoM_Exp7_VTA')                                   % load beh data databse
+        
     elseif ismember(animal_ID,animal_ID_list_NAc)
-                    load('BehPhotoM_Exp7_NAc')                                   % load beh data databse
-
-            elseif ismember(animal_ID,animal_ID_list_DMS)
-                    load('BehPhotoM_Exp7_DMS')                                   % load beh data databse
-                
+        load('BehPhotoM_Exp7_NAc')                                   % load beh data databse
+        
+    elseif ismember(animal_ID,animal_ID_list_DMS)
+        load('BehPhotoM_Exp7_DMS')                                   % load beh data databse
+        
     end
-
- 
+    
+    
     SessionList = 1:length(BehPhotoM(animal_ID).Session);
     
     for iSession = SessionList
-
-
+        
+        
         TrialTimingData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
-
-
+        
+        
         NeuronStim = BehPhotoM(animal_ID).Session(iSession).NeuronStim;
-        %NeuronStim = BehPhotoM(animal_ID).Session(iSession).NeuronAction;
         
         
-         NeuronStimTurned=NeuronStim';
+        NeuronStimTurned=NeuronStim';
         NeuronStimVector=NeuronStimTurned(:);
         NeuronStimVector = zscore(NeuronStimVector);
-NeuronStimNorm = reshape(NeuronStimVector,size(NeuronStim,2),size(NeuronStim,1));
-NeuronStimNorm = NeuronStimNorm';
-
-
+        NeuronStimNorm = reshape(NeuronStimVector,size(NeuronStim,2),size(NeuronStim,1));
+        NeuronStimNorm = NeuronStimNorm';
+        
         NeuronStim = NeuronStimNorm;
+        
+        
+        NeuronAction = BehPhotoM(animal_ID).Session(iSession).NeuronAction;
+        
+        
+        NeuronActionTurned=NeuronAction';
+        NeuronActionVector=NeuronActionTurned(:);
+        NeuronActionVector = zscore(NeuronActionVector);
+        NeuronActionNorm = reshape(NeuronActionVector,size(NeuronAction,2),size(NeuronAction,1));
+        NeuronActionNorm = NeuronActionNorm';
+        
+        
+        NeuronAction = NeuronActionNorm;
         
         NeuronReward = BehPhotoM(animal_ID).Session(iSession).NeuronReward;
         
-         NeuronRewardTurned=NeuronReward';
+        NeuronRewardTurned=NeuronReward';
         NeuronRewardVector=NeuronRewardTurned(:);
         NeuronRewardVector = zscore(NeuronRewardVector);
-NeuronRewardNorm = reshape(NeuronRewardVector,size(NeuronReward,2),size(NeuronReward,1));
-NeuronRewardNorm = NeuronRewardNorm';
-
-                NeuronReward = NeuronRewardNorm;
-
-
-
+        NeuronRewardNorm = reshape(NeuronRewardVector,size(NeuronReward,2),size(NeuronReward,1));
+        NeuronRewardNorm = NeuronRewardNorm';
+        
+        NeuronReward = NeuronRewardNorm;
+        
+        
+        
         c = 5;
         for istim = fliplr(unique(abs(TrialTimingData(:,2))'))
-           
-                
-                    
-                          NeuronStimCor(animalcount,iSession,c,:) = mean(NeuronStim(TrialTimingData(:,9)==1 & abs(TrialTimingData(:,2))==istim, :));
-                            NeuronRewardCor(animalcount,iSession,c,:)  = mean(NeuronReward(TrialTimingData(:,9)==1 & abs(TrialTimingData(:,2))==istim, :));
-
-                           NeuronStimErr(animalcount,iSession,c,:) = mean(NeuronStim(TrialTimingData(:,9)==0 & abs(TrialTimingData(:,2))==istim, :));
-                           NeuronRewardErr(animalcount,iSession,c,:)  = mean(NeuronReward(TrialTimingData(:,9)==0 & abs(TrialTimingData(:,2))==istim, :));
-                    c=c-1;
-                    
-
+            
+            
+            
+            NeuronStimCor(animalcount,iSession,c,:) = mean(NeuronStim(TrialTimingData(:,9)==1 & abs(TrialTimingData(:,2))==istim, :));
+            NeuronActionCor(animalcount,iSession,c,:) = mean(NeuronAction(TrialTimingData(:,9)==1 & abs(TrialTimingData(:,2))==istim, :));
+            
+            NeuronRewardCor(animalcount,iSession,c,:)  = mean(NeuronReward(TrialTimingData(:,9)==1 & abs(TrialTimingData(:,2))==istim, :));
+            
+            NeuronStimErr(animalcount,iSession,c,:) = mean(NeuronStim(TrialTimingData(:,9)==0 & abs(TrialTimingData(:,2))==istim, :));
+            NeuronActionErr(animalcount,iSession,c,:) = mean(NeuronAction(TrialTimingData(:,9)==0 & abs(TrialTimingData(:,2))==istim, :));
+            
+            
+            NeuronRewardErr(animalcount,iSession,c,:)  = mean(NeuronReward(TrialTimingData(:,9)==0 & abs(TrialTimingData(:,2))==istim, :));
+            
+            
+            
+            c=c-1;
+            
+            
         end
         
     end
-        
+    
 end
 
 
@@ -148,55 +169,76 @@ end
 figure
 
 if length(animal_list)==1
-for i=1:9
-    
-    subplot(9,2,2*i-1); hold on
-    for istim =1:5
-        
-plot(nanmean(squeeze(NeuronStimCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
-
-    
-    end
-        xlim([3500 4500])
-        ylim([-2 2])
-
-    subplot(9,2,2*i); hold on
-    for istim =1:5
-        
-plot(nanmean(squeeze(NeuronRewardCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
-
-    
-    end
-            ylim([-2 2])
-
-    xlim([3500 4500])
-end
-
-else
-   
     for i=1:9
-    
-    subplot(9,2,2*i-1); hold on
-    for istim =1:5
         
-plot(nanmean(squeeze(NeuronStimCor(:,i,istim,:))),'color',colorGray4(istim,:))    ; hold on
-
-    
-    end
+        subplot(9,3,3*i-2); hold on
+        for istim =1:5
+            
+            plot(nanmean(squeeze(NeuronStimCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
+            
+            
+        end
+        xlim([3700 4500])
+        ylim([-1 2])
+        
+        subplot(9,3,3*i-1); hold on
+        for istim =1:5
+            
+            plot(nanmean(squeeze(NeuronActionCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
+            
+            
+        end
         xlim([3500 4500])
-        ylim([-2 2])
-
-    subplot(9,2,2*i); hold on
-    for istim =1:5
+        ylim([-1 2])
         
-plot(nanmean(squeeze(NeuronRewardCor(:,i,istim,:))),'color',colorGray4(istim,:))    ; hold on
-
-    
+        subplot(9,3,3*i); hold on
+        
+        for istim =1:5
+            
+            plot(nanmean(squeeze(NeuronRewardCor(:,i,istim,:)),2),'color',colorGray4(istim,:))    ; hold on
+            
+            
+        end
+        ylim([-1 2])
+        
+        xlim([3500 4500])
     end
-            ylim([-2 2])
-
-    xlim([3500 4500])
+    
+else
+    
+    for i=1:9
+        
+        subplot(9,3,3*i-2); hold on
+        for istim =1:5
+            
+            plot(nanmean(squeeze(NeuronStimCor(:,i,istim,:))),'color',colorGray4(istim,:))    ; hold on
+            
+            
+        end
+        xlim([3700 4500])
+        ylim([-1 2])
+        
+        subplot(9,3,3*i-1); hold on
+        for istim =1:5
+            
+            plot(nanmean(squeeze(NeuronActionCor(:,i,istim,:))),'color',colorGray4(istim,:))    ; hold on
+            
+            
+        end
+        xlim([3500 4500])
+        ylim([-1 2])
+        
+        subplot(9,3,3*i); hold on
+        for istim =1:5
+            
+            plot(nanmean(squeeze(NeuronRewardCor(:,i,istim,:))),'color',colorGray4(istim,:))    ; hold on
+            
+            
+        end
+        ylim([-1 2])
+        
+        xlim([3500 4500])
     end
 end
-    
+
 
