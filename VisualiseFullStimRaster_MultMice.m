@@ -10,13 +10,13 @@ close all
 
 
 % animal_list = [48, 50, 51] %corresponding to VTA: ALK068, 70 and 71
-% animal_list = [56, 57, 59] %#ok<NOPTS> %corresponding to NAc: ALK078(Bi), MMM001(Un), MMM002(Un)
-% animal_list = [53]%, 55] %corresponding to DMS: ALK074(Bi), ALK075(Bi)
+% animal_list = [56, 57, 59] % corresponding to NAc: ALK078(Bi), MMM001(Un), MMM002(Un)
+% animal_list = [53, 55] %corresponding to DMS: ALK074(Bi), ALK075(Bi)
 
-animal_list = 56
+animal_list = 48
 
-% load('BehPhotoM_Exp23')
-load('BehPhotoM_Exp23_NAc')
+ load('BehPhotoM_Exp23')
+%load('BehPhotoM_Exp23_NAc')
 % load('BehPhotoM_Exp23_DMS')
 
 RTLimit = 6; 
@@ -113,7 +113,7 @@ for animal_ID = animal_list
             StimDataL = [StimDataL;TempStimData];
             ActionDataL = [ActionDataL;TempActionData];
             RewardDataL = [RewardDataL;TempRewardData];
-            
+        
             
             if strcmp(Implant, 'Bi') %right hem for bi animals
                 TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
@@ -131,14 +131,15 @@ for animal_ID = animal_list
             
         end
         
+        
         RT = BehData(:,10) - BehData(:,13);
 
-        toRemove = find ( RT > RTLimit);
-        BehData(toRemove,:) = [];
-        BeepDataL(toRemove,:) = [];
-        StimDataL(toRemove,:) = [];
-        ActionDataL(toRemove,:) = [];
-        RewardDataL(toRemove,:) = [];
+%         toRemove = find ( RT > RTLimit);
+%         BehData(toRemove,:) = [];
+%         BeepDataL(toRemove,:) = [];
+%         StimDataL(toRemove,:) = [];
+%         ActionDataL(toRemove,:) = [];
+%         RewardDataL(toRemove,:) = [];
         
         
    %------------- a) normalise left hem : stimulus-----------   
@@ -165,7 +166,44 @@ for animal_ID = animal_list
         
         
     %------ b) normalise left hem : err/corr large/small L/R choice -
-        tempBehData = BehData;
+       
+      tempBehData = BehData;
+                 
+        if StimCtrl == 'y' %&& strcmp(Implant, 'Right')
+            stimInclude = find(abs(BehData(:,2))== max(BehData(:,2)));
+            tempBehData = tempBehData(stimInclude,:);
+        end
+        
+        icorrect = find(tempBehData(:,9)==1);
+        ierror = find(tempBehData(:,9)==0);
+        irightchoice = find(tempBehData(:,3)==1);
+        ileftchoice = find(tempBehData(:,3)==-1);
+        ileftblock = find(tempBehData(:,8)==1);
+        irightblock = find(tempBehData(:,8)==2);
+        M = {StimDataL, ActionDataL, RewardDataL};
+        
+        for i = 1:3
+            data = M{i};
+            
+            if StimCtrl == 'y'
+                data = data(stimInclude,:);
+            end
+
+            TempRespNorm = [];
+            TempRespNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
+            TempRespNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
+            TempRespNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
+            TempRespNorm(4,:) = nanmean(data(mintersect(icorrect, irightchoice, ileftblock), :)); %correct small R choice
+            TempRespNorm(5,:) = nanmean(data(mintersect(ierror, ileftchoice), :)); %error L choice
+            TempRespNorm(6,:) = nanmean(data(mintersect(ierror, irightchoice), :)); %error R choice
+            
+                
+        end
+        
+        TempResp2Normalise = TempRespNorm;
+        
+        
+    tempBehData = BehData;
         
         if StimCtrl == 'y'
             stimExclude = find(abs(BehData(:,2))~= StimOI);
@@ -186,7 +224,7 @@ for animal_ID = animal_list
             if StimCtrl == 'y'
                 data(stimExclude,:) = [];
             end
-            TempRestNorm = [];
+            TempRespNorm = [];
             TempRespNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
             TempRespNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
             TempRespNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
@@ -196,7 +234,7 @@ for animal_ID = animal_list
             
 
             for j = 1:size(TempRespNorm,1)
-                TempRespNorm(j,:) = TempRespNorm(j,:)./max(max(TempRespNorm));
+                TempRespNorm(j,:) = TempRespNorm(j,:)./max(max(TempResp2Normalise));
             end
             
             if i == 1
@@ -236,16 +274,16 @@ for animal_ID = animal_list
     % --------------------- NORMALISE RIGHT HEM DATA ----------------------
     if strcmp(Implant, 'Right') || strcmp(Implant, 'Bi')
         
-        if strcmp(Implant, 'Right')
-            RT = BehData(:,10) - BehData(:,13);
-            toRemove = find ( RT > RTLimit);
-            BehData(toRemove, :) = [];
-        end
-        
-%             BeepDataR(toRemove,:) = [];
-            StimDataR(toRemove,:) = [];
-            ActionDataR(toRemove,:) = [];
-            RewardDataR(toRemove,:) = [];
+%         if strcmp(Implant, 'Right')
+%             RT = BehData(:,10) - BehData(:,13);
+%             toRemove = find ( RT > RTLimit);
+%             BehData(toRemove, :) = [];
+%         end
+%         
+% %             BeepDataR(toRemove,:) = [];
+%             StimDataR(toRemove,:) = [];
+%             ActionDataR(toRemove,:) = [];
+%             RewardDataR(toRemove,:) = [];
         
         %------------- a) normalise right hem : stimulus-----------
         fullStim = unique(BehData(:,2))';
@@ -275,7 +313,45 @@ for animal_ID = animal_list
         
         
         %------ b) normalise right hem : err/corr large/small L/R choice -
-         tempBehData = BehData;
+        
+        
+        tempBehData = BehData;
+                 
+        if StimCtrl == 'y' %&& strcmp(Implant, 'Right')
+            stimInclude = find(abs(BehData(:,2))== max(BehData(:,2)));
+            tempBehData = tempBehData(stimInclude,:);
+        end
+        
+        icorrect = find(tempBehData(:,9)==1);
+        ierror = find(tempBehData(:,9)==0);
+        irightchoice = find(tempBehData(:,3)==1);
+        ileftchoice = find(tempBehData(:,3)==-1);
+        ileftblock = find(tempBehData(:,8)==1);
+        irightblock = find(tempBehData(:,8)==2);
+        M = {StimDataR, ActionDataR, RewardDataR};
+        
+        for i = 1:3
+            data = M{i};
+            
+            if StimCtrl == 'y'
+                data = data(stimInclude,:);
+            end
+
+            TempRespNorm = [];
+            TempRespNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
+            TempRespNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
+            TempRespNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
+            TempRespNorm(4,:) = nanmean(data(mintersect(icorrect, irightchoice, ileftblock), :)); %correct small R choice
+            TempRespNorm(5,:) = nanmean(data(mintersect(ierror, ileftchoice), :)); %error L choice
+            TempRespNorm(6,:) = nanmean(data(mintersect(ierror, irightchoice), :)); %error R choice
+            
+                
+        end
+        
+        TempResp2Normalise = TempRespNorm;
+        
+        
+        tempBehData = BehData;
                  
         if StimCtrl == 'y' %&& strcmp(Implant, 'Right')
             stimExclude = find(abs(BehData(:,2))~= StimOI);
@@ -298,7 +374,7 @@ for animal_ID = animal_list
             end
 %             data(abs(BehData(2,:))~= 0.25,:) = [];
 
-            TempRestNorm = [];
+            TempRespNorm = [];
             TempRespNorm(1,:) = nanmean(data(mintersect(icorrect, ileftchoice, ileftblock), :)); %correct large L choice
             TempRespNorm(2,:) = nanmean(data(mintersect(icorrect, irightchoice, irightblock), :)); %correct large R choice
             TempRespNorm(3,:) = nanmean(data(mintersect(icorrect, ileftchoice, irightblock), :)); %correct small L choice
@@ -307,7 +383,7 @@ for animal_ID = animal_list
             TempRespNorm(6,:) = nanmean(data(mintersect(ierror, irightchoice), :)); %error R choice
             
             for j = 1:6
-                TempRespNorm(j,:) = TempRespNorm(j,:)./max(max(TempRespNorm));
+                TempRespNorm(j,:) = TempRespNorm(j,:)./max(max(TempResp2Normalise));
             end
             
             if i == 1

@@ -1,6 +1,6 @@
 % Visualise avg responses to stimulus and reward in specified sessions
 
-% Morgane August 2018
+% Armin Oct 2018
 
 
 % to do instead of z-scoring normalise to max response
