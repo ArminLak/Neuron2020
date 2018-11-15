@@ -13,11 +13,14 @@ close all
 % animal_list = [56, 57, 59] % corresponding to NAc: ALK078(Bi), MMM001(Un), MMM002(Un)
 % animal_list = [53, 55] %corresponding to DMS: ALK074(Bi), ALK075(Bi)
 
-animal_list = 48
+animal_list = 51
 
  load('BehPhotoM_Exp23')
 %load('BehPhotoM_Exp23_NAc')
 % load('BehPhotoM_Exp23_DMS')
+
+LImplantList = [50 59];
+RImplantList = [48 51 57];
 
 RTLimit = 6; 
 
@@ -72,10 +75,10 @@ for animal_ID = animal_list
     if isfield(BehPhotoM(animal_ID).Session, 'NeuronStimR')
         Implant = 'Bi';
         nbi = nbi + 1;
-    elseif strcmp(num2str(animal_ID), '59') % add other animals here with L implant
+    elseif ismember(animal_ID, LImplantList) % add other animals here with L implant
         Implant = 'Left';
         nleft = nleft + 1;
-    elseif strcmp(num2str(animal_ID), '57') % add other animals here with R implant
+    elseif ismember(animal_ID, RImplantList) % add other animals here with R implant
         Implant = 'Right';
         nright = nright + 1;
     end
@@ -134,12 +137,12 @@ for animal_ID = animal_list
         
         RT = BehData(:,10) - BehData(:,13);
 
-%         toRemove = find ( RT > RTLimit);
-%         BehData(toRemove,:) = [];
-%         BeepDataL(toRemove,:) = [];
-%         StimDataL(toRemove,:) = [];
-%         ActionDataL(toRemove,:) = [];
-%         RewardDataL(toRemove,:) = [];
+        toRemove = find ( RT > RTLimit);
+        BehData(toRemove,:) = [];
+        BeepDataL(toRemove,:) = [];
+        StimDataL(toRemove,:) = [];
+        ActionDataL(toRemove,:) = [];
+        RewardDataL(toRemove,:) = [];
         
         
    %------------- a) normalise left hem : stimulus-----------   
@@ -274,16 +277,16 @@ for animal_ID = animal_list
     % --------------------- NORMALISE RIGHT HEM DATA ----------------------
     if strcmp(Implant, 'Right') || strcmp(Implant, 'Bi')
         
-%         if strcmp(Implant, 'Right')
-%             RT = BehData(:,10) - BehData(:,13);
-%             toRemove = find ( RT > RTLimit);
-%             BehData(toRemove, :) = [];
-%         end
-%         
-% %             BeepDataR(toRemove,:) = [];
-%             StimDataR(toRemove,:) = [];
-%             ActionDataR(toRemove,:) = [];
-%             RewardDataR(toRemove,:) = [];
+        if strcmp(Implant, 'Right')
+            RT = BehData(:,10) - BehData(:,13);
+            toRemove = find ( RT > RTLimit);
+            BehData(toRemove, :) = [];
+        end
+        
+%             BeepDataR(toRemove,:) = [];
+            StimDataR(toRemove,:) = [];
+            ActionDataR(toRemove,:) = [];
+            RewardDataR(toRemove,:) = [];
         
         %------------- a) normalise right hem : stimulus-----------
         fullStim = unique(BehData(:,2))';
