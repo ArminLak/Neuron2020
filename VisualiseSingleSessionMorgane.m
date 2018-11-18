@@ -1,12 +1,12 @@
  clear all
  close all
 
-animal_name = 'MMM002'
-exp_date   = '2018-08-15'
-exp_series ='3'
+animal_name = 'ALK083'
+exp_date   = '2018-11-14'
+exp_series ='1'
 
 %Unilatral or bilateral
-Implant = 'Un'  % or 'Bi'  % in progress
+Implant = 'Bi'  % or 'Bi'  % in progress
 
 %--------------- useful information --------------------------------------
 % task event

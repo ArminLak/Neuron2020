@@ -13,7 +13,7 @@ close all
 % animal_list = [56, 57, 59] % corresponding to NAc: ALK078(Bi), MMM001(Un), MMM002(Un)
 % animal_list = [53, 55] %corresponding to DMS: ALK074(Bi), ALK075(Bi)
 
-animal_list = 48
+animal_list = 63
 
  load('BehPhotoM_Exp23')
 %load('BehPhotoM_Exp23_NAc')
