@@ -15,17 +15,17 @@ close all
 
 
 % select animal
-animal_ID = 53
+animal_ID = 50
 
 % select database
-% load('BehPhotoM_Exp23')
+ load('BehPhotoM_Exp23')
 
 % load('BehPhotoM_Exp23_NAc')
 
-load('BehPhotoM_Exp23_DMS')
+%load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Bi' 
+Implant = 'Un' 
 
 
 if strcmp(Implant,'Un')
@@ -161,6 +161,10 @@ end
 RT = BehData(:,10) - BehData(:,13);
 
 toRemove = find ( RT > RTLimit);
+
+toRemove2= find(BehData(:,1) < 50);
+toRemove = unique([toRemove; toRemove2]);
+
 BehData(toRemove,:) = [];
 
 for HemIter = 1:iter
@@ -182,6 +186,10 @@ for HemIter = 1:iter
     RewardData = RewardDataR; 
     
      end
+
+     
+     
+
 
 BeepData(toRemove,:) = [];
 StimData(toRemove,:) = [];
