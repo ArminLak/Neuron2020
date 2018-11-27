@@ -7,12 +7,15 @@ animal_name = 'ALK084'
 exp_date = '2018-11-14'
 exp_series = '2'
 
-load('MiceExpInfoPhotoM')
+start_time_s = 1; %interval of video
+stop_time_s = 10;
+
 
 sample_rate = 12000;                                        % photoM recording sampling rate
 video_fps = 30;                                             % video frames per second 
 downsampleScale = sample_rate/video_fps;                    % factor downsampling the Ca responses to match video frame rate
 
+load('MiceExpInfoPhotoM')
 
 % ------ read animals' ID
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
@@ -22,6 +25,7 @@ downsampleScale = sample_rate/video_fps;                    % factor downsamplin
 path2photoM= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\photoM'];
 path2Beh= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series];
 % path2eye = ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series];
+filename = [exp_date,'_',exp_series,'_',animal_name,'_eye.mj2'];
 
 addpath (genpath(path2Beh))
 addpath (genpath(path2photoM))
@@ -43,8 +47,8 @@ TargetSession = isession - 1;
 TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData;
 
 load([exp_date,'_',exp_series,'_',animal_name,'_eye_proc.mat']);
-VideoFrameTimes = proc.data.pupil.AlignedTime; 
-
+VideoFrameTimes = proc.data.pupil.AlignedTime;   
+Video = VideoReader([exp_date,'_',exp_series,'_',animal_name,'_eye.mj2']);
 
 % ------ load photoM data
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
@@ -59,24 +63,65 @@ end
 
 % ------- cut photoM data to fit length of video (by times)
 
+DeltaFoverF = DeltaFoverF(round(sample_rate*VideoFrameTimes(1)):round(sample_rate*VideoFrameTimes(end))); %align video to photom
+TimeStamps = TimeStamps(round(sample_rate*VideoFrameTimes(1)):round(sample_rate*VideoFrameTimes(end)));
 
-DeltaFoverF = DeltaFoverF(round(sample_rate*VideoFrameTimes(1)):round(sample_rate*VideoFrameTimes(end)));
-DeltaFoverF = downsample(DeltaFoverF, downsampleScale);
+% ----- create sound and frame stack
+
+startframe = round((VideoFrameTimes(1)+start_time_s)*video_fps); %start frame
+stopframe = round((VideoFrameTimes(1)+stop_time_s)*video_fps); %stop frame 
+
+DeltaFoverF = downsample(DeltaFoverF, sample_rate/video_fps);
+
+duration = range(VideoFrameTimes);
+t = 0:1/sample_rate:duration;
+Fc = 200;               % baseline frequency
+FDev = 200;             % frequency deviation 
+Fs = sample_rate/video_fps;    % sampling frequency set so that audio samples per second matches video frames per second
+sound = fmmod(smooth(DeltaFoverF,10), Fc, Fs, FDev);
+% sound(sound, 1000)
+[frame_stack] = getframes(path2Beh, filename, startframe, stopframe); % create framestack
+
+% ------ write video file
+
+% nRep = floor(length(sound)/length(frame_stack)); % audio frames per video frame
+% nDiff = length(sound) - nRep*length(frame_stack); %offset between audio and video 
+% 
+% if nDiff
+%         % if length(frame_stack) does not evenly divide nsoundwave, then subsample audio to match nRep*length(frame_stack)
+%         selector = round(linspace(1, length(sound), nRep*length(frames)));
+%         subsoundwave = sound(selector, :);
+% end
+% 
+
+VideoFWriter = vision.VideoFileWriter(fullfile(path2Beh, [exp_date,'_',exp_series,'_',animal_name,'_sonifiedDA.avi']), ...
+    'FileFormat', 'AVI', 'FrameRate', video_fps, 'AudioInputPort', true);
 
 
 
-% ----- create a wave 
-
-amp = 10;
-Fs = 1000;                                                  %sampling frequency must be less than min freq in audio
-
-Audio = rescale(DeltaFoverF, 1500, 6000);
+for iFrame = round(VideoFrameTimes(1)*video_fps):2000
+    videoFrame = frame_stack(iFrame);
+    step(VideoFWriter, videoFrame, sound(iFrame));
+end
 
 
 
+% to do:
+% fix Fs for creating soundwave. be sure total sampling frequency makes sense 
 
 
+function [frame_stack] = getframes(path, filename, startframe, stopframe)
 
-% to do: 
-% align photoM data to video data 
-% filter out so u can add any animal and it looks for specific brain region
+    frame_stack = [];
+
+    addpath(path);
+    vidobj = VideoReader(fullfile(path,filename));
+    
+    framec = 1;
+    for iFrame = startframe:stopframe
+        frame_stack(:,:,framec)=read(vidobj,iFrame);
+        framec = framec+1;
+    end
+    
+    
+end
