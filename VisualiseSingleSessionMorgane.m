@@ -2,8 +2,8 @@
  close all
 
 animal_name = 'ALK083'
-exp_date   = '2018-11-22'
-exp_series ='1'
+exp_date   = '2018-11-26'
+exp_series ='4'
 
 %Unilatral or bilateral
 Implant = 'Bi'  % or 'Bi'  % in progress, Note:
@@ -49,7 +49,9 @@ colorRed = [1 0 0
     0.8 0 0
     0.6 0  0
     0.3 0 0];
-
+colorGray3 = [0.8 0.8 0.8
+    0.6 0.6 0.6
+    0.3 0.3 0.3];
 colorGray4 = [0.8 0.8 0.8
     0.6 0.6 0.6
     0.3 0.3 0.3
