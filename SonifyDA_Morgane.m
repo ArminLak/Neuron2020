@@ -71,15 +71,15 @@ TimeStamps = TimeStamps(round(sample_rate*VideoFrameTimes(1)):round(sample_rate*
 startframe = round((VideoFrameTimes(1)+start_time_s)*video_fps); %start frame
 stopframe = round((VideoFrameTimes(1)+stop_time_s)*video_fps); %stop frame 
 
-DeltaFoverF = downsample(DeltaFoverF, sample_rate/video_fps);
-
+% DeltaFoverF = downsample(DeltaFoverF, sample_rate/video_fps);
+%%
 duration = range(VideoFrameTimes);
 t = 0:1/sample_rate:duration;
 Fc = 200;               % baseline frequency
 FDev = 200;             % frequency deviation 
 Fs = sample_rate/video_fps;    % sampling frequency set so that audio samples per second matches video frames per second
-sound = fmmod(smooth(DeltaFoverF,10), Fc, Fs, FDev);
-% sound(sound, 1000)
+soundwave = fmmod(smooth(DeltaFoverF,10), Fc, Fs, FDev);
+% sound(soundwave, 1000)
 [frame_stack] = getframes(path2Beh, filename, startframe, stopframe); % create framestack
 
 % ------ write video file
@@ -93,7 +93,7 @@ sound = fmmod(smooth(DeltaFoverF,10), Fc, Fs, FDev);
 %         subsoundwave = sound(selector, :);
 % end
 % 
-
+% 
 VideoFWriter = vision.VideoFileWriter(fullfile(path2Beh, [exp_date,'_',exp_series,'_',animal_name,'_sonifiedDA.avi']), ...
     'FileFormat', 'AVI', 'FrameRate', video_fps, 'AudioInputPort', true);
 
@@ -101,7 +101,8 @@ VideoFWriter = vision.VideoFileWriter(fullfile(path2Beh, [exp_date,'_',exp_serie
 
 for iFrame = round(VideoFrameTimes(1)*video_fps):2000
     videoFrame = frame_stack(iFrame);
-    step(VideoFWriter, videoFrame, sound(iFrame));
+    step(VideoFWriter, videoFrame, soundwave);
+%     VideoFWriter(
 end
 
 

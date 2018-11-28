@@ -1,8 +1,8 @@
  clear all
  close all
 
-animal_name = 'MMM003'
-exp_date   = '2018-11-23'
+animal_name = 'MMM005'
+exp_date   = '2018-11-27'
 exp_series ='1'
 
 %Unilatral or bilateral
@@ -50,6 +50,9 @@ colorRed = [1 0 0
     0.8 0 0
     0.6 0  0
     0.3 0 0];
+colorGray2 = [
+    0.3 0.3 0.3
+    0 0 0];
 colorGray3 = [
     0.6 0.6 0.6
     0.3 0.3 0.3
