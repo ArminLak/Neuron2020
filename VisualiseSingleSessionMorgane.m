@@ -278,7 +278,7 @@ plot (Stimz, normalised', 'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 
 xlabel('Contrast')
 ylabel('Rel')
 
-% 
+%% 
 % -------------------------------------------------subplot for stimulus aligned, not normalised
 subplot(7,2,9); hold on
 title ('Stimulus aligned ')
