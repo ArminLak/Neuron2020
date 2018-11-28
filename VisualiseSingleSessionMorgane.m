@@ -1,12 +1,16 @@
  clear all
  close all
 
-animal_name = 'MMM005'
-exp_date   = '2018-11-27'
-exp_series ='1'
+
+animal_name = 'ALK084'
+exp_date   = '2018-11-28'
+exp_series ='2'
 
 %Unilatral or bilateral
-Implant = 'Bi'  % or 'Bi'  % in progress
+Implant = 'Bi'  % or 'Bi'  % in progress, Note:
+% this by default only looks at channel 2. if you need to see Chan4, change
+% code on line 100. 
+
 
 %--------------- useful information --------------------------------------
 % task event
@@ -24,11 +28,8 @@ stop=1     % s
 % conservative by keeping 13700 of 13800 (so event is at 3700  sample)
 
 
-% load('BehPhotoM_Exp7_VTA')
-% load('BehPhotoM_Exp23_NAc') %MMM002, MMM001, ALK078 (bi)
-% load('BehPhotoM_Exp23_DMS') % ALK074(bi), ALK075 (bi)
-% load('BehPhotoM_Exp23') %ALK068, 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
+
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
 
@@ -57,7 +58,6 @@ colorGray3 = [
     0.6 0.6 0.6
     0.3 0.3 0.3
     0 0 0];
-
 colorGray4 = [0.8 0.8 0.8
     0.6 0.6 0.6
     0.3 0.3 0.3
@@ -102,7 +102,8 @@ FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
 load(photoMFileName);
 
-DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;TimeStamps=photoMdata.Time_s_;
+DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
+TimeStamps=photoMdata.Time_s_;
 
     
 %------------------------------- plot psychoimetric curve------------------

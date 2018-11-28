@@ -92,17 +92,22 @@ soundwave = fmmod(smooth(DeltaFoverF,10), Fc, Fs, FDev);
 %         selector = round(linspace(1, length(sound), nRep*length(frames)));
 %         subsoundwave = sound(selector, :);
 % end
-% 
-% 
+
 VideoFWriter = vision.VideoFileWriter(fullfile(path2Beh, [exp_date,'_',exp_series,'_',animal_name,'_sonifiedDA.avi']), ...
-    'FileFormat', 'AVI', 'FrameRate', video_fps, 'AudioInputPort', true);
+    'FileFormat', 'Indexed AVI', 'FrameRate', video_fps, 'AudioInputPort', true);
+VideoFWriter.Colormap = parula(256)
 
+FS_dim = size(frame_stack);
+audio_frame_length = length(soundwave)/FS_dim(3)
+audio_c = 0
 
-
-for iFrame = round(VideoFrameTimes(1)*video_fps):2000
-    videoFrame = frame_stack(iFrame);
-    step(VideoFWriter, videoFrame, soundwave);
-%     VideoFWriter(
+for iFrame = 1:FS_dim(3)
+    videoFrame = frame_stack(:,:,iFrame);
+    soundFrame = soundwave(audio_c+1:(audio_c+audio_frame_length));
+    
+    step(VideoFWriter, videoFrame, soundFrame);
+    
+	audio_c = audio_c + audio_frame_length;
 end
 
 

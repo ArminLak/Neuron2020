@@ -128,17 +128,6 @@ elseif strcmp(animal_name,'MMM003')   % photometry,
     
     chan_order = chan_order  +1;
     
-elseif strcmp(animal_name,'MMM004')   % photometry,
-    chan_order = [];
-    animal_ID  = 65;
-    
-    chan_order = chan_order  +1;
-    
-elseif strcmp(animal_name,'MMM005')   % photometry,
-    chan_order = [];
-    animal_ID  = 66;
-    
-    chan_order = chan_order  +1;
     
 elseif strcmp(animal_name,'ALK084')   % photometry,
     chan_order = [];
@@ -149,6 +138,17 @@ elseif strcmp(animal_name,'ALK084')   % photometry,
 elseif strcmp(animal_name,'ALK083')   % photometry,
     chan_order = [];
     animal_ID  = 63;
+    
+    chan_order = chan_order  +1;
+elseif strcmp(animal_name,'MMM004')   % photometry,
+    chan_order = [];
+    animal_ID  = 65;
+    
+    chan_order = chan_order  +1;
+    
+elseif strcmp(animal_name,'MMM005')   % photometry,
+    chan_order = [];
+    animal_ID  = 66;
     
     chan_order = chan_order  +1;
     
