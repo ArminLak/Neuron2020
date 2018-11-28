@@ -1,8 +1,8 @@
  clear all
  close all
 
-animal_name = 'ALK083'
-exp_date   = '2018-11-14'
+animal_name = 'MMM003'
+exp_date   = '2018-11-23'
 exp_series ='1'
 
 %Unilatral or bilateral
@@ -24,10 +24,10 @@ stop=1     % s
 % conservative by keeping 13700 of 13800 (so event is at 3700  sample)
 
 
-load('BehPhotoM_Exp7_VTA')
-load('BehPhotoM_Exp23_NAc') %MMM002, MMM001, ALK078 (bi)
-load('BehPhotoM_Exp23_DMS') % ALK074(bi), ALK075 (bi)
-load('BehPhotoM_Exp23') %ALK068, 
+% load('BehPhotoM_Exp7_VTA')
+% load('BehPhotoM_Exp23_NAc') %MMM002, MMM001, ALK078 (bi)
+% load('BehPhotoM_Exp23_DMS') % ALK074(bi), ALK075 (bi)
+% load('BehPhotoM_Exp23') %ALK068, 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
@@ -50,6 +50,10 @@ colorRed = [1 0 0
     0.8 0 0
     0.6 0  0
     0.3 0 0];
+colorGray3 = [
+    0.6 0.6 0.6
+    0.3 0.3 0.3
+    0 0 0];
 
 colorGray4 = [0.8 0.8 0.8
     0.6 0.6 0.6
@@ -276,7 +280,7 @@ plot (Stimz, normalised', 'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 
 xlabel('Contrast')
 ylabel('Rel')
 
-% 
+%% 
 % -------------------------------------------------subplot for stimulus aligned, not normalised
 subplot(7,2,9); hold on
 title ('Stimulus aligned ')
