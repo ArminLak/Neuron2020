@@ -2,12 +2,12 @@
  close all
 
 
-animal_name = 'ALK084'
-exp_date   = '2018-11-28'
-exp_series ='2'
+animal_name = 'MMM003'
+exp_date   = '2018-11-27'
+exp_series ='1'
 
 %Unilatral or bilateral
-Implant = 'Bi'  % or 'Bi'  % in progress, Note:
+Implant = 'Un'  % or 'Bi'  % in progress, Note:
 % this by default only looks at channel 2. if you need to see Chan4, change
 % code on line 100. 
 
