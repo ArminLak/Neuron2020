@@ -62,17 +62,15 @@ end
 
 
 % ------- cut photoM data to fit length of video (by times)
-
 DeltaFoverF = DeltaFoverF(round(sample_rate*VideoFrameTimes(1)):round(sample_rate*VideoFrameTimes(end))); %align video to photom
 TimeStamps = TimeStamps(round(sample_rate*VideoFrameTimes(1)):round(sample_rate*VideoFrameTimes(end)));
 
-% ----- create sound and frame stack
 
+
+% ----- create sound and frame stack
 startframe = round((VideoFrameTimes(1)+start_time_s)*video_fps); %start frame
 stopframe = round((VideoFrameTimes(1)+stop_time_s)*video_fps); %stop frame 
 
-% DeltaFoverF = downsample(DeltaFoverF, sample_rate/video_fps);
-%%
 duration = range(VideoFrameTimes);
 t = 0:1/sample_rate:duration;
 Fc = 200;               % baseline frequency
@@ -82,44 +80,35 @@ soundwave = fmmod(smooth(DeltaFoverF,10), Fc, Fs, FDev);
 % sound(soundwave, 1000)
 [frame_stack] = getframes(path2Beh, filename, startframe, stopframe); % create framestack
 
+
+
 % ------ write video file
-
-% nRep = floor(length(sound)/length(frame_stack)); % audio frames per video frame
-% nDiff = length(sound) - nRep*length(frame_stack); %offset between audio and video 
-% 
-% if nDiff
-%         % if length(frame_stack) does not evenly divide nsoundwave, then subsample audio to match nRep*length(frame_stack)
-%         selector = round(linspace(1, length(sound), nRep*length(frames)));
-%         subsoundwave = sound(selector, :);
-% end
-
 VideoFWriter = vision.VideoFileWriter(fullfile(path2Beh, [exp_date,'_',exp_series,'_',animal_name,'_sonifiedDA.avi']), ...
     'FileFormat', 'AVI', 'FrameRate', video_fps, 'AudioInputPort', true);
 
 
 frame_stack_dims = size(frame_stack);
-audio_frame_length = length(soundwave)/frame_stack_dims(3)
-audio_c = 0
+audio_frame_length = round(length(soundwave)/(video_fps*frame_stack_dims(3)));
+audio_c = 0;
 
 for iFrame = 1:frame_stack_dims(3)
-%     videoFrame = imshow(frame_stack(:,:,iFrame), 'Colormap', bone);
-%     videoFrame = videoFrame.CData;
-%     soundFrame = soundwave(audio_c+1:floor(audio_c+audio_frame_length));
 
     videoFrame = frame_stack(:,:,iFrame);
-    sound_bit = DeltaFoverF(audio_c+1:floor(audio_c+audio_frame_length));
-    soundFrame = fmmod(smooth(sound_bit,10), Fc, Fs, FDev);
+    sound_bit = audio_c+1:round(audio_c+audio_frame_length);
+    soundFrame = soundwave(sound_bit);
     
     step(VideoFWriter, videoFrame, soundFrame);
-	audio_c = audio_c + audio_frame_length;
+	audio_c = round(audio_c + audio_frame_length);
 end
 release(VideoFWriter);
 
 
-% to do:
-% fix Fs for creating soundwave. be sure total sampling frequency makes sense 
 
 
+
+
+
+%%
 function [frame_stack] = getframes(path, filename, startframe, stopframe)
 
     frame_stack = [];
