@@ -2,8 +2,8 @@
  close all
 
 animal_name = 'ALK083'
-exp_date   = '2018-11-26'
-exp_series ='4'
+exp_date   = '2018-11-30'
+exp_series ='1'
 
 %Unilatral or bilateral
 Implant = 'Bi'  % or 'Bi'  % in progress, Note:
@@ -96,7 +96,7 @@ FileAlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);
 load(photoMFileName);
 
-DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
+DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
 TimeStamps=photoMdata.Time_s_;
 
     

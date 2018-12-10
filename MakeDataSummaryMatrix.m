@@ -13,10 +13,10 @@ close all
 % hem)
 
 
-animal_name = 'MMM002'
+animal_name = 'ALK083'
 
 %Unilatral or bilateral ('Un' or 'Bi')
-Implant = 'Un'
+Implant = 'Bi'
 
 if strcmp(Implant,'Un')
     ChanNum =1;
@@ -30,30 +30,34 @@ end;
 SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24];           % ALK068 Exp23
 SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24];    % ALK070 Exp23
 SessionList = [10, 11, 12,13, 14,19];                             % ALK071 Exp23 % 15-18 are bad
+SessionList = [11:29];                                            % ALK084 Exp23
 
-% DMS animals Exp 23
-SessionList = [21,22,23,24,25,26,27]; % ALK074, exp 23
-SessionList = [15, 16,17,18,19];      % ALK075, exp 23
+% % DMS animals Exp 23
+% SessionList = [21,22,23,24,25,26,27]; % ALK074, exp 23
+% SessionList = [15, 16,17,18,19];      % ALK075, exp 23
+SessionList = [13:29];                                            % ALK084 Exp23
+SessionList = [13:21];                                            % ALK083 Exp23
 
-% NAc animals Exp 23
-
- SessionList = [13,14,15,16, 18, 19, 20, 21, 22, 23, 24, 25]; % MMM001, exp 23
- SessionList = [23:32];  % ALK078, 
- SessionList = [15,16,17,18,20,21,22,23]; % MMM002, exp 23, 
-
- %% Learning Exp
- % Naive learning VTA animals
-SessionList = [1,3,5:13]; % ALk068, Exp 7
-SessionList = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]; % ALk070, Exp 7
-SessionList = [1:9]; %ALK071 Exp 7
-
- % Naive learning DMS animals
-SessionList = [1:20]; %ALK074 Exp 7
-SessionList = [1:14]; %ALK075 Exp 7
-
- % Naive learning NAc animals
-SessionList = [1:12]; %MMM001 Exp 7
-SessionList = [1:10]; %MMM002 Exp 7
+% 
+% % NAc animals Exp 23
+% 
+%  SessionList = [13,14,15,16, 18, 19, 20, 21, 22, 23, 24, 25]; % MMM001, exp 23
+%  SessionList = [23:32];  % ALK078, 
+%  SessionList = [15,16,17,18,20,21,22,23]; % MMM002, exp 23, 
+% 
+%  %% Learning Exp
+%  % Naive learning VTA animals
+% SessionList = [1,3,5:13]; % ALk068, Exp 7
+% SessionList = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]; % ALk070, Exp 7
+% SessionList = [1:9]; %ALK071 Exp 7
+% 
+%  % Naive learning DMS animals
+% SessionList = [1:20]; %ALK074 Exp 7
+% SessionList = [1:14]; %ALK075 Exp 7
+% 
+%  % Naive learning NAc animals
+% SessionList = [1:12]; %MMM001 Exp 7
+% SessionList = [1:10]; %MMM002 Exp 7
 
 %%
 % ------------------------------------------------------------------------
@@ -67,13 +71,13 @@ SessionList = [1:10]; %MMM002 Exp 7
 
 %load('BehPhotoM_Exp23_NAc')
 
-%load('BehPhotoM_Exp23_DMS')
+load('BehPhotoM_Exp23_DMS')
 
 %load('BehPhotoM_Exp7_VTA')
 
 %load('BehPhotoM_Exp7_DMS')
 
-load('BehPhotoM_Exp7_NAc')
+%load('BehPhotoM_Exp7_NAc')
 
 %--------------- useful information --------------------------------------
 % task event
@@ -120,6 +124,7 @@ for iSession =  SessionList
         
         if iChan == 1
             DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
+            
         elseif iChan == 2
             DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
         end
