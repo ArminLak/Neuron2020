@@ -14,8 +14,8 @@ close all
         % BUT requires new system of Chan2 / Chan4 in database
 
 
-animal_name = 'ALK084'
-Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'ALK071'
+Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '7';
 
@@ -28,32 +28,7 @@ elseif strcmp(Implant,'Bi')
     ChanNum =[1 2];
 end;
 
-% ------ give a list of sessions (don't modify these numbers)
-
-% Exp 7 session lists
-SessionList = [1,3,5:13]; % ALk068 
-SessionList = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]; % ALk070
-SessionList = [1:9]; %ALK071
-SessionList = [1:20]; %ALK074
-SessionList = [1:14]; %ALK075
-SessionList = [1:3]; %ALK083
-SessionList = [1:9]; %ALK084
-SessionList = [1:12]; %MMM001
-SessionList = [1:10]; %MMM002
-SessionList = [1:9]; %MMM005
-
-
-% Exp 23
-SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24];           % ALK068
-SessionList = [13, 14, 15, 16,17, 18, 19, 20, 21, 22, 23, 24];    % ALK070
-SessionList = [10, 11, 12,13, 14,19];                             % ALK071 : 15-18 are bad
-SessionList = [21,22,23,24,25,26,27]; % ALK074
-SessionList = [15, 16,17,18,19];      % ALK075
-SessionList = [23:32];  % ALK078
-SessionList = [13:21];  % ALK083
-SessionList = [11:29];  % ALK084
-SessionList = [13,14,15,16, 18, 19, 20, 21, 22, 23, 24, 25]; % MMM001
-SessionList = [15,16,17,18,20,21,22,23]; % MMM002
+[SessionList] = getSessionList_photoM(animal_name, exp_ID);
 
 
 %%
@@ -69,6 +44,7 @@ SessionList = [15,16,17,18,20,21,22,23]; % MMM002
 start = -3 % s
 stop=8     % s
 
+addpath('C:\Users\morga\Dropbox\Morgane Project\Code')
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
@@ -77,22 +53,47 @@ downsampleScale = 10;                                       % factor downsamplin
 % read animals' ID
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
 
+% get brain regions and hems 
 if Implant == 'Un'
     animal_chanz = cellstr([MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan2]);
+    
+    r1 = char(animal_chanz{1}); r1 = r1(end-2:end);
+    h1 = char(animal_chanz{1}); h1 = h1(1);
+    
+    SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
+%     Chan2_Empties = 
 elseif Implant == 'Bi'
     animal_chanz = [MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan2];
     animal_chanz = cellstr([animal_chanz; MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan4]);
+    
+    r1 = char(animal_chanz{1}); r1 = r1(end-2:end); r2 = char(animal_chanz{2}); r2 = r2(end-2:end);
+    h1 = char(animal_chanz{1}); h1 = h1(1); h2 = char(animal_chanz{2}); h2 = h2(1);
 
-    SessionList1 = find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))); % sessions where animal_chanz(1) is chan2
-    SessionList2 = find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(2)));
+    SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1)))); % sessions where animal_chanz(1) is chan2
+    SessionList2 = setdiff(SessionList, SessionList1); % sessions where animal_chanz(1) is chan4
+    
+%     Chan2_Empties = 
+%     Chan4_Empties = isnan (
 end
 
 
+%%
 
 for iChan = ChanNum
-
-    load(['BehPhotoM_Exp', exp_ID, '_', char(animal_chanz(iChan))]);
-
+    
+	if iChan == 1
+        hem = h1;
+        load(['BehPhotoM_Exp', exp_ID, '_', r1]);
+        
+    elseif iChan ==2
+        hem = h2;
+        
+    	if r1 ~= r2
+            load(['BehPhotoM_Exp', exp_ID, '_', r2]);
+        end
+    end
+    
+       
 SessionC = 1;    
 for iSession =  SessionList
 
@@ -144,21 +145,34 @@ for iSession =  SessionList
         
         [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
+        if iChan == 1 || string(r1) ~= string(r2)
+            BehPhotoM(animal_ID).Session(SessionC).TrialTimingData   =  TrialTimingData;
+        end
         
-        BehPhotoM(animal_ID).Session(SessionC).TrialTimingData               =  TrialTimingData;
+        if hem == 'L'
             
-            BehPhotoM(animal_ID).Session(SessionC).NeuronBeep    = Raster_MatrixBeep;
-            BehPhotoM(animal_ID).Session(SessionC).NeuronStim    = Raster_MatrixStim;
-            BehPhotoM(animal_ID).Session(SessionC).NeuronAction  = Raster_MatrixAction;
-            BehPhotoM(animal_ID).Session(SessionC).NeuronReward  = Raster_MatrixReward;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronBeepL    = Raster_MatrixBeep;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronStimL   = Raster_MatrixStim;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronActionL  = Raster_MatrixAction;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronRewardL  = Raster_MatrixReward;
             
-
+        elseif hem == 'R'
+            BehPhotoM(animal_ID).Session(SessionC).NeuronBeepR    = Raster_MatrixBeep;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronStimR   = Raster_MatrixStim;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronActionR  = Raster_MatrixAction;
+            BehPhotoM(animal_ID).Session(SessionC).NeuronRewardR  = Raster_MatrixReward;
+            
+        end
+        
     SessionC = SessionC + 1;
 end
-
-save(['BehPhotoM_Exp', exp_ID, '_', char(animal_chanz(iChan))], 'BehPhotoM')
-
-end
-
+        if length(ChanNum) ==1 || string(r1) ~= string(r2) 
+            save(['BehPhotoM_Exp', exp_ID, '_', r1], 'BehPhotoM', '-v7.3');
+        elseif iChan ==2
+            save(['BehPhotoM_Exp', exp_ID, '_', r2], 'BehPhotoM', '-v7.3');
+        end
+        
+    end
+    
 
 
