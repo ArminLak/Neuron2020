@@ -14,8 +14,8 @@ close all
         % BUT requires new system of Chan2 / Chan4 in database
 
 
-animal_name = 'ALK078'
-Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'ALK071'
+Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '7';
 
@@ -44,7 +44,7 @@ end;
 start = -3 % s
 stop=8     % s
 
-% addpath('C:\Users\morga\Dropbox\Morgane Project\Code')
+addpath('C:\Users\morga\Dropbox\Morgane Project\Code')
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
@@ -60,7 +60,7 @@ if Implant == 'Un'
     r1 = char(animal_chanz{1}); r1 = r1(end-2:end);
     h1 = char(animal_chanz{1}); h1 = h1(1);
     
-    SessionList1 = find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1)));
+    SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
 %     Chan2_Empties = 
 elseif Implant == 'Bi'
     animal_chanz = [MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan2];
@@ -69,7 +69,7 @@ elseif Implant == 'Bi'
     r1 = char(animal_chanz{1}); r1 = r1(end-2:end); r2 = char(animal_chanz{2}); r2 = r2(end-2:end);
     h1 = char(animal_chanz{1}); h1 = h1(1); h2 = char(animal_chanz{2}); h2 = h2(1);
 
-    SessionList1 = find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))); % sessions where animal_chanz(1) is chan2
+    SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1)))); % sessions where animal_chanz(1) is chan2
     SessionList2 = setdiff(SessionList, SessionList1); % sessions where animal_chanz(1) is chan4
     
 %     Chan2_Empties = 
