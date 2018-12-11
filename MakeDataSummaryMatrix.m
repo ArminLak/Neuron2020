@@ -13,10 +13,10 @@ close all
 % hem)
 
 
-animal_name = 'ALK083'
+animal_name = 'MMM003'
 
 %Unilatral or bilateral ('Un' or 'Bi')
-Implant = 'Bi'
+Implant = 'Un'
 
 if strcmp(Implant,'Un')
     ChanNum =1;
@@ -37,6 +37,8 @@ SessionList = [11:29];                                            % ALK084 Exp23
 % SessionList = [15, 16,17,18,19];      % ALK075, exp 23
 SessionList = [13:29];                                            % ALK084 Exp23
 SessionList = [13:21];                                            % ALK083 Exp23
+SessionList = [13:16];                                            % MMMM003 Exp23
+
 
 % 
 % % NAc animals Exp 23

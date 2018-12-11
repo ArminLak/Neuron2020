@@ -9,13 +9,14 @@ close all
 
 
 
-%VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
-% DMS : [53, 55] coresponding to ALK074(Bi), ALK075(Bi)
+%VTA : [48, 50,51, 64]  coresponding to ALK068, 70 and 71
+% DMS : [53, 55,63,64] coresponding to ALK074(Bi), ALK075(Bi), ALK083(Bi),
+% ALK084(Un)
 % NAc : [56, 57,59] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un)
 
 
 % select animal
-animal_ID = 63
+animal_ID = 62
 
 % select database
 % load('BehPhotoM_Exp23')
@@ -25,7 +26,7 @@ animal_ID = 63
 load('BehPhotoM_Exp23_DMS')
 
 % define implant
-Implant = 'Bi' 
+Implant = 'Un' 
 
 
 if strcmp(Implant,'Un')
