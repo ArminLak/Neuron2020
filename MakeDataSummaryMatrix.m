@@ -8,7 +8,7 @@
 
 % Armin Feb 2018
 % Armin July 2018 added the possbiltiy of saving 2 channels per recoring ( L and R hem)
-% Morgane December 2018 modified so separates into left/right and vta/dms/nac 
+% Morgane December 2018 modified so separates into L/R and vta/dms/nac 
         % BUT requires new system of Chan2 / Chan4 in database
         
 clear all
