@@ -30,7 +30,7 @@ elseif strcmp(Implant,'Bi')
 end;
 
 path2data = ['\\zubjects.cortexlab.net\Subjects\',animal_name];
-addpath path2data
+addpath(genpath(path2data))
 
 [SessionList] = getSessionList_photoM(animal_name, exp_ID);
 

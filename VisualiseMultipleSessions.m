@@ -16,14 +16,14 @@ close all
 
 
 % select animal
-animal_ID = 53
+animal_ID = 48
 
 % select database
-% load('BehPhotoM_Exp23')
+ load('BehPhotoM_Exp23_VTA')
 
 % load('BehPhotoM_Exp23_NAc')
 
-load('BehPhotoM_Exp23_DMS')
+%load('BehPhotoM_Exp23_DMS')
 
 
 RTLimit = 6; % in s, excluding trials with RT longer than this
