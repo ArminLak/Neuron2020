@@ -22,7 +22,6 @@ exp_ID = '23';
 
 
 % ---------- 
-
 if strcmp(Implant,'Un')
     ChanNum =1;
 elseif strcmp(Implant,'Bi')
@@ -51,7 +50,6 @@ stop=8     % s
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
-
 
 % read animals' ID
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name);
@@ -119,14 +117,14 @@ for iSession =  SessionList
     load(photoMFileName);
         
     if iChan ==1 && ismember(iSession, SessionList1) || iChan ==2 && ismember(iSession, SessionList2)
-        if isempty(MiceExpInfo.mice(animal_ID).session(iSession).Chan2)
-            continue
+        if isempty(MiceExpInfo.mice(animal_ID).session(iSession).Chan2) 
+            continue                                                         %skip this iteration if channel 2 was not recorded from in this session
         end
         
         DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
     elseif iChan ==1 && ismember(iSession, SessionList2) || iChan ==2 && ismember (iSession, SessionList1)
         if isempty(MiceExpInfo.mice(animal_ID).session(iSession).Chan4)
-            continue
+            continue                                                         %skip this iteration if channel 4 was not recorded from in this session
         end
         DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
     end
