@@ -10,12 +10,12 @@ close all
 
 % Armin Feb 2018
 % Armin July 2018 added the possbiltiy of saving 2 channels per recoring ( L and R hem)
-% Morgane December 2018 modified so separates into left/right and vta/dms/nac 
+% Morgane December 2018 modified so separates into L/R and vta/dms/nac 
         % BUT requires new system of Chan2 / Chan4 in database
 
 
-animal_name = 'ALK071'
-Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'ALK074'
+Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '7';
 
