@@ -1,5 +1,3 @@
-clear all
-close all
 
 % specify anial name, experiment ID, and list of sessions of interest
 
@@ -12,6 +10,9 @@ close all
 % Armin July 2018 added the possbiltiy of saving 2 channels per recoring ( L and R hem)
 % Morgane December 2018 modified so separates into left/right and vta/dms/nac 
         % BUT requires new system of Chan2 / Chan4 in database
+        
+clear all
+close all
 
 
 animal_name = 'ALK074'
