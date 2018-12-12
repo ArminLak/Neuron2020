@@ -25,16 +25,6 @@ animal_ID = 53
 
 load('BehPhotoM_Exp23_DMS')
 
-% define implant
-Implant = 'Un'
-
-
-if strcmp(Implant,'Un')
-    ChanNum =1;
-elseif strcmp(Implant,'Bi')
-    ChanNum =[1 2];
-end;
-
 
 RTLimit = 6; % in s, excluding trials with RT longer than this
 
@@ -56,8 +46,6 @@ colorRed = [ 1 0.8 0.8
     1 0.6 0.6
     1 0.4 0.4
     1 0 0];
-
-
 
 
 %%
@@ -142,8 +130,6 @@ if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
     iter = iter + 1;
     
 end
-
-
 
 
 RT = BehData(:,10) - BehData(:,13);
