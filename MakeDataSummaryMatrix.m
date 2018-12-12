@@ -61,7 +61,8 @@ if Implant == 'Un'
     h1 = char(animal_chanz{1}); h1 = h1(1);         % brain Hemi
     
     SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
-%     Chan2_Empties = 
+    
+%     Chan2_Empties = find(isempty(MiceExpInfo.mice(animal_ID).session(SessionList).Chan2));
 elseif Implant == 'Bi'
     animal_chanz = [MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan2];
     animal_chanz = cellstr([animal_chanz; MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan4]);
@@ -72,8 +73,8 @@ elseif Implant == 'Bi'
     SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1)))); % sessions where animal_chanz(1) is chan2
     SessionList2 = setdiff(SessionList, SessionList1); % sessions where animal_chanz(1) is chan4
     
-%     Chan2_Empties = 
-%     Chan4_Empties = isnan (
+%     Chan2_Empties = isempty(MiceExpInfo.mice(animal_ID).session(SessionList).Chan2);
+%     Chan4_Empties = isempty(MiceExpInfo.mice(animal_ID).session(SessionList).Chan4);
 end
 
 
