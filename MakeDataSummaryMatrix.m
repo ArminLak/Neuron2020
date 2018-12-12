@@ -15,8 +15,8 @@ clear all
 close all
 
 
-animal_name = 'ALK074'
-Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'ALK068'
+Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '23';
 
@@ -28,6 +28,9 @@ if strcmp(Implant,'Un')
 elseif strcmp(Implant,'Bi')
     ChanNum =[1 2];
 end;
+
+path2data = ['\\zubjects.cortexlab.net\Subjects\',animal_name];
+addpath path2data
 
 [SessionList] = getSessionList_photoM(animal_name, exp_ID);
 
