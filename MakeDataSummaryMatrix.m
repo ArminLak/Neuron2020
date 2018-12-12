@@ -64,8 +64,7 @@ if Implant == 'Un'
     h1 = char(animal_chanz{1}); h1 = h1(1);         % brain Hemi
     
     SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
-    
-%     Chan2_Empties = find(isempty(MiceExpInfo.mice(animal_ID).session(SessionList).Chan2));
+
 elseif Implant == 'Bi'
     animal_chanz = [MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan2];
     animal_chanz = cellstr([animal_chanz; MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan4]);
@@ -73,11 +72,10 @@ elseif Implant == 'Bi'
     r1 = char(animal_chanz{1}); r1 = r1(end-2:end); r2 = char(animal_chanz{2}); r2 = r2(end-2:end);
     h1 = char(animal_chanz{1}); h1 = h1(1);         h2 = char(animal_chanz{2});         h2 = h2(1);
 
-    SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1)))); % sessions where animal_chanz(1) is chan2
+    SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))...
+        || {MiceExpInfo.mice(animal_ID).session(SessionList).Chan4}==string(animal_chanz(2)))); % sessions where animal_chanz(1) is chan2
     SessionList2 = setdiff(SessionList, SessionList1); % sessions where animal_chanz(1) is chan4
-    
-%     Chan2_Empties = isempty(MiceExpInfo.mice(animal_ID).session(SessionList).Chan2);
-%     Chan4_Empties = isempty(MiceExpInfo.mice(animal_ID).session(SessionList).Chan4);
+
 end
 
 
@@ -118,16 +116,22 @@ for iSession =  SessionList
     photoMFileName=MiceExpInfo.mice(animal_ID).session(iSession).Neuronfile(1:end-4);
     %photoMdata = readtable([path2photoM,'\',photoMFileName]);
     load(photoMFileName);
-    
         
-        if iChan ==1 && ismember(iSession, SessionList1) || iChan ==2 && ismember(iSession, SessionList2)
-            DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
-        elseif iChan ==1 && ismember(iSession, SessionList2) || iChan ==2 && ismember (iSession, SessionList1)
-            DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
+    if iChan ==1 && ismember(iSession, SessionList1) || iChan ==2 && ismember(iSession, SessionList2)
+        if isempty(MiceExpInfo.mice(animal_ID).session(iSession).Chan2)
+            continue
         end
         
-        TimeStamps=photoMdata.Time_s_;
-        
+        DeltaFoverF = photoMdata.AnalogIn_2_dF_F0;
+    elseif iChan ==1 && ismember(iSession, SessionList2) || iChan ==2 && ismember (iSession, SessionList1)
+        if isempty(MiceExpInfo.mice(animal_ID).session(iSession).Chan4)
+            continue
+        end
+        DeltaFoverF = photoMdata.AnalogIn_4_dF_F0;
+    end
+    
+    TimeStamps=photoMdata.Time_s_;
+    
         
         %------------------------define event time for event-alinged responses--------------------------
         
