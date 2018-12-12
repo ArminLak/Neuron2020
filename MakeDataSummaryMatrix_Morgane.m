@@ -14,10 +14,10 @@ close all
         % BUT requires new system of Chan2 / Chan4 in database
 
 
-animal_name = 'ALK071'
-Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'ALK074'
+Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
 
-exp_ID = '7';
+exp_ID = '23';
 
 
 % ---------- 
@@ -43,8 +43,7 @@ end;
 % start and stop of time axis for plot (in second before and after the event)
 start = -3 % s
 stop=8     % s
-
-addpath('C:\Users\morga\Dropbox\Morgane Project\Code')
+%addpath('C:\Users\morga\Dropbox\Morgane Project\Code')
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
@@ -57,8 +56,8 @@ downsampleScale = 10;                                       % factor downsamplin
 if Implant == 'Un'
     animal_chanz = cellstr([MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan2]);
     
-    r1 = char(animal_chanz{1}); r1 = r1(end-2:end);
-    h1 = char(animal_chanz{1}); h1 = h1(1);
+    r1 = char(animal_chanz{1}); r1 = r1(end-2:end); % brain Region
+    h1 = char(animal_chanz{1}); h1 = h1(1);         % brain Hemi
     
     SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
 %     Chan2_Empties = 
@@ -67,7 +66,7 @@ elseif Implant == 'Bi'
     animal_chanz = cellstr([animal_chanz; MiceExpInfo.mice(animal_ID).session(SessionList(1)).Chan4]);
     
     r1 = char(animal_chanz{1}); r1 = r1(end-2:end); r2 = char(animal_chanz{2}); r2 = r2(end-2:end);
-    h1 = char(animal_chanz{1}); h1 = h1(1); h2 = char(animal_chanz{2}); h2 = h2(1);
+    h1 = char(animal_chanz{1}); h1 = h1(1);         h2 = char(animal_chanz{2});         h2 = h2(1);
 
     SessionList1 = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1)))); % sessions where animal_chanz(1) is chan2
     SessionList2 = setdiff(SessionList, SessionList1); % sessions where animal_chanz(1) is chan4
@@ -81,14 +80,14 @@ end
 
 for iChan = ChanNum
     
-	if iChan == 1
-        hem = h1;
+	if iChan == 1  
+        hem = h1; 
         load(['BehPhotoM_Exp', exp_ID, '_', r1]);
         
     elseif iChan ==2
         hem = h2;
         
-    	if r1 ~= r2
+    	if r1 ~= r2 % if the second channel is looking into a new brain region
             load(['BehPhotoM_Exp', exp_ID, '_', r2]);
         end
     end
@@ -166,6 +165,11 @@ for iSession =  SessionList
         
     SessionC = SessionC + 1;
 end
+
+if strcmpi(getComputerName,'zopamine2')
+    cd ('C:\Users\Armin\Dropbox\Work\UCL\Science\Analysis Code\PhotoM')
+end
+
         if length(ChanNum) ==1 || string(r1) ~= string(r2) 
             save(['BehPhotoM_Exp', exp_ID, '_', r1], 'BehPhotoM', '-v7.3');
         elseif iChan ==2
