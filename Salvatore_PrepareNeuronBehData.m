@@ -356,9 +356,8 @@ DataMatrix=[TrialCount',Sign_Contrast',ResponseSide',liquid', laser',laser_Stimt
 %   DataMatrix_AllSessions = [DataMatrix; DataMatrix_AllSessions];
 
 
-% removing late responses (Nick's design)
-
-if ~strcmp(animal_name,'ALK068') && ~strcmp(animal_name,'ALK070') && ~strcmp(animal_name,'ALK083')
+if ~strcmp(animal_name,'ALK068') && ~strcmp(animal_name,'ALK070') && ~strcmp(animal_name,'ALK083')...
+    && ~strcmp(animal_name,'ALK084')
     
 DataMatrix(DataMatrix(:,3)==3,:) = [];
 end

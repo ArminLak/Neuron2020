@@ -6,8 +6,7 @@ close all
 % it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
 % Armin Feb 2018
 % Armin July 2018 added bilateral recoding
-
-
+% Armin Dec 2018, changed to better handle bilateral recordings
 
 %VTA : [48, 50,51, 64]  coresponding to ALK068, 70 and 71
 % DMS : [53, 55,63,64] coresponding to ALK074(Bi), ALK075(Bi), ALK083(Bi),
@@ -16,10 +15,48 @@ close all
 
 
 % select animal
-animal_ID = 48
+animal_ID = 64
+BrainStrucutre = 'VTA'
+ExpID = '38'
 
+if strcmpi (BrainStrucutre,'VTA')
+    
+    if strcmpi (ExpID,'7')
+  load('BehPhotoM_Exp7_VTA')
+    elseif strcmpi (ExpID,'23')
+  load('BehPhotoM_Exp23_VTA')
+    elseif strcmpi (ExpID,'38')
+  load('BehPhotoM_Exp38_VTA')
+    end
+    
+elseif strcmpi (BrainStrucutre,'NAC')
+    
+    if strcmpi (ExpID,'7')
+  load('BehPhotoM_Exp7_NAC')
+    elseif strcmpi (ExpID,'23')
+  load('BehPhotoM_Exp23_NAC')
+    elseif strcmpi (ExpID,'38')
+  load('BehPhotoM_Exp38_NAC')
+    end
+    
+    
+elseif strcmpi (BrainStrucutre,'DMS')
+    
+    if strcmpi (ExpID,'7')
+  load('BehPhotoM_Exp7_DMS')
+    elseif strcmpi (ExpID,'23')
+  load('BehPhotoM_Exp23_DMS')
+    elseif strcmpi (ExpID,'38')
+  load('BehPhotoM_Exp38_DMS')
+    end
+    
+end
+ 
+        
+    
 % select database
- load('BehPhotoM_Exp23_VTA')
+% load('BehPhotoM_Exp23_VTA')
+% load('BehPhotoM_Exp38_VTA')
 
 % load('BehPhotoM_Exp23_NAc')
 
@@ -98,10 +135,10 @@ if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
     iter = iter + 1;
 end
 
-BehData = [];
 
 if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
-    
+    BehData = [];
+
     for iSession = sessionz % left hem
         
         TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
@@ -204,14 +241,20 @@ for HemIter = 1:iter
     
     figure; hold on
     
-    for iBlock = [1 2]
+    for iBlock = unique(BehData(:,8))
         
         TempData = BehData(BehData(:,8)==iBlock,:);
         
         c = 1;
         for istim = unique(BehData(:,2))'
             
+             if strcmpi (ExpID,'38')
+            performance(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,9));
+                 
+             else
+                 
             performance(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,3));
+             end
             RTAv(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,7));
             
             c=c+1;
@@ -225,9 +268,15 @@ for HemIter = 1:iter
     title( 'Psychometric curves')
     set(gca,'TickDir','out','Box','off');
     
+      if strcmpi (ExpID,'23')
     plot(unique(BehData(:,2))',performance(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
     plot(unique(BehData(:,2))',performance(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
-    legend('LargeRew@L','LargeRew@R','Location','southeast')
+        legend('LargeRew@L','LargeRew@R','Location','southeast')
+
+      else
+    plot(unique(BehData(:,2))',performance(4,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+      end          
+          
     
     
     subplot(6,3,2); hold on
@@ -236,10 +285,14 @@ for HemIter = 1:iter
     title( 'Reaction Time')
     set(gca,'TickDir','out','Box','off');
     
-    
+          if strcmpi (ExpID,'23')
+
     plot(unique(BehData(:,2))',RTAv(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-    
     plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+          else
+    plot(unique(BehData(:,2))',RTAv(4,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+
+          end
     
     %% beep figure
     

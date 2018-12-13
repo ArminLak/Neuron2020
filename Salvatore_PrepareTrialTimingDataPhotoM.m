@@ -47,6 +47,7 @@ TimeStamps=photoMdata.Time_s_;
 
 WaterUp = find(diff(WaterDig)>0.5);
 
+
 WaterUpTime = TimeStamps(WaterUp);%  / sample_rate;
 
 

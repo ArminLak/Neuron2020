@@ -4,8 +4,8 @@
 clear all
 close all
 
-animal_name = 'ALK083'
-exp_date   = '2018-12-06'
+animal_name = 'ALK084'
+exp_date   = '2018-12-12'
 exp_series ='1'
 
 
@@ -189,7 +189,7 @@ for iChan = 1:NChan
     xlabel('Contrast')
     xticks([min(Stimz) 0 max(Stimz)])
     title('Psych Curve')
-    ylabel('% Rightward')
+    ylabel('P(correct)')
     %yticklabels({0 50 100})
     
     

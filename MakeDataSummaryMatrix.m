@@ -15,10 +15,10 @@ clear all
 close all
 
 
-animal_name = 'ALK068'
-Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'ALK084'
+Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
 
-exp_ID = '23';
+exp_ID = '38';
 
 
 % ---------- 
@@ -178,7 +178,7 @@ if strcmpi(getComputerName,'zopamine2')
     cd ('C:\Users\Armin\Dropbox\Work\UCL\Science\Analysis Code\PhotoM')
 end
 
-        if length(ChanNum) ==1 || string(r1) ~= string(r2) 
+        if length(ChanNum) ==1 || (length(ChanNum)==2 && iChan ==1 && string(r1) ~= string(r2)) 
             save(['BehPhotoM_Exp', exp_ID, '_', r1], 'BehPhotoM', '-v7.3');
         elseif iChan ==2
             save(['BehPhotoM_Exp', exp_ID, '_', r2], 'BehPhotoM', '-v7.3');
