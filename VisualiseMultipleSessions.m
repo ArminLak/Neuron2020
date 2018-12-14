@@ -15,43 +15,46 @@ close all
 
 
 % select animal
-animal_ID = 64
+animal_ID = 48
 BrainStrucutre = 'VTA'
-ExpID = '38'
+ExpID = '23'
 
-if strcmpi (BrainStrucutre,'VTA')
-    
-    if strcmpi (ExpID,'7')
-  load('BehPhotoM_Exp7_VTA')
-    elseif strcmpi (ExpID,'23')
-  load('BehPhotoM_Exp23_VTA')
-    elseif strcmpi (ExpID,'38')
-  load('BehPhotoM_Exp38_VTA')
-    end
-    
-elseif strcmpi (BrainStrucutre,'NAC')
-    
-    if strcmpi (ExpID,'7')
-  load('BehPhotoM_Exp7_NAC')
-    elseif strcmpi (ExpID,'23')
-  load('BehPhotoM_Exp23_NAC')
-    elseif strcmpi (ExpID,'38')
-  load('BehPhotoM_Exp38_NAC')
-    end
-    
-    
-elseif strcmpi (BrainStrucutre,'DMS')
-    
-    if strcmpi (ExpID,'7')
-  load('BehPhotoM_Exp7_DMS')
-    elseif strcmpi (ExpID,'23')
-  load('BehPhotoM_Exp23_DMS')
-    elseif strcmpi (ExpID,'38')
-  load('BehPhotoM_Exp38_DMS')
-    end
-    
-end
- 
+        load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
+
+        
+% if strcmpi (BrainStrucutre,'VTA')
+%     
+%     if strcmpi (ExpID,'7')
+%   load('BehPhotoM_Exp7_VTA')
+%     elseif strcmpi (ExpID,'23')
+%   load('BehPhotoM_Exp23_VTA')
+%     elseif strcmpi (ExpID,'38')
+%   load('BehPhotoM_Exp38_VTA')
+%     end
+%     
+% elseif strcmpi (BrainStrucutre,'NAC')
+%     
+%     if strcmpi (ExpID,'7')
+%   load('BehPhotoM_Exp7_NAC')
+%     elseif strcmpi (ExpID,'23')
+%   load('BehPhotoM_Exp23_NAC')
+%     elseif strcmpi (ExpID,'38')
+%   load('BehPhotoM_Exp38_NAC')
+%     end
+%     
+%     
+% elseif strcmpi (BrainStrucutre,'DMS')
+%     
+%     if strcmpi (ExpID,'7')
+%   load('BehPhotoM_Exp7_DMS')
+%     elseif strcmpi (ExpID,'23')
+%   load('BehPhotoM_Exp23_DMS')
+%     elseif strcmpi (ExpID,'38')
+%   load('BehPhotoM_Exp38_DMS')
+%     end
+%     
+% end
+%  
         
     
 % select database
@@ -241,7 +244,7 @@ for HemIter = 1:iter
     
     figure; hold on
     
-    for iBlock = unique(BehData(:,8))
+    for iBlock = unique(BehData(:,8))'
         
         TempData = BehData(BehData(:,8)==iBlock,:);
         

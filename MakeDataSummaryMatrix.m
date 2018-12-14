@@ -18,7 +18,7 @@ close all
 animal_name = 'ALK084'
 Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
 
-exp_ID = '38';
+exp_ID = '23';
 
 
 % ---------- 
