@@ -176,6 +176,8 @@ end
 
 if strcmpi(getComputerName,'zopamine2')
     cd ('C:\Users\Armin\Dropbox\Work\UCL\Science\Analysis Code\PhotoM')
+elseif strcmpi(getComputerName, 'zebrafish')
+    cd ('C:\Users\morga\Documents\MATLAB')
 end
 
         if length(ChanNum) ==1 || (length(ChanNum)==2 && iChan ==1 && string(r1) ~= string(r2)) 
