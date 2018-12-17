@@ -16,9 +16,9 @@ close all
 
 
 % select animal
-animal_ID = 57
-BrainStrucutre = 'NAc'
-ExpID = '23'
+animal_ID = 64
+BrainStrucutre = 'DMS'
+ExpID = '38'
 
         load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
