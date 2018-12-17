@@ -55,7 +55,7 @@ elseif strcmp(animal_name, 'ALK084')
     elseif exp_ID == '23'
         SessionList = [12:29];
     elseif exp_ID == '38'
-        SessionList = [31:34];
+        SessionList = [31:37];
         
     end
     
