@@ -2,28 +2,30 @@ clear all
 close all
 
 % list of animals
-Animals = [48 50 51]
+Animals = [48 50 51 64]
 
-load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23_VTA')
 
 
-%Animals = [56, 57 59]
+Hem2show = 'both' % 'L' 'R' or 'both'
+
+%Animals = [56, 57 59 ]
 
 %load('BehPhotoM_Exp23_NAc')
 
 
-%Animals = [53,55]
+%Animals = [53,62, 63]
 
 %load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8
-                  -0.8, 0.2
-                  -0.2, 0.8]; % stim, action, reward in s
-              
-              
-              sampleRate = 1200;
-              StartTime = 3700; % saved in the database.
+    -0.8, 0.2
+    -0.2, 0.8]; % stim, action, reward in s
+
+
+sampleRate = 1200;
+StartTime = 3700; % saved in the database.
 
 
 color = [
@@ -77,176 +79,213 @@ GrandPopStimBin = nan(4,4,length(Animals));
 GrandPopRewBin = nan(4,4,length(Animals));
 
 c=1;
-
 for iAnimal = Animals
     
-    if iAnimal == 56  % we will use R hem of this animal (left hem gives the same results)
-        
-        BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
+    
+    ChanN = 0;
+    
+    if ~isempty(BehPhotoM(iAnimal).GrandSummaryL)
+        ChanN = ChanN + 1;
     end
     
+    if ~isempty(BehPhotoM(iAnimal).GrandSummaryR)
+        ChanN = ChanN + 1;
+    end
     
-    PerBlock1(c,:)=BehPhotoM(iAnimal).GrandSummary.Performance(1,:);
-    RTBlock1(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(1,:);
-     
-    PerBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.Performance(2,:);
-    RTBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(2,:);
+    if ~strcmpi(Hem2show,'both')
+        
+        ChanN = 1;
+    end
     
-    
-    % Stim-align rastersCor
-    SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster; 
-    SingleAnimalNormStimTrace = SingleAnimalStimTrace ./ max(max(SingleAnimalStimTrace));
-    GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
-    
-        % Action-align rastersCor
-    SingleAnimalActionTrace= BehPhotoM(iAnimal).GrandSummary.AbsActionRaster; 
-    SingleAnimalNormActionTrace = SingleAnimalActionTrace ./ max(max(SingleAnimalActionTrace));
-    GrandPopAbsActionResp = SingleAnimalNormActionTrace + GrandPopAbsActionResp ;
-    
-      % Stim-align rasters(correct/error)
-    SingleAnimalStimTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(1,:);
-    SingleAnimalStimTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(2,:);
-    SingleAnimalStimTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(3,:);
-    SingleAnimalStimTraceMiddleStimCorrect(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(4,:);
-    
-    SingleAnimalNormStimTraceMiddleStimCorrect = SingleAnimalStimTraceMiddleStimCorrect ./ max(max(SingleAnimalStimTraceMiddleStimCorrect));
-    GrandPopAbsStimRespMiddleStimCorrect = SingleAnimalNormStimTraceMiddleStimCorrect + GrandPopAbsStimRespMiddleStimCorrect ;
-    
-    SingleAnimalStimTraceMiddleStimError(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(1,:); 
-    SingleAnimalStimTraceMiddleStimError(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(2,:);
-    SingleAnimalStimTraceMiddleStimError(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(3,:); 
-    SingleAnimalStimTraceMiddleStimError(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(4,:); 
-    
-    
-    SingleAnimalNormStimTraceMiddleStimError = SingleAnimalStimTraceMiddleStimError ./ max(max(SingleAnimalStimTraceMiddleStimCorrect));
-    GrandPopAbsStimRespMiddleStimError = SingleAnimalNormStimTraceMiddleStimError + GrandPopAbsStimRespMiddleStimError ;
-    
-    
-       % Action-align rasters(correct/error)
-    SingleAnimalActionTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(1,:);
-    SingleAnimalActionTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(2,:);
-    SingleAnimalActionTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(3,:);
-    SingleAnimalActionTraceMiddleStimCorrect(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(4,:);
-    
-    SingleAnimalNormActionTraceMiddleStimCorrect = SingleAnimalActionTraceMiddleStimCorrect ./ max(max(SingleAnimalActionTraceMiddleStimCorrect));
-    GrandPopAbsActionRespMiddleStimCorrect = SingleAnimalNormActionTraceMiddleStimCorrect + GrandPopAbsActionRespMiddleStimCorrect ;
-    
-    SingleAnimalActionTraceMiddleStimError(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(1,:); 
-    SingleAnimalActionTraceMiddleStimError(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(2,:);
-    SingleAnimalActionTraceMiddleStimError(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(3,:); 
-    SingleAnimalActionTraceMiddleStimError(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(4,:); 
-    
-    
-    SingleAnimalNormActionTraceMiddleStimError = SingleAnimalActionTraceMiddleStimError ./ max(max(SingleAnimalActionTraceMiddleStimCorrect));
-    GrandPopAbsActionRespMiddleStimError = SingleAnimalNormActionTraceMiddleStimError + GrandPopAbsActionRespMiddleStimError ;
-    
-    
-    
-        % Stim-align rasters(middle stimuli, correct/ small/large reward)
-    SingleAnimalStimTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterLargeCorrect(2,:); 
-    SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimLargeCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
-    GrandPopAbsStimRespMiddleStimCorLarge = SingleAnimalNormStimTraceMiddleStimLargeCorrect + GrandPopAbsStimRespMiddleStimCorLarge ;
-    
-    SingleAnimalStimTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterSmallCorrect(2,:); 
-    SingleAnimalNormStimTraceMiddleStimSmallCorrect = SingleAnimalStimTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
-    GrandPopAbsStimRespMiddleStimCorSmall = SingleAnimalNormStimTraceMiddleStimSmallCorrect + GrandPopAbsStimRespMiddleStimCorSmall ;
-    
- 
-    
-          % Action-align rasters(middle stimuli, correct/ small/large reward)
-    SingleAnimalActionTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterLargeCorrect(2,:); 
-    SingleAnimalNormActionTraceMiddleStimLargeCorrect = SingleAnimalActionTraceMiddleStimLargeCorrect ./ max(max(SingleAnimalActionTraceMiddleStimLargeCorrect));
-    GrandPopAbsActionRespMiddleStimCorLarge = SingleAnimalNormActionTraceMiddleStimLargeCorrect + GrandPopAbsActionRespMiddleStimCorLarge ;
-    
-    SingleAnimalActionTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterSmallCorrect(2,:); 
-    SingleAnimalNormActionTraceMiddleStimSmallCorrect = SingleAnimalActionTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalActionTraceMiddleStimLargeCorrect));
-    GrandPopAbsActionRespMiddleStimCorSmall = SingleAnimalNormActionTraceMiddleStimSmallCorrect + GrandPopAbsActionRespMiddleStimCorSmall ;
- 
-    
-    
-    % tuning curve for different blocks
-    SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
-    SingleAnimalNormTunningStim = SingleAnimalTunningStim ./ max(max(SingleAnimalTunningStim));
-    GrandPopNormBinStimNoFold = SingleAnimalNormTunningStim + GrandPopNormBinStimNoFold ;
-        GrandPopNormBinStimNoFold1(c,:)=SingleAnimalNormTunningStim(1,:);
-        GrandPopNormBinStimNoFold2(c,:)=SingleAnimalNormTunningStim(2,:);
-
-    
-    SingleAnimalTunningReward= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardNoFold;
-    SingleAnimalNormTunningRew = SingleAnimalTunningReward ./ max(max(SingleAnimalTunningReward));
-    GrandPopNormBinRewardNoFold = SingleAnimalNormTunningRew + GrandPopNormBinRewardNoFold ;
-    GrandPopNormBinRewardNoFold1(c,:)=SingleAnimalNormTunningRew(1,:);
-    GrandPopNormBinRewardNoFold2(c,:)=SingleAnimalNormTunningRew(2,:);
-  
-    
-    % tuning curve for corr/error
-    SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
-    SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
-    GrandPopNormBinStimNoFoldCorrError = SingleAnimalNormTunningStimCorrError + GrandPopNormBinStimNoFoldCorrError ;
-    GrandPopNormBinStimNoFoldCorrError1(c,:)=SingleAnimalNormTunningStimCorrError(1,:);
-    GrandPopNormBinStimNoFoldCorrError2(c,:)=SingleAnimalNormTunningStimCorrError(2,:);
-    
-  
-    SingleAnimalTunningRewardCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrectErrorNoFold;
-    SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError ./ max(max(SingleAnimalTunningRewardCorrError));
-    GrandPopNormBinRewardNoFoldCorrError = SingleAnimalNormTunningRewardCorrError + GrandPopNormBinRewardNoFoldCorrError ;
-  GrandPopNormBinRewardNoFoldCorrError1(c,:)=GrandPopNormBinRewardNoFoldCorrError(1,:);
-    GrandPopNormBinRewardNoFoldCorrError2(c,:)=GrandPopNormBinRewardNoFoldCorrError(2,:);
-  
-    SingleAnimalBeep2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DACorr;
-    SingleAnimalBeep2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.BeepAwayDACorr;
-    SingleAnimalBeep2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DAErr;
-    SingleAnimalBeep2AwayDACorrErr(4,:)= BehPhotoM(iAnimal).GrandSummary.BeepAwayDAErr;
-    
-    
-    SingleAnimalBeep2AwayDACorrErrNorm = SingleAnimalBeep2AwayDACorrErr ./ max(max(SingleAnimalBeep2AwayDACorrErr));
-    
-    GrandPopBeep2AwayDACorError = SingleAnimalBeep2AwayDACorrErrNorm + GrandPopBeep2AwayDACorError ;
-    
-    SingleAnimalStim2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Stim2DACorr;
-    SingleAnimalStim2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.StimAwayDACorr;
-    SingleAnimalStim2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Stim2DAErr;
-    SingleAnimalStim2AwayDACorrErr(4,:)= BehPhotoM(iAnimal).GrandSummary.StimAwayDAErr;
-    
-    
-    SingleAnimalStim2AwayDACorrErrNorm = SingleAnimalStim2AwayDACorrErr ./ max(max(SingleAnimalStim2AwayDACorrErr));
-     
-    GrandPopStim2AwayDACorError = SingleAnimalStim2AwayDACorrErrNorm + GrandPopStim2AwayDACorError ;
-    
-    
-    SingleBinStimCorrError(1:2,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrect;
-    SingleBinStimCorrError(3:4,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimError;
-    
-    SingleBinStimCorrErrorNorm = SingleBinStimCorrError ./ max(max(SingleBinStimCorrError));
-    
-    
-    %GrandPopStimBin = SingleBinStimCorrErrorNorm + GrandPopStimBin ;
-    
-    GrandPopStimBin(:,:,c) = SingleBinStimCorrErrorNorm  ;
-    
-    SingleAnimalRew2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Rew2DACorr;
-    SingleAnimalRew2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.RewAwayDACorr;
-    SingleAnimalRew2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Rew2DAErr;
-    SingleAnimalRew2AwayDACorrErr(4,:)= BehPhotoM(iAnimal).GrandSummary.RewAwayDAErr;
-    
-    
-    SingleAnimalRew2AwayDACorrErrNorm = SingleAnimalRew2AwayDACorrErr ./ max(max(SingleAnimalRew2AwayDACorrErr));
-     
-    GrandPopRew2AwayDACorError = SingleAnimalRew2AwayDACorrErrNorm + GrandPopRew2AwayDACorError ;
-    
-    
-    SingleBinRewCorrError(1:2,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrect;
-    SingleBinRewCorrError(3:4,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardError;
-    
-    SingleBinRewCorrErrorNorm = SingleBinRewCorrError ./ max(max(SingleBinRewCorrError));
-    
-    
-    %GrandPopRewBin = SingleBinRewCorrErrorNorm + GrandPopRewBin ;
-    
-        GrandPopRewBin(:,:,c) = SingleBinRewCorrErrorNorm  ;
-
-    
-    c=c+1;
+    for iChan = ChanN
+        
+        if ~isempty(BehPhotoM(iAnimal).GrandSummaryL) && strcmpi(Hem2show,'L')
+            BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryL;
+        elseif  ~isempty(BehPhotoM(iAnimal).GrandSummaryR) && strcmpi(Hem2show,'R')
+            BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
+            
+            
+        else
+            BehPhotoM(iAnimal).GrandSummary=[];
+            
+        end
+        
+        if strcmpi(Hem2show,'both')
+            
+            if ~isempty(BehPhotoM(iAnimal).GrandSummaryL)
+                BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryL;
+            end
+            
+            if ~isempty(BehPhotoM(iAnimal).GrandSummaryR)
+                BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
+            end
+            
+        end
+        
+        if            ~isempty(BehPhotoM(iAnimal).GrandSummary)
+            
+            PerBlock1(c,:)=BehPhotoM(iAnimal).GrandSummary.Performance(1,:);
+            RTBlock1(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(1,:);
+            
+            PerBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.Performance(2,:);
+            RTBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(2,:);
+            
+            
+            % Stim-align rastersCor
+            SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster;
+            SingleAnimalNormStimTrace = SingleAnimalStimTrace ./ max(max(SingleAnimalStimTrace));
+            GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
+            
+            % Action-align rastersCor
+            SingleAnimalActionTrace= BehPhotoM(iAnimal).GrandSummary.AbsActionRaster;
+            SingleAnimalNormActionTrace = SingleAnimalActionTrace ./ max(max(SingleAnimalActionTrace));
+            GrandPopAbsActionResp = SingleAnimalNormActionTrace + GrandPopAbsActionResp ;
+            
+            % Stim-align rasters(correct/error)
+            SingleAnimalStimTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(1,:);
+            SingleAnimalStimTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(2,:);
+            SingleAnimalStimTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(3,:);
+            SingleAnimalStimTraceMiddleStimCorrect(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterCorrect(4,:);
+            
+            SingleAnimalNormStimTraceMiddleStimCorrect = SingleAnimalStimTraceMiddleStimCorrect ./ max(max(SingleAnimalStimTraceMiddleStimCorrect));
+            GrandPopAbsStimRespMiddleStimCorrect = SingleAnimalNormStimTraceMiddleStimCorrect + GrandPopAbsStimRespMiddleStimCorrect ;
+            
+            SingleAnimalStimTraceMiddleStimError(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(1,:);
+            SingleAnimalStimTraceMiddleStimError(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(2,:);
+            SingleAnimalStimTraceMiddleStimError(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(3,:);
+            SingleAnimalStimTraceMiddleStimError(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterError(4,:);
+            
+            
+            SingleAnimalNormStimTraceMiddleStimError = SingleAnimalStimTraceMiddleStimError ./ max(max(SingleAnimalStimTraceMiddleStimCorrect));
+            GrandPopAbsStimRespMiddleStimError = SingleAnimalNormStimTraceMiddleStimError + GrandPopAbsStimRespMiddleStimError ;
+            
+            
+            % Action-align rasters(correct/error)
+            SingleAnimalActionTraceMiddleStimCorrect(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(1,:);
+            SingleAnimalActionTraceMiddleStimCorrect(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(2,:);
+            SingleAnimalActionTraceMiddleStimCorrect(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(3,:);
+            SingleAnimalActionTraceMiddleStimCorrect(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterCorrect(4,:);
+            
+            SingleAnimalNormActionTraceMiddleStimCorrect = SingleAnimalActionTraceMiddleStimCorrect ./ max(max(SingleAnimalActionTraceMiddleStimCorrect));
+            GrandPopAbsActionRespMiddleStimCorrect = SingleAnimalNormActionTraceMiddleStimCorrect + GrandPopAbsActionRespMiddleStimCorrect ;
+            
+            SingleAnimalActionTraceMiddleStimError(1,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(1,:);
+            SingleAnimalActionTraceMiddleStimError(2,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(2,:);
+            SingleAnimalActionTraceMiddleStimError(3,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(3,:);
+            SingleAnimalActionTraceMiddleStimError(4,:)= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterError(4,:);
+            
+            
+            SingleAnimalNormActionTraceMiddleStimError = SingleAnimalActionTraceMiddleStimError ./ max(max(SingleAnimalActionTraceMiddleStimCorrect));
+            GrandPopAbsActionRespMiddleStimError = SingleAnimalNormActionTraceMiddleStimError + GrandPopAbsActionRespMiddleStimError ;
+            
+            
+            
+            % Stim-align rasters(middle stimuli, correct/ small/large reward)
+            SingleAnimalStimTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterLargeCorrect(2,:);
+            SingleAnimalNormStimTraceMiddleStimLargeCorrect = SingleAnimalStimTraceMiddleStimLargeCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
+            GrandPopAbsStimRespMiddleStimCorLarge = SingleAnimalNormStimTraceMiddleStimLargeCorrect + GrandPopAbsStimRespMiddleStimCorLarge ;
+            
+            SingleAnimalStimTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsStimRasterSmallCorrect(2,:);
+            SingleAnimalNormStimTraceMiddleStimSmallCorrect = SingleAnimalStimTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalStimTraceMiddleStimLargeCorrect));
+            GrandPopAbsStimRespMiddleStimCorSmall = SingleAnimalNormStimTraceMiddleStimSmallCorrect + GrandPopAbsStimRespMiddleStimCorSmall ;
+            
+            
+            
+            % Action-align rasters(middle stimuli, correct/ small/large reward)
+            SingleAnimalActionTraceMiddleStimLargeCorrect= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterLargeCorrect(2,:);
+            SingleAnimalNormActionTraceMiddleStimLargeCorrect = SingleAnimalActionTraceMiddleStimLargeCorrect ./ max(max(SingleAnimalActionTraceMiddleStimLargeCorrect));
+            GrandPopAbsActionRespMiddleStimCorLarge = SingleAnimalNormActionTraceMiddleStimLargeCorrect + GrandPopAbsActionRespMiddleStimCorLarge ;
+            
+            SingleAnimalActionTraceMiddleStimSmallCorrect= BehPhotoM(iAnimal).GrandSummary.AbsActionRasterSmallCorrect(2,:);
+            SingleAnimalNormActionTraceMiddleStimSmallCorrect = SingleAnimalActionTraceMiddleStimSmallCorrect ./ max(max(SingleAnimalActionTraceMiddleStimLargeCorrect));
+            GrandPopAbsActionRespMiddleStimCorSmall = SingleAnimalNormActionTraceMiddleStimSmallCorrect + GrandPopAbsActionRespMiddleStimCorSmall ;
+            
+            
+            
+            % tuning curve for different blocks
+            SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
+            SingleAnimalNormTunningStim = SingleAnimalTunningStim ./ max(max(SingleAnimalTunningStim));
+            GrandPopNormBinStimNoFold = SingleAnimalNormTunningStim + GrandPopNormBinStimNoFold ;
+            GrandPopNormBinStimNoFold1(c,:)=SingleAnimalNormTunningStim(1,:);
+            GrandPopNormBinStimNoFold2(c,:)=SingleAnimalNormTunningStim(2,:);
+            
+            
+            SingleAnimalTunningReward= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardNoFold;
+            SingleAnimalNormTunningRew = SingleAnimalTunningReward ./ max(max(SingleAnimalTunningReward));
+            GrandPopNormBinRewardNoFold = SingleAnimalNormTunningRew + GrandPopNormBinRewardNoFold ;
+            GrandPopNormBinRewardNoFold1(c,:)=SingleAnimalNormTunningRew(1,:);
+            GrandPopNormBinRewardNoFold2(c,:)=SingleAnimalNormTunningRew(2,:);
+            
+            
+            % tuning curve for corr/error
+            SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
+            SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
+            GrandPopNormBinStimNoFoldCorrError = SingleAnimalNormTunningStimCorrError + GrandPopNormBinStimNoFoldCorrError ;
+            GrandPopNormBinStimNoFoldCorrError1(c,:)=SingleAnimalNormTunningStimCorrError(1,:);
+            GrandPopNormBinStimNoFoldCorrError2(c,:)=SingleAnimalNormTunningStimCorrError(2,:);
+            
+            
+            SingleAnimalTunningRewardCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrectErrorNoFold;
+            SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError ./ max(max(SingleAnimalTunningRewardCorrError));
+            GrandPopNormBinRewardNoFoldCorrError = SingleAnimalNormTunningRewardCorrError + GrandPopNormBinRewardNoFoldCorrError ;
+            GrandPopNormBinRewardNoFoldCorrError1(c,:)=GrandPopNormBinRewardNoFoldCorrError(1,:);
+            GrandPopNormBinRewardNoFoldCorrError2(c,:)=GrandPopNormBinRewardNoFoldCorrError(2,:);
+            
+            SingleAnimalBeep2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DACorr;
+            SingleAnimalBeep2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.BeepAwayDACorr;
+            SingleAnimalBeep2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Beep2DAErr;
+            SingleAnimalBeep2AwayDACorrErr(4,:)= BehPhotoM(iAnimal).GrandSummary.BeepAwayDAErr;
+            
+            
+            SingleAnimalBeep2AwayDACorrErrNorm = SingleAnimalBeep2AwayDACorrErr ./ max(max(SingleAnimalBeep2AwayDACorrErr));
+            
+            GrandPopBeep2AwayDACorError = SingleAnimalBeep2AwayDACorrErrNorm + GrandPopBeep2AwayDACorError ;
+            
+            SingleAnimalStim2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Stim2DACorr;
+            SingleAnimalStim2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.StimAwayDACorr;
+            SingleAnimalStim2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Stim2DAErr;
+            SingleAnimalStim2AwayDACorrErr(4,:)= BehPhotoM(iAnimal).GrandSummary.StimAwayDAErr;
+            
+            
+            SingleAnimalStim2AwayDACorrErrNorm = SingleAnimalStim2AwayDACorrErr ./ max(max(SingleAnimalStim2AwayDACorrErr));
+            
+            GrandPopStim2AwayDACorError = SingleAnimalStim2AwayDACorrErrNorm + GrandPopStim2AwayDACorError ;
+            
+            
+            SingleBinStimCorrError(1:2,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrect;
+            SingleBinStimCorrError(3:4,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimError;
+            
+            SingleBinStimCorrErrorNorm = SingleBinStimCorrError ./ max(max(SingleBinStimCorrError));
+            
+            
+            %GrandPopStimBin = SingleBinStimCorrErrorNorm + GrandPopStimBin ;
+            
+            GrandPopStimBin(:,:,c) = SingleBinStimCorrErrorNorm  ;
+            
+            SingleAnimalRew2AwayDACorrErr(1,:)= BehPhotoM(iAnimal).GrandSummary.Rew2DACorr;
+            SingleAnimalRew2AwayDACorrErr(2,:)= BehPhotoM(iAnimal).GrandSummary.RewAwayDACorr;
+            SingleAnimalRew2AwayDACorrErr(3,:)= BehPhotoM(iAnimal).GrandSummary.Rew2DAErr;
+            SingleAnimalRew2AwayDACorrErr(4,:)= BehPhotoM(iAnimal).GrandSummary.RewAwayDAErr;
+            
+            
+            SingleAnimalRew2AwayDACorrErrNorm = SingleAnimalRew2AwayDACorrErr ./ max(max(SingleAnimalRew2AwayDACorrErr));
+            
+            GrandPopRew2AwayDACorError = SingleAnimalRew2AwayDACorrErrNorm + GrandPopRew2AwayDACorError ;
+            
+            
+            SingleBinRewCorrError(1:2,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrect;
+            SingleBinRewCorrError(3:4,:)= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardError;
+            
+            SingleBinRewCorrErrorNorm = SingleBinRewCorrError ./ max(max(SingleBinRewCorrError));
+            
+            
+            %GrandPopRewBin = SingleBinRewCorrErrorNorm + GrandPopRewBin ;
+            
+            GrandPopRewBin(:,:,c) = SingleBinRewCorrErrorNorm  ;
+            c=c+1;
+            
+        end
+    end
 end
 
 %%
@@ -285,8 +324,8 @@ plot(StimAllowed,nanmean(RTBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o
 % title('Stimulus Align')
 % xlabel('Contrast')
 
-    
-    subplot(6,3,4); hold on % errorbars reflecting across sessions
+
+subplot(6,3,4); hold on % errorbars reflecting across sessions
 errorbar(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),...
     nanstd(GrandPopNormBinStimNoFold1) ./ sqrt(12),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 errorbar(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),...
@@ -295,7 +334,7 @@ set(gca,'TickDir','out','Box','off');
 title('Stimulus Align')
 xlabel('Contrast')
 
-    
+
 
 
 %subplot(5,3,5); hold on
@@ -390,7 +429,7 @@ plot(GrandPopStim2AwayDACorError(3,:)./ length(Animals),'r','LineWidth',2);
 
 plot(GrandPopStim2AwayDACorError(4,:)./ length(Animals),'--r','LineWidth',2);
 
-              
+
 xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
 ylim([-0.3 1])
 set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
@@ -450,7 +489,7 @@ for c = 1:4
     
     subplot(6,3,15); hold on
     plot((GrandPopAbsStimResp(c,:) ./ length(Animals)),'color',colorGray(c,:),'LineWidth',2)
-  
+    
 end
 
 
@@ -474,7 +513,7 @@ for c = 1:4
     
     subplot(6,3,18); hold on
     plot((GrandPopAbsActionResp(c,:) ./ length(Animals)),'color',colorGray(c,:),'LineWidth',2)
-  
+    
 end
 
 
@@ -492,13 +531,13 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 for c = 2 % you could do the 1:4 and get all stimuli
-   
+    
     
     subplot(6,3,3); hold on
     plot(GrandPopAbsStimRespMiddleStimCorrect(c,:)./ length(Animals),'g','LineWidth',2);
-
-plot(GrandPopAbsStimRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
-  
+    
+    plot(GrandPopAbsStimRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
+    
 end
 
 subplot(6,3,3); hold on
@@ -515,13 +554,13 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 for c = 2 % you could do the 1:4 and get all stimuli
-   
+    
     
     subplot(6,3,16); hold on
     plot(GrandPopAbsActionRespMiddleStimCorrect(c,:)./ length(Animals),'g','LineWidth',2);
-
-plot(GrandPopAbsActionRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
-  
+    
+    plot(GrandPopAbsActionRespMiddleStimError(c,:)./ length(Animals),'r','LineWidth',2);
+    
 end
 
 subplot(6,3,16); hold on
@@ -564,7 +603,7 @@ set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 xlabel('Time (s)')
 ylabel('Norm response')
 
-    
+
 subplot(6,3,17); hold on
 title('middleSim,SmallLarge')
 
@@ -580,4 +619,3 @@ set(gca, 'XTickLabel', {'0','0.2'},'TickDir','out','Box','off');
 
 xlabel('Time (s)')
 ylabel('Norm response')
-    

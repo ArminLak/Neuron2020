@@ -16,55 +16,14 @@ close all
 
 
 % select animal
+
 animal_ID = 64
 BrainStrucutre = 'DMS'
 ExpID = '38'
 
-        load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
+save2file = 1; % decide if you want to overwrite GrandSummary or not
 
-        
-% if strcmpi (BrainStrucutre,'VTA')
-%     
-%     if strcmpi (ExpID,'7')
-%   load('BehPhotoM_Exp7_VTA')
-%     elseif strcmpi (ExpID,'23')
-%   load('BehPhotoM_Exp23_VTA')
-%     elseif strcmpi (ExpID,'38')
-%   load('BehPhotoM_Exp38_VTA')
-%     end
-%     
-% elseif strcmpi (BrainStrucutre,'NAC')
-%     
-%     if strcmpi (ExpID,'7')
-%   load('BehPhotoM_Exp7_NAC')
-%     elseif strcmpi (ExpID,'23')
-%   load('BehPhotoM_Exp23_NAC')
-%     elseif strcmpi (ExpID,'38')
-%   load('BehPhotoM_Exp38_NAC')
-%     end
-%     
-%     
-% elseif strcmpi (BrainStrucutre,'DMS')
-%     
-%     if strcmpi (ExpID,'7')
-%   load('BehPhotoM_Exp7_DMS')
-%     elseif strcmpi (ExpID,'23')
-%   load('BehPhotoM_Exp23_DMS')
-%     elseif strcmpi (ExpID,'38')
-%   load('BehPhotoM_Exp38_DMS')
-%     end
-%     
-% end
-%  
-        
-    
-% select database
-% load('BehPhotoM_Exp23_VTA')
-% load('BehPhotoM_Exp38_VTA')
-
-% load('BehPhotoM_Exp23_NAc')
-
-%load('BehPhotoM_Exp23_DMS')
+load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
 
 RTLimit = 6; % in s, excluding trials with RT longer than this
@@ -142,7 +101,7 @@ end
 
 if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
     BehData = [];
-
+    
     for iSession = sessionz % left hem
         
         TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
@@ -224,7 +183,6 @@ for HemIter = 1:iter
     end
     
     
-    
     BeepData(toRemove,:) = [];
     StimData(toRemove,:) = [];
     ActionData(toRemove,:) = [];
@@ -252,13 +210,13 @@ for HemIter = 1:iter
         c = 1;
         for istim = unique(BehData(:,2))'
             
-             if strcmpi (ExpID,'38')
-            performance(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,9));
-                 
-             else
-                 
-            performance(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,3));
-             end
+            if strcmpi (ExpID,'38')
+                performance(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,9));
+                
+            else
+                
+                performance(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,3));
+            end
             RTAv(iBlock,c) = nanmean (TempData(TempData(:,2)==istim,7));
             
             c=c+1;
@@ -272,15 +230,15 @@ for HemIter = 1:iter
     title( 'Psychometric curves')
     set(gca,'TickDir','out','Box','off');
     
-      if strcmpi (ExpID,'23')
-    plot(unique(BehData(:,2))',performance(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-    plot(unique(BehData(:,2))',performance(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+    if strcmpi (ExpID,'23')
+        plot(unique(BehData(:,2))',performance(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+        plot(unique(BehData(:,2))',performance(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
         legend('LargeRew@L','LargeRew@R','Location','southeast')
-
-      else
-    plot(unique(BehData(:,2))',performance(4,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
-      end          
-          
+        
+    else
+        plot(unique(BehData(:,2))',performance(4,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+    end
+    
     
     
     subplot(6,3,2); hold on
@@ -289,14 +247,14 @@ for HemIter = 1:iter
     title( 'Reaction Time')
     set(gca,'TickDir','out','Box','off');
     
-          if strcmpi (ExpID,'23')
-
-    plot(unique(BehData(:,2))',RTAv(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-    plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
-          else
-    plot(unique(BehData(:,2))',RTAv(4,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-
-          end
+    if strcmpi (ExpID,'23')
+        
+        plot(unique(BehData(:,2))',RTAv(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+        plot(unique(BehData(:,2))',RTAv(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+    else
+        plot(unique(BehData(:,2))',RTAv(4,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
+        
+    end
     
     %% beep figure
     
@@ -371,6 +329,7 @@ for HemIter = 1:iter
     if animal_ID == 48
         NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
         
+       % NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2);
         
         
     elseif animal_ID == 50
@@ -888,10 +847,13 @@ for HemIter = 1:iter
     
 end
 
-%%
-% Grand Summary data of the animal
+if save2file
 
+if strcmpi(getComputerName,'zopamine2')
+    cd ('C:\Users\Armin\Dropbox\Work\UCL\Science\Analysis Code\PhotoM')
+elseif strcmpi(getComputerName, 'zebrafish')
+    cd ('C:\Users\morga\Documents\MATLAB')
+end
 
-
-
-
+save(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre], 'BehPhotoM', '-v7.3');
+end
