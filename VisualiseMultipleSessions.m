@@ -8,15 +8,16 @@ close all
 % Armin July 2018 added bilateral recoding
 % Armin Dec 2018, changed to better handle bilateral recordings
 
-%VTA : [48, 50,51, 64]  coresponding to ALK068, 70 and 71
-% DMS : [53, 55,63,64] coresponding to ALK074(Bi), ALK075(Bi), ALK083(Bi),
+%VTA : [48, 50,51, 64]  coresponding to ALK068, 70 and 71, ALK084
+% DMS : [53, 55,62, 63,64] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
 % ALK084(Un)
-% NAc : [56, 57,59] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un)
+% NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),
+% MMM005(UN)
 
 
 % select animal
-animal_ID = 48
-BrainStrucutre = 'VTA'
+animal_ID = 57
+BrainStrucutre = 'NAc'
 ExpID = '23'
 
         load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);

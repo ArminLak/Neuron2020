@@ -53,7 +53,7 @@ elseif strcmp(animal_name, 'ALK084')
     if exp_ID == '7'
         SessionList = [1:9];
     elseif exp_ID == '23'
-        SessionList = [11:29];
+        SessionList = [12:29];
     elseif exp_ID == '38'
         SessionList = [31:34];
         
@@ -84,7 +84,7 @@ elseif strcmp(animal_name, 'MMM005')
     if exp_ID == '7'
         SessionList = [1:9];
     elseif exp_ID == '23'
-        SessionList = [10:15, 17, 18]; % ongoing experiments 11/12/2018
+        SessionList = [10:15, 17, 18, 19]; 
     end
     
     
