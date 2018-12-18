@@ -355,7 +355,7 @@ for HemIter = 1:iter
         
         NormBinStim = mean(StimData(:,4400:4800),2);
     
-        elseif animal_ID == 64 && strcmp(BrainStrucutre = 'DMS'
+        elseif animal_ID == 64 && strcmp(BrainStrucutre,'DMS')
         
         NormBinStim = mean(StimData(:,4500:5000),2);
         

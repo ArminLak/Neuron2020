@@ -1,22 +1,21 @@
 clear all
 close all
 
-% list of animals
-Animals = [48 50 51 64]
+Hem2show = 'L' % 'L' 'R' or 'both'
 
+% list of animals
+
+% VTA,
+%Animals = [48 50 51 64]
 %load('BehPhotoM_Exp23_VTA')
 
+% NAC
+%Animals = [56, 57 59 66]
+%load('BehPhotoM_Exp23_NAc')
 
-Hem2show = 'both' % 'L' 'R' or 'both'
-
-Animals = [56, 57 59 66]
-
-load('BehPhotoM_Exp23_NAc')
-
-
-%Animals = [53,62, 63]
-
-%load('BehPhotoM_Exp23_DMS')
+% DMS
+Animals = [53, 62, 63,64]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8
@@ -211,7 +210,13 @@ for iAnimal = Animals
             
             
             SingleAnimalTunningReward= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardNoFold;
+            
+            if max(max(SingleAnimalTunningReward)) > 0.5    % this is to avoid diving by a small number in one animal
             SingleAnimalNormTunningRew = SingleAnimalTunningReward ./ max(max(SingleAnimalTunningReward));
+            else
+                SingleAnimalNormTunningRew = SingleAnimalTunningReward;
+            end
+            
             GrandPopNormBinRewardNoFold = SingleAnimalNormTunningRew + GrandPopNormBinRewardNoFold ;
             GrandPopNormBinRewardNoFold1(c,:)=SingleAnimalNormTunningRew(1,:);
             GrandPopNormBinRewardNoFold2(c,:)=SingleAnimalNormTunningRew(2,:);
@@ -226,7 +231,13 @@ for iAnimal = Animals
             
             
             SingleAnimalTunningRewardCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrectErrorNoFold;
+            
+            if max(max(SingleAnimalTunningRewardCorrError)) > 0.5 % this is to avoid diving by a small number in one animal
             SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError ./ max(max(SingleAnimalTunningRewardCorrError));
+            else
+            SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError;
+                
+            end
             GrandPopNormBinRewardNoFoldCorrError = SingleAnimalNormTunningRewardCorrError + GrandPopNormBinRewardNoFoldCorrError ;
             GrandPopNormBinRewardNoFoldCorrError1(c,:)=GrandPopNormBinRewardNoFoldCorrError(1,:);
             GrandPopNormBinRewardNoFoldCorrError2(c,:)=GrandPopNormBinRewardNoFoldCorrError(2,:);
