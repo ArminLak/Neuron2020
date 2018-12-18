@@ -354,6 +354,10 @@ for HemIter = 1:iter
         
         NormBinStim = mean(StimData(:,4400:4800),2);
         
+    elseif animal_ID == 66
+        
+       % NormBinStim = mean(StimData(:,4900:6000),2)- mean(StimData(:,3200:3700),2);
+        NormBinStim = mean(StimData(:,5000:6000),2);
         
     else
         
@@ -497,13 +501,13 @@ for HemIter = 1:iter
         
         subplot(6,3,3); hold on
         
-        plot((smooth(AbsActionRasterCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
+        plot((smooth(AbsStimRasterLargeCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
         
-        plot((smooth(AbsActionRasterError(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
+        plot((smooth(AbsStimRasterSmallCorrect(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
         
     end
     
-    title('Action Align')
+    title('Stim Align')
     
     xlim([3500 4900])
     ylim([-0.3 2])

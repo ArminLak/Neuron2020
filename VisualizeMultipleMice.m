@@ -4,14 +4,14 @@ close all
 % list of animals
 Animals = [48 50 51 64]
 
-load('BehPhotoM_Exp23_VTA')
+%load('BehPhotoM_Exp23_VTA')
 
 
 Hem2show = 'both' % 'L' 'R' or 'both'
 
-%Animals = [56, 57 59 ]
+Animals = [56, 57 59 66]
 
-%load('BehPhotoM_Exp23_NAc')
+load('BehPhotoM_Exp23_NAc')
 
 
 %Animals = [53,62, 63]
