@@ -16,9 +16,10 @@ close all
 
 
 % select animal
-animal_ID = 66
-BrainStrucutre = 'NAc'
-ExpID = '23'
+
+animal_ID = 64
+BrainStrucutre = 'DMS'
+ExpID = '38'
 
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
