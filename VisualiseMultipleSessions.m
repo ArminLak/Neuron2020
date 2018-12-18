@@ -19,7 +19,7 @@ close all
 
 animal_ID = 64
 BrainStrucutre = 'DMS'
-ExpID = '38'
+ExpID = '23'
 
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
@@ -354,10 +354,13 @@ for HemIter = 1:iter
     elseif animal_ID == 59
         
         NormBinStim = mean(StimData(:,4400:4800),2);
+    
+        elseif animal_ID == 64 && strcmp(BrainStrucutre = 'DMS'
+        
+        NormBinStim = mean(StimData(:,4500:5000),2);
         
     elseif animal_ID == 66
         
-       % NormBinStim = mean(StimData(:,4900:6000),2)- mean(StimData(:,3200:3700),2);
         NormBinStim = mean(StimData(:,5000:6000),2);
         
     else
