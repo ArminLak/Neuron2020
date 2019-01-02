@@ -1,7 +1,7 @@
 clear all
 close all
 
-Hem2show = 'L' % 'L' 'R' or 'both'
+Hem2show = 'R' % 'L' 'R' or 'both'
 
 % list of animals
 
@@ -14,13 +14,13 @@ Hem2show = 'L' % 'L' 'R' or 'both'
 %load('BehPhotoM_Exp23_NAc')
 
 % DMS
-Animals = [53, 62, 63,64]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+Animals = [53, 62, 63]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8
-    -0.8, 0.2
-    -0.2, 0.8]; % stim, action, reward in s
+                   -0.8, 0.2
+                   -0.2, 0.8]; % stim, action, reward in s
 
 
 sampleRate = 1200;
@@ -209,14 +209,17 @@ for iAnimal = Animals
             GrandPopNormBinStimNoFold2(c,:)=SingleAnimalNormTunningStim(2,:);
             
             
-            SingleAnimalTunningReward= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardNoFold;
+            SingleAnimalTunningReward = BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardNoFold;
             
-            if max(max(SingleAnimalTunningReward)) > 0.5    % this is to avoid diving by a small number in one animal
-            SingleAnimalNormTunningRew = SingleAnimalTunningReward ./ max(max(SingleAnimalTunningReward));
-            else
-                SingleAnimalNormTunningRew = SingleAnimalTunningReward;
+          
+            
+            if abs(max(max(SingleAnimalTunningReward))) < abs( min(min(SingleAnimalTunningReward))) % this is to avoid diving by a small number in one animal
+           
+                SingleAnimalTunningReward = SingleAnimalTunningReward + abs(min(min(SingleAnimalTunningReward)));      
             end
-            
+
+             SingleAnimalNormTunningRew = SingleAnimalTunningReward ./ max(max(SingleAnimalTunningReward));
+
             GrandPopNormBinRewardNoFold = SingleAnimalNormTunningRew + GrandPopNormBinRewardNoFold ;
             GrandPopNormBinRewardNoFold1(c,:)=SingleAnimalNormTunningRew(1,:);
             GrandPopNormBinRewardNoFold2(c,:)=SingleAnimalNormTunningRew(2,:);
@@ -232,12 +235,15 @@ for iAnimal = Animals
             
             SingleAnimalTunningRewardCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrectErrorNoFold;
             
-            if max(max(SingleAnimalTunningRewardCorrError)) > 0.5 % this is to avoid diving by a small number in one animal
+           
+              if abs(max(max(SingleAnimalTunningRewardCorrError))) < abs( min(min(SingleAnimalTunningRewardCorrError))) % this is to avoid diving by a small number in one animal
+           
+                SingleAnimalTunningRewardCorrError = SingleAnimalTunningRewardCorrError + abs(min(min(SingleAnimalTunningRewardCorrError)));      
+              end
+            
+            
             SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError ./ max(max(SingleAnimalTunningRewardCorrError));
-            else
-            SingleAnimalNormTunningRewardCorrError = SingleAnimalTunningRewardCorrError;
-                
-            end
+
             GrandPopNormBinRewardNoFoldCorrError = SingleAnimalNormTunningRewardCorrError + GrandPopNormBinRewardNoFoldCorrError ;
             GrandPopNormBinRewardNoFoldCorrError1(c,:)=GrandPopNormBinRewardNoFoldCorrError(1,:);
             GrandPopNormBinRewardNoFoldCorrError2(c,:)=GrandPopNormBinRewardNoFoldCorrError(2,:);
