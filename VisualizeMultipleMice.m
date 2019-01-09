@@ -1,7 +1,7 @@
 clear all
 close all
 
-Hem2show = 'R' % 'L' 'R' or 'both'
+Hem2show = 'L' % 'L' 'R' or 'both'
 
 % list of animals
 

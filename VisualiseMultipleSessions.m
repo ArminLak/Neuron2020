@@ -18,10 +18,10 @@ close all
 % select animal
 
 animal_ID = 64
-BrainStrucutre = 'DMS'
-ExpID = '23'
+BrainStrucutre = 'VTA'
+ExpID = '38'
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -68,6 +68,7 @@ RewardDataR = [];
 
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
 
+sessionz = [3:8]
 iter = 0;
 if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
     
@@ -608,6 +609,13 @@ for HemIter = 1:iter
         NormBinReward = mean(RewardData(:,4000:4800),2);
     end
     
+        if animal_ID == 66 &&  strcmp(ExpID , '38')
+ 
+        NormBinReward = mean(RewardData(:,4100:4600),2) - mean(RewardData(:,3400:3800),2);
+        end
+
+    
+   
     
     % this figure looks at response as a function of contrast separated for
     % blocks with large reward on L or R

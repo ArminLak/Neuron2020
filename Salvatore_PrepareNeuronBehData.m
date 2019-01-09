@@ -117,14 +117,18 @@ for trial = 1 : size(block.trial,2)-1
     
     Correction_Trial(trial) = block.trial(trial).condition.repeatNum;
     
+    if ~isempty(block.trial(trial).onsetToneSoundPlayedTime)
     Sound_Onset_Time (trial) = block.trial(trial).onsetToneSoundPlayedTime(1);  % go cue time is the second component
+    end
     if length(block.trial(trial).onsetToneSoundPlayedTime) > 1  % both initial beep and go cue
         
         Go_Cue_Time (trial) = block.trial(trial).onsetToneSoundPlayedTime(2);
         
     end
     
+    if ~isempty(block.trial(trial).stimulusCueStartedTime)
     Stim_Onset_Time  (trial) = block.trial(trial).stimulusCueStartedTime;
+    end
     
     Reward_Onset_Time (trial) = block.trial(trial).feedbackStartedTime + block.parameters.feedbackDeliveryDelay;
     
@@ -213,13 +217,16 @@ for trial = 1 : size(block.trial,2)-1
         end
     end
     %% response time
-    response_time(trial) = block.trial(trial).responseMadeTime - block.trial(trial).interactiveStartedTime;
     
+    if ~isempty( block.trial(trial).interactiveStartedTime)
+    response_time(trial) = block.trial(trial).responseMadeTime - block.trial(trial).interactiveStartedTime;
+    end
     
     %% reaction time (29.06.2016 changed stimonset_index (for now for animals with go cue.))
     % stimonset_index=find(floor(100*(block.inputSensorPositionTimes))==floor(100*(block.trial(trial).interactiveStartedTime)),1);
+    if ~isempty(block.trial(trial).stimulusCueStartedTime)
     stimonset_index=find(floor(100*(block.inputSensorPositionTimes))==floor(100*(block.trial(trial).stimulusCueStartedTime)),1); 
-    
+    end
     
     
     if ~isempty(stimonset_index)
