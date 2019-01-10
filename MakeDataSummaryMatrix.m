@@ -15,8 +15,8 @@ clear all
 close all
 
 
-animal_name = 'ALK084'
-Implant = 'Bi' %Unilatral or bilateral ('Un' or 'Bi')
+animal_name = 'MMM005'
+Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '38';
 

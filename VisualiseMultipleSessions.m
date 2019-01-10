@@ -17,9 +17,9 @@ close all
 
 % select animal
 
-animal_ID = 64
+animal_ID = 51
 BrainStrucutre = 'VTA'
-ExpID = '38'
+ExpID = '23'
 
 save2file = 0; % decide if you want to overwrite GrandSummary or not
 
@@ -68,7 +68,6 @@ RewardDataR = [];
 
 sessionz = 1:length(BehPhotoM(animal_ID).Session);
 
-sessionz = [3:8]
 iter = 0;
 if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
     
@@ -773,6 +772,56 @@ for HemIter = 1:iter
         
     end
     
+    %%
+    
+    DA_threshold_Reward = prctile(NormBinReward, 70);
+    
+    
+    index_BigRPE_Right=intersect(find(BehData(:,3)==1) , find(NormBinReward > DA_threshold_Reward));
+            index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
+            
+            
+            index_BigRPE_Left=intersect(find(BehData(:,3)==-1) , find(NormBinReward > DA_threshold_Reward));
+            index_BigRPE_Left = index_BigRPE_Left+ 1; % go to the next trial
+            
+            index_SmallRPE_Right=intersect(find(BehData(:,3)==1) , find(NormBinReward < DA_threshold_Reward));
+            index_SmallRPE_Right = index_SmallRPE_Right+ 1; % go to the next trial
+            
+            
+            index_SmallRPE_Left=intersect(find(BehData(:,3)==-1) , find(NormBinReward < DA_threshold_Reward));
+            index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
+         
+            
+     c = 1;
+        for istim = unique(BehData(:,2))'
+            
+            indexBL = intersect(find(BehData01(:,2)==istim),index_BigRPE_Left);
+            indexSL = intersect(find(BehData01(:,2)==istim),index_SmallRPE_Left);
+            
+            indexBR = intersect(find(BehData01(:,2)==istim),index_BigRPE_Right);
+            indexSR = intersect(find(BehData01(:,2)==istim),index_SmallRPE_Right);
+           
+            
+            performance_BL(c) = nanmean (BehData01(indexBL,3));
+            performance_SL(c) = nanmean (BehData01(indexSL,3));
+               
+            performance_BR(c) = nanmean (BehData01(indexBR,3));
+            performance_SR(c) = nanmean (BehData01(indexSR,3));
+            
+            
+            c=c+1;
+        end
+        
+    
+        figure
+        
+        plot(performance_BL,'k')
+        hold on
+        plot(performance_SL,'-.k')
+        plot(performance_BR,'b')
+        plot(performance_SR,'-.b')
+        
+     %%
     
     if (HemIter ==1 && isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')) || (iter == 2 && HemIter ==1)
         BehPhotoM(animal_ID).GrandSummaryL.Performance = performance;
