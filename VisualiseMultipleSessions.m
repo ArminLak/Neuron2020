@@ -17,7 +17,7 @@ close all
 
 % select animal
 
-animal_ID = 51
+animal_ID = 64
 BrainStrucutre = 'VTA'
 ExpID = '23'
 
@@ -774,23 +774,47 @@ for HemIter = 1:iter
     
     %%
     
+     performance_BL=nan(1,length(unique(BehData(:,2))'));
+     
+            performance_SL=nan(1,length(unique(BehData(:,2))'));
+               
+            performance_BR=nan(1,length(unique(BehData(:,2))'));
+            performance_SR=nan(1,length(unique(BehData(:,2))'));
+             
     DA_threshold_Reward = prctile(NormBinReward, 70);
+    Block2test = 1;
     
     
-    index_BigRPE_Right=intersect(find(BehData(:,3)==1) , find(NormBinReward > DA_threshold_Reward));
+%             index_BigRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1) , find(NormBinReward > DA_threshold_Reward),find(BehData(:,8)==Block2test));
+%             index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
+%             
+%             
+%             index_BigRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1), find(NormBinReward > DA_threshold_Reward),find(BehData(:,8)==Block2test));
+%             index_BigRPE_Left = index_BigRPE_Left+ 1; % go to the next trial
+%             
+%             index_SmallRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1), find(NormBinReward < DA_threshold_Reward),find(BehData(:,8)==Block2test));
+%             index_SmallRPE_Right = index_SmallRPE_Right+ 1; % go to the next trial
+%             
+%             
+%             index_SmallRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1), find(NormBinReward < DA_threshold_Reward),find(BehData(:,8)==Block2test));
+%             index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
+%          
+  
+            index_BigRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1) , find(BehData(:,2)==0),find(BehData(:,8)==Block2test));
             index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
             
             
-            index_BigRPE_Left=intersect(find(BehData(:,3)==-1) , find(NormBinReward > DA_threshold_Reward));
+            index_BigRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1),  find(BehData(:,2)==0),find(BehData(:,8)==Block2test));
             index_BigRPE_Left = index_BigRPE_Left+ 1; % go to the next trial
             
-            index_SmallRPE_Right=intersect(find(BehData(:,3)==1) , find(NormBinReward < DA_threshold_Reward));
+            index_SmallRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1),  find(BehData(:,2)>=0.5),find(BehData(:,8)==Block2test));
             index_SmallRPE_Right = index_SmallRPE_Right+ 1; % go to the next trial
             
             
-            index_SmallRPE_Left=intersect(find(BehData(:,3)==-1) , find(NormBinReward < DA_threshold_Reward));
+            index_SmallRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1),  find(BehData(:,2)<=-0.5),find(BehData(:,8)==Block2test));
             index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
-         
+
+            
             
      c = 1;
         for istim = unique(BehData(:,2))'
@@ -811,6 +835,11 @@ for HemIter = 1:iter
             
             c=c+1;
         end
+    
+        DAConditionedPerf.mice(1).Block1 (1,:)=performance_BL;
+        DAConditionedPerf.mice(1).Block1 (2,:)=performance_SL;
+        DAConditionedPerf.mice(1).Block1 (3,:)=performance_BR;
+        DAConditionedPerf.mice(1).Block1 (4,:)=performance_SR;
         
     
         figure

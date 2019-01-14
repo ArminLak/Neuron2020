@@ -2,7 +2,7 @@
 
 % Armin Oct 2018
 
-
+% 14 jan 2019; to do: make the code work with L and R hem 
 % to do instead of z-scoring normalise to max response
 
 clear all
@@ -11,42 +11,21 @@ close all
 
 
 
-% animal_name= ['ALK068'];
-animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
+%animal_list= [{'ALK068', 'ALK070', 'ALK071'}];
 
 
-animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
+%animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
 
 
 %animal_list= [{'ALK074', 'ALK075'}];
 
-%animal_list= [{'ALK074'}];
+animal_list= [{'ALK068'}];
 
 animal_ID_list_VTA = [48  50  51];
 
 animal_ID_list_NAc =[56, 57,59];
 
 animal_ID_list_DMS =[53, 55];
-
-
-
-% ------------------------------------------------------------------------
-% start and stop of time axis for plot (in second before and after the event)
-start = -1 % s this should be -1 or less
-stop = 2    % s
-event_time = 3; % this is the time in the summary matrix where the event took place
-
-sample_rate = 12000;                                        % photoM recording sampling rate
-downsampleScale = 10;                                       % factor downsampling the Ca responses
-
-start2stop = (event_time+start)*sample_rate/downsampleScale:(event_time+stop)*sample_rate/downsampleScale; %window of interest
-
-% event is at 3 seconds i.e. point 3600
-
-preAlignStim = (event_time-0.4)*sample_rate/downsampleScale : (event_time-0)*sample_rate/downsampleScale;
-postAlignStim = (event_time+0.2)*sample_rate/downsampleScale : (event_time+0.8)*sample_rate/downsampleScale;
-preAlignRwd = (event_time-0.2)*sample_rate/downsampleScale : (event_time-0)*sample_rate/downsampleScale;
-postAlignRwd = (event_time+0.2)*sample_rate/downsampleScale : (event_time+0.8)*sample_rate/downsampleScale;
 
 
 % plot colours
@@ -134,6 +113,9 @@ for animalcount = 1:length(animal_list)
         NeuronRewardNorm = NeuronRewardNorm';
         
         NeuronReward = NeuronRewardNorm;
+        
+        
+        
         
         
         
