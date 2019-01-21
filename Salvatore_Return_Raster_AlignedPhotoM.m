@@ -20,13 +20,23 @@ limit = (stop - start ) * (12000/downsampleScale)- 100;   % 1200 comes because s
 for ievent=event_times' %(sort_index)'
 
     index  = find(TimeStamps >  (ievent + start) & TimeStamps <  (ievent + stop));
+
+    if ~isempty(index)
+
+    if length(index) < limit
+        DeltaFoverF=[DeltaFoverF;zeros(limit-length(index),1)];
+        Raster_Matrix(trace,1:length(index)) = DeltaFoverF(index(1:length(index)),:) ;
     
-    if index
+    else
+        
         Raster_Matrix(trace,:) = DeltaFoverF(index(1:limit),:) ;
         
     end
+    
+end
  
     trace = trace +1;
+    
 end
 
 

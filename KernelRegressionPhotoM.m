@@ -1,10 +1,7 @@
 clear all
 close all
 
-% give animal name and it will plot data averaged across all session
-
-% it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
-
+% Jan 2019: I think this code is obsolete. we will keep it for now.
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 

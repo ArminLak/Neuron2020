@@ -1,11 +1,17 @@
 clear all
 close all
 
+% last check Jan 2019. 
+% This has figurs for the paper. 
+
+% it produces averaged figures for shape of kernels and the size of kernels
+
+
 % list of animals
 Animals = [48 50 51]
 
 
-load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23_VTA')
 %%
 %  ModelArrangement=15 (it is just similar to model 11) for visualing pop PSTH of the model predictions 
 

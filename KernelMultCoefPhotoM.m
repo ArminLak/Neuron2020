@@ -1,10 +1,9 @@
 clear all
 close all
 
-% give animal name and it will plot data averaged across all session
-% it also save average data of the animal into 'GrandSummary' (you will need to save mannulay)
+% last checked Jan 2019. it includes figures and stat for the paper.
 
-% it also plots mega raster for the paper. For this change the following:
+% give animal name and it estimate kernels and their coefficents. it  plots mega raster for the paper. For this change the following:
 % put RTLimit = 3
 % comment around line 85
 % set model to 11
@@ -17,16 +16,16 @@ close all
 % paper
 % model 15 for pop PSTH of model prediction
 
-% includes regression stats for regressing coefficents on chosenValue and
-% RPE
+%% includes regression stats for regressing coefficents on chosenValue and
+%% RPE
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71
 
-load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23_VTA')
 %load('BehPhotoM_Exp23_NAc.mat')
 
 %
-animal_ID = 51
+animal_ID = 48
 
 if animal_ID ==48
 animal_name = 'ALK068'
@@ -88,9 +87,9 @@ sessionz = 1:length(BehPhotoM(animal_ID).Session);
 for iSession = sessionz
     
     TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
-    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
-    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
-    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
+    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
+    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
     
     if animal_ID ==56 % for ALK078 we use right hem data 
     

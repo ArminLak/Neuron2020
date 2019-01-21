@@ -2,7 +2,7 @@ function [SessionList] = getSessionList_photoM(animal_name, exp_ID)
 
 if strcmp(animal_name,'ALK068')
     if exp_ID == '7'
-        SessionList = [1,3,5:13];
+        SessionList = [1:13]; % 1,3,5:13
     elseif exp_ID == '23'
         SessionList = [14, 15, 16, 17, 18, 19, 20, 22, 23, 24];
     end
@@ -82,7 +82,7 @@ elseif strcmp(animal_name, 'MMM003')
     
 elseif strcmp(animal_name, 'MMM005')
     if exp_ID == '7'
-        SessionList = [1:9];
+        SessionList = [1:7];
     elseif exp_ID == '23'
         SessionList = [10:15, 17, 18, 19,20]; 
     elseif exp_ID == '38'
