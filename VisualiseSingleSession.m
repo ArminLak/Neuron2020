@@ -5,7 +5,7 @@ clear all
 close all
 
 animal_name = 'ALK084'
-exp_date   = '2019-01-07'
+exp_date   = '2018-12-21'
 exp_series ='1'
 
 
