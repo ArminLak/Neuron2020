@@ -4,7 +4,7 @@
 clear all
 % close all
 
-animal_name = 'ALK071'
+animal_name = 'ALK068'
 
 load('BehPhotoM_Exp7_VTA')  % load beh data database 
 
@@ -38,7 +38,7 @@ for isession = SessionList
     
     TrialTimingData = BehPhotoM(animal_ID).Session(isession).TrialTimingData;  % load beh data 
     TrialTimingDataCor = TrialTimingData(TrialTimingData(:,9)==1, :);
-    NeuronStim = BehPhotoM(animal_ID).Session(isession).NeuronStim; % load photom data 
+    NeuronStim = BehPhotoM(animal_ID).Session(isession).NeuronStimR; % load photom data 
 
     for stimcount = 1:length(StimzAbs)
         istim = StimzAbs(stimcount);

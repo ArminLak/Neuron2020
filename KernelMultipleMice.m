@@ -1,5 +1,6 @@
 clear all
 close all
+% jan 2019: this code is obsolete, I think. we keep it for now. 
 
 % list of animals
 Animals = [48 50 51]
