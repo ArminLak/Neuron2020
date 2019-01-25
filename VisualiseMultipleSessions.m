@@ -17,11 +17,11 @@ close all
 
 % select animal
 
-animal_ID = 64
-BrainStrucutre = 'VTA'
+animal_ID = 56
+BrainStrucutre = 'NAC'
 ExpID = '23'
 
-save2file = 0; % decide if you want to overwrite GrandSummary or not
+save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -345,15 +345,20 @@ for HemIter = 1:iter
     elseif animal_ID == 56
         
         NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3100:3500),2);
+        NormBinStim = mean(StimData(:,4600:5300),2);
         
         
     elseif animal_ID == 57
         
         NormBinStim = mean(StimData(:,4300:5000),2)- mean(StimData(:,3400:3800),2);
-        
+
+        NormBinStim = mean(StimData(:,4600:5300),2)- mean(StimData(:,3400:3800),2);
+
     elseif animal_ID == 59
         
         NormBinStim = mean(StimData(:,4400:4800),2);
+        NormBinStim = mean(StimData(:,4900:5400),2);
+        
     
         elseif animal_ID == 64 && strcmp(BrainStrucutre,'DMS')
         

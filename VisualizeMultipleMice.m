@@ -6,12 +6,13 @@ Hem2show = 'both' % 'L' 'R' or 'both'
 % list of animals
 
 % VTA,
-Animals = [48 50 51 64]
-load('BehPhotoM_Exp23_VTA')
+%Animals = [48 50 51 64]
+%load('BehPhotoM_Exp23_VTA')
 
 % NAC
-%Animals = [56, 57 59 66]
-%load('BehPhotoM_Exp23_NAc')
+Animals = [56 57 59 66]
+
+load('BehPhotoM_Exp23_NAc')
 
 % DMS
 %Animals = [53, 62, 63]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
@@ -96,16 +97,15 @@ for iAnimal = Animals
         ChanN = 1;
     end
     
-    for iChan = ChanN
+    for iChan = 1:ChanN
+        
+        BehPhotoM(iAnimal).GrandSummary=[]; 
         
         if ~isempty(BehPhotoM(iAnimal).GrandSummaryL) && strcmpi(Hem2show,'L')
             BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryL;
         elseif  ~isempty(BehPhotoM(iAnimal).GrandSummaryR) && strcmpi(Hem2show,'R')
             BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
-            
-            
-        else
-            BehPhotoM(iAnimal).GrandSummary=[];
+       
             
         end
         
@@ -119,6 +119,18 @@ for iAnimal = Animals
                 BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
             end
             
+            
+            if ~isempty(BehPhotoM(iAnimal).GrandSummaryL) && ~isempty(BehPhotoM(iAnimal).GrandSummaryR)
+
+            if iChan == 1
+                                BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryL;
+
+            elseif iChan==2
+                                BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
+            end
+                 
+            end
+             
         end
         
         if            ~isempty(BehPhotoM(iAnimal).GrandSummary)
