@@ -16,7 +16,7 @@ animal_list= [{'ALK068', 'ALK070', 'ALK071','ALK084'}];
 %animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
 
 
-%animal_list= [{'ALK074', 'ALK075'}];
+animal_list= [{'ALK084'}];
 
 BrainStrucutre = 'VTA'
 

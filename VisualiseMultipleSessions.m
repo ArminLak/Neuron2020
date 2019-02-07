@@ -14,14 +14,20 @@ close all
 % NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),
 % MMM005(UN)
 
+% Exp:
+% 7: learning from scratch
+% 7Adv: single reward after learning is advanced ( this one is in the
+% getSessionList_photpM code.
+% 23: double reward size 
+
 
 % select animal
 
-animal_ID = 56
-BrainStrucutre = 'NAC'
+animal_ID = 64
+BrainStrucutre = 'VTA'
 ExpID = '23'
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -778,18 +784,153 @@ for HemIter = 1:iter
     end
     
     %%
-    
-     performance_BL=nan(1,length(unique(BehData(:,2))'));
-     
-            performance_SL=nan(1,length(unique(BehData(:,2))'));
-               
-            performance_BR=nan(1,length(unique(BehData(:,2))'));
-            performance_SR=nan(1,length(unique(BehData(:,2))'));
+%    %  we need to do this session by session (conditional to Da responses at
+%    %  the reward time) controlled for the reward size
+%     firstTrialOfBlock=[1 ; find(diff(BehData01(:,1)) < 0)+1]';  % define block onset
+%     firstTrialOfBlock = [firstTrialOfBlock, size(BehData01,1)];
+% 
+%      for     Block2test = 1:2 %(or 4 for single value task)
+% 
+%       performance_BL  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%      
+%             performance_SL=nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%                
+%             performance_BR=nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%             performance_SR=nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%     
+%     for iblockZ = 1:length(firstTrialOfBlock)-1
+%         
+%         BehDataTemp = BehData01(firstTrialOfBlock(iblockZ):firstTrialOfBlock(iblockZ+1)-1,:);
+%         NormBinRewardTemp = NormBinReward(firstTrialOfBlock(iblockZ):firstTrialOfBlock(iblockZ+1)-1,:);
+%              
+%     DA_threshold_Reward = prctile(NormBinRewardTemp, 65);
+%     
+%     % neurons
+%             index_BigRPE_Right=mintersect(find(BehDataTemp(:,3)==1) , find(BehDataTemp(:,9)==1) , find(NormBinRewardTemp > DA_threshold_Reward),find(BehDataTemp(:,8)==Block2test));
+%             index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
+%             
+%             
+%             index_BigRPE_Left=mintersect(find(BehDataTemp(:,3)==0) , find(BehDataTemp(:,9)==1), find(NormBinRewardTemp > DA_threshold_Reward),find(BehDataTemp(:,8)==Block2test));
+%             index_BigRPE_Left = index_BigRPE_Left+ 1; % go to the next trial
+%             
+%             index_SmallRPE_Right=mintersect(find(BehDataTemp(:,3)==1) , find(BehDataTemp(:,9)==1), find(NormBinRewardTemp < DA_threshold_Reward),find(BehDataTemp(:,8)==Block2test));
+%             index_SmallRPE_Right = index_SmallRPE_Right+ 1; % go to the next trial
+%             
+%             
+%             index_SmallRPE_Left=mintersect(find(BehDataTemp(:,3)==0) , find(BehDataTemp(:,9)==1), find(NormBinRewardTemp < DA_threshold_Reward),find(BehDataTemp(:,8)==Block2test));
+%             index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
+%       
+%        
+%              c = 1;
+%         for istim = unique(BehData(:,2))'
+%             
+%             indexBL = intersect(find(BehDataTemp(:,2)==istim),index_BigRPE_Left);
+%             indexSL = intersect(find(BehDataTemp(:,2)==istim),index_SmallRPE_Left);
+%             
+%             indexBR = intersect(find(BehDataTemp(:,2)==istim),index_BigRPE_Right);
+%             indexSR = intersect(find(BehDataTemp(:,2)==istim),index_SmallRPE_Right);
+%            
+%             
+%             performance_BL(iblockZ,c) = nanmean (BehDataTemp(indexBL,3));
+%             performance_SL(iblockZ,c) = nanmean (BehDataTemp(indexSL,3));
+%                
+%             performance_BR(iblockZ,c) = nanmean (BehDataTemp(indexBR,3));
+%             performance_SR(iblockZ,c) = nanmean (BehDataTemp(indexSR,3));
+%             
+%             
+%             c=c+1;
+%         end
+%             
+%     end
+%        
+%         DAConditionedPerf.mice(1).Block(Block2test).perf(1,:)=nanmean(performance_BL);
+%         DAConditionedPerf.mice(1).Block(Block2test).perf(2,:)=nanmean(performance_SL);
+%         DAConditionedPerf.mice(1).Block(Block2test).perf(3,:)=nanmean(performance_BR);
+%         DAConditionedPerf.mice(1).Block(Block2test).perf(4,:)=nanmean(performance_SR);
+% 
+%          
+%     
+%        figure
+%         
+%         plot(nanmean(performance_BL),'k')
+%         hold on
+%         plot(nanmean(performance_SL),'-.k')
+%         plot(nanmean(performance_BR),'b')
+%         plot(nanmean(performance_SR),'-.b')
+%             
+%      end
+
+     %%
+      %  we need to do this session by session (conditional to Da responses at
+   %  the reward time) controlled for  stimulus 
+    firstTrialOfBlock=[1 ; find(diff(BehData01(:,1)) < 0)+1]';  % define block onset
+    firstTrialOfBlock = [firstTrialOfBlock, size(BehData01,1)];
+
+      
+    cc=1;
+          for istimPast = unique(BehData(:,2))'   
+              
+                    performance_ConL  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+                    performance_ConS  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+
+    for iblockZ = 1:length(firstTrialOfBlock)-1
+        
+        BehDataTemp = BehData01(firstTrialOfBlock(iblockZ):firstTrialOfBlock(iblockZ+1)-1,:);
+        NormBinRewardTemp = NormBinReward(firstTrialOfBlock(iblockZ):firstTrialOfBlock(iblockZ+1)-1,:);
              
-    DA_threshold_Reward = prctile(NormBinReward, 70);
-    Block2test = 1;
-    
-    
+    DA_threshold_Reward = prctile(NormBinRewardTemp, 65);
+           
+           index_ConL=mintersect(find(BehDataTemp(:,9)==1) ,find(NormBinRewardTemp > DA_threshold_Reward),find(BehDataTemp(:,2)==istimPast));
+           
+            index_ConL = index_ConL+ 1; % go to the next trial
+            
+            
+          index_ConS=mintersect(find(BehDataTemp(:,9)==1) ,find(NormBinRewardTemp < DA_threshold_Reward),find(BehDataTemp(:,2)==istimPast));
+           
+            index_ConS = index_ConS+ 1; % go to the next trial
+            
+            
+            
+             c = 1;
+        for istim = unique(BehData(:,2))'
+              
+            indexL = intersect(find(BehDataTemp(:,2)==istim),index_ConL);
+          
+            performance_ConL(iblockZ,c) = nanmean (BehDataTemp(indexL,3));
+            
+            indexS = intersect(find(BehDataTemp(:,2)==istim),index_ConS);
+          
+            performance_ConS(iblockZ,c) = nanmean (BehDataTemp(indexS,3));
+            
+            
+            c=c+1;
+        end
+            
+       
+          end
+          DAConditionedPerf.mice(1).Block(cc).perf(1,:)=nanmean(performance_ConL);
+          DAConditionedPerf.mice(1).Block(cc).perf(2,:)=nanmean(performance_ConS);
+          
+        
+        cc=cc+1;
+end
+          
+    %%        
+            
+            
+     % this part is too look at all data at once (not separating sessions)  , it is again for the performance conditional to DA responses at reward time     
+            
+%      performance_BL=nan(1,length(unique(BehData(:,2))'));
+%      
+%             performance_SL=nan(1,length(unique(BehData(:,2))'));
+%                
+%             performance_BR=nan(1,length(unique(BehData(:,2))'));
+%             performance_SR=nan(1,length(unique(BehData(:,2))'));
+%              
+%     DA_threshold_Reward = prctile(NormBinReward, 65);
+%     Block2test = 4;
+%     
+%     % neurons
 %             index_BigRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1) , find(NormBinReward > DA_threshold_Reward),find(BehData(:,8)==Block2test));
 %             index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
 %             
@@ -804,56 +945,57 @@ for HemIter = 1:iter
 %             index_SmallRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1), find(NormBinReward < DA_threshold_Reward),find(BehData(:,8)==Block2test));
 %             index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
 %          
-  
-            index_BigRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1) , find(BehData(:,2)==0),find(BehData(:,8)==Block2test));
-            index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
-            
-            
-            index_BigRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1),  find(BehData(:,2)==0),find(BehData(:,8)==Block2test));
-            index_BigRPE_Left = index_BigRPE_Left+ 1; % go to the next trial
-            
-            index_SmallRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1),  find(BehData(:,2)>=0.5),find(BehData(:,8)==Block2test));
-            index_SmallRPE_Right = index_SmallRPE_Right+ 1; % go to the next trial
-            
-            
-            index_SmallRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1),  find(BehData(:,2)<=-0.5),find(BehData(:,8)==Block2test));
-            index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
-
-            
-            
-     c = 1;
-        for istim = unique(BehData(:,2))'
-            
-            indexBL = intersect(find(BehData01(:,2)==istim),index_BigRPE_Left);
-            indexSL = intersect(find(BehData01(:,2)==istim),index_SmallRPE_Left);
-            
-            indexBR = intersect(find(BehData01(:,2)==istim),index_BigRPE_Right);
-            indexSR = intersect(find(BehData01(:,2)==istim),index_SmallRPE_Right);
-           
-            
-            performance_BL(c) = nanmean (BehData01(indexBL,3));
-            performance_SL(c) = nanmean (BehData01(indexSL,3));
-               
-            performance_BR(c) = nanmean (BehData01(indexBR,3));
-            performance_SR(c) = nanmean (BehData01(indexSR,3));
-            
-            
-            c=c+1;
-        end
-    
-        DAConditionedPerf.mice(1).Block1 (1,:)=performance_BL;
-        DAConditionedPerf.mice(1).Block1 (2,:)=performance_SL;
-        DAConditionedPerf.mice(1).Block1 (3,:)=performance_BR;
-        DAConditionedPerf.mice(1).Block1 (4,:)=performance_SR;
-        
-    
-        figure
-        
-        plot(performance_BL,'k')
-        hold on
-        plot(performance_SL,'-.k')
-        plot(performance_BR,'b')
-        plot(performance_SR,'-.b')
+%   
+% % beh
+% %             index_BigRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1) , find(BehData(:,2)==0),find(BehData(:,8)==Block2test));
+% %             index_BigRPE_Right = index_BigRPE_Right+ 1; % go to the next trial
+% %             
+% %             
+% %             index_BigRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1),  find(BehData(:,2)==0),find(BehData(:,8)==Block2test));
+% %             index_BigRPE_Left = index_BigRPE_Left+ 1; % go to the next trial
+% %             
+% %             index_SmallRPE_Right=mintersect(find(BehData(:,3)==1) , find(BehData(:,9)==1),  find(BehData(:,2)>=0.5),find(BehData(:,8)==Block2test));
+% %             index_SmallRPE_Right = index_SmallRPE_Right+ 1; % go to the next trial
+% %             
+% %             
+% %             index_SmallRPE_Left=mintersect(find(BehData(:,3)==-1) , find(BehData(:,9)==1),  find(BehData(:,2)<=-0.5),find(BehData(:,8)==Block2test));
+% %             index_SmallRPE_Left = index_SmallRPE_Left+ 1; % go to the next trial
+% 
+%             
+%             
+%      c = 1;
+%         for istim = unique(BehData(:,2))'
+%             
+%             indexBL = intersect(find(BehData01(:,2)==istim),index_BigRPE_Left);
+%             indexSL = intersect(find(BehData01(:,2)==istim),index_SmallRPE_Left);
+%             
+%             indexBR = intersect(find(BehData01(:,2)==istim),index_BigRPE_Right);
+%             indexSR = intersect(find(BehData01(:,2)==istim),index_SmallRPE_Right);
+%            
+%             
+%             performance_BL(c) = nanmean (BehData01(indexBL,3));
+%             performance_SL(c) = nanmean (BehData01(indexSL,3));
+%                
+%             performance_BR(c) = nanmean (BehData01(indexBR,3));
+%             performance_SR(c) = nanmean (BehData01(indexSR,3));
+%             
+%             
+%             c=c+1;
+%         end
+%     
+%         DAConditionedPerf.mice(3).Block4 (1,:)=performance_BL;
+%         DAConditionedPerf.mice(3).Block4 (2,:)=performance_SL;
+%         DAConditionedPerf.mice(3).Block4 (3,:)=performance_BR;
+%         DAConditionedPerf.mice(3).Block4 (4,:)=performance_SR;
+%         
+%     
+%         figure
+%         
+%         plot(performance_BL,'k')
+%         hold on
+%         plot(performance_SL,'-.k')
+%         plot(performance_BR,'b')
+%         plot(performance_SR,'-.b')
         
      %%
     
