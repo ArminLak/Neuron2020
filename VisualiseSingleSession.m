@@ -2,10 +2,10 @@
 % for both the behaviour and simpl plots on neuronal responses
 
 clear all
-close all
+% close all
 
-animal_name = 'ALK084'
-exp_date   = '2018-12-21'
+animal_name = 'MMM006'
+exp_date   = '2019-01-29'
 exp_series ='1'
 
 
