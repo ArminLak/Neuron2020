@@ -4,8 +4,8 @@
 clear all
 close all
 
-animal_name = 'MMM006'
-exp_date   = '2019-02-06'
+animal_name = 'ALK084'
+exp_date   = '2018-12-21'
 exp_series ='1'
 
 
