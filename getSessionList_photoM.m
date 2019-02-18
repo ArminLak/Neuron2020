@@ -85,17 +85,30 @@ elseif strcmp(animal_name, 'MMM005')
     if exp_ID == '7'
         SessionList = [1:7];
     elseif exp_ID == '23'
-        SessionList = [10:15, 17, 18, 19,20]; 
+        SessionList = [10:15, 17, 18, 19,20];
     elseif exp_ID == '38'
         SessionList = [22:27];
-    
+        
     end
     
-    elseif strcmp(animal_name, 'MMM006')
+elseif strcmp(animal_name, 'MMM006')
     if exp_ID == '7'
         SessionList = [7:13]; % temporary
     end
     
+elseif strcmp(animal_name, 'ALK085')
+    if exp_ID == '7'
+        SessionList = [1:14]; % temporary
+        
+         elseif exp_ID == '23'
+             
+    end
+    
+    
+elseif strcmp(animal_name, 'MMM008')
+    if exp_ID == '7'
+        SessionList = [5:8]; % temporary
+    end
     
 end
 end

@@ -8,7 +8,7 @@ close all
 % Armin July 2018 added bilateral recoding
 % Armin Dec 2018, changed to better handle bilateral recordings
 
-%VTA : [48, 50,51, 64]  coresponding to ALK068, 70 and 71, ALK084
+%VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084
 % DMS : [53, 55,62, 63,64] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
 % ALK084(Un)
 % NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),
@@ -23,7 +23,7 @@ close all
 
 % select animal
 
-animal_ID = 68
+animal_ID = 
 BrainStrucutre = 'DMS'
 ExpID = '7'
 
@@ -374,6 +374,11 @@ for HemIter = 1:iter
         
         NormBinStim = mean(StimData(:,5000:6000),2);
         
+        
+    elseif animal_ID == 70
+        
+        NormBinStim = mean(StimData(:,4000:5000),2);
+        
     else
         
         NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3400:3800),2);
@@ -520,6 +525,8 @@ for HemIter = 1:iter
         
         plot((smooth(AbsStimRasterSmallCorrect(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
         
+    
+        
     end
     
     title('Stim Align')
@@ -624,7 +631,6 @@ for HemIter = 1:iter
         NormBinReward = mean(RewardData(:,4100:4600),2) - mean(RewardData(:,3400:3800),2);
         end
 
-    
    
     
     % this figure looks at response as a function of contrast separated for

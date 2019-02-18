@@ -10,13 +10,13 @@ close all
 
 
 
-animal_list= [{'ALK068', 'ALK070', 'ALK071','ALK084'}];
+animal_list= [{'ALK068', 'ALK070', 'ALK071','ALK084','ALK085'}];
 
 
 %animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
 
 
-animal_list= [{'ALK084'}];
+animal_list= [{'ALK085'}];
 
 BrainStrucutre = 'VTA'
 

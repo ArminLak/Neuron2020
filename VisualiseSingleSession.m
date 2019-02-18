@@ -4,9 +4,9 @@
 clear all
 % close all
 
-animal_name = 'MMM008'
+animal_name = 'MMM006'
 exp_date   = '2019-02-15'
-exp_series ='1'
+exp_series ='2'
 
 
 %--------------- useful information --------------------------------------
