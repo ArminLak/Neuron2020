@@ -790,7 +790,7 @@ for HemIter = 1:iter
     end
     
     %%
-%    %  we need to do this session by session (conditional to Da responses at
+%    %   session by session (conditional to Da responses at
 %    %  the reward time) controlled for the reward size
 %     firstTrialOfBlock=[1 ; find(diff(BehData01(:,1)) < 0)+1]';  % define block onset
 %     firstTrialOfBlock = [firstTrialOfBlock, size(BehData01,1)];
@@ -867,7 +867,7 @@ for HemIter = 1:iter
 %      end
 
      %%
-      %  we need to do this session by session (conditional to Da responses at
+      %  session by session (conditional to Da responses at
    %  the reward time) controlled for  stimulus 
     firstTrialOfBlock=[1 ; find(diff(BehData01(:,1)) < 0)+1]';  % define block onset
     firstTrialOfBlock = [firstTrialOfBlock, size(BehData01,1)];

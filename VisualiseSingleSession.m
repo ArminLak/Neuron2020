@@ -4,10 +4,11 @@
 clear all
 % close all
 
-animal_name = 'MMM006'
+animal_name = 'MMM008'
 exp_date   = '2019-02-15'
-exp_series ='2'
+exp_series ='1'
 
+RawOrNorm = 'Norm'
 
 %--------------- useful information --------------------------------------
 % task event
@@ -97,6 +98,22 @@ photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:e
 load(photoMFileName);
 
 NChan = 0;
+
+if strcmp(RawOrNorm,'Raw')
+if isfield(photoMdata, 'AnalogIn_2')
+    
+    DeltaFoverF(1,:) = photoMdata.AnalogIn_2;
+    NChan = NChan +1;
+end
+
+if isfield(photoMdata, 'AnalogIn_4')
+    
+    DeltaFoverF(2,:) = photoMdata.AnalogIn_4;
+    NChan = NChan +1;
+    
+end    
+    
+elseif strcmp(RawOrNorm,'Norm')
 if isfield(photoMdata, 'AnalogIn_2_dF_F0')
     
     DeltaFoverF(1,:) = photoMdata.AnalogIn_2_dF_F0;
@@ -108,6 +125,7 @@ if isfield(photoMdata, 'AnalogIn_4_dF_F0')
     DeltaFoverF(2,:) = photoMdata.AnalogIn_4_dF_F0;
     NChan = NChan +1;
     
+end
 end
 
 TimeStamps = photoMdata.Time_s_;
