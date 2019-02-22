@@ -94,6 +94,9 @@ elseif strcmp(animal_name, 'MMM005')
 elseif strcmp(animal_name, 'MMM006')
     if exp_ID == '7'
         SessionList = [7:13]; % temporary
+      elseif exp_ID == '23'
+                     SessionList = [14:21]; % temporary
+
     end
     
 elseif strcmp(animal_name, 'ALK085')
@@ -101,7 +104,8 @@ elseif strcmp(animal_name, 'ALK085')
         SessionList = [1:9, 12]; % temporary
         
          elseif exp_ID == '23'
-             
+                     SessionList = [15:22]; % temporary
+
     end
     
     

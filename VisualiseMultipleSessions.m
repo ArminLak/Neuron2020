@@ -8,9 +8,10 @@ close all
 % Armin July 2018 added bilateral recoding
 % Armin Dec 2018, changed to better handle bilateral recordings
 
-%VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084
-% DMS : [53, 55,62, 63,64] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
-% ALK084(Un)
+%VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084,
+%ALK085
+% DMS : [53, 55,62, 63,64, 68] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
+% ALK084(Un), MMM006(Un)
 % NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),
 % MMM005(UN)
 
@@ -18,14 +19,15 @@ close all
 % 7: learning from scratch
 % 7Adv: single reward after learning is advanced ( this one is in the
 % getSessionList_photpM code.
+
 % 23: double reward size 
 
 
 % select animal
 
-animal_ID = 
+animal_ID = 68
 BrainStrucutre = 'DMS'
-ExpID = '7'
+ExpID = '23'
 
 save2file = 0; % decide if you want to overwrite GrandSummary or not
 
@@ -374,6 +376,11 @@ for HemIter = 1:iter
         
         NormBinStim = mean(StimData(:,5000:6000),2);
         
+                
+    elseif animal_ID == 69
+        
+        NormBinStim = mean(StimData(:,3900:5200),2)- mean(StimData(:,3400:3800),2);
+             
         
     elseif animal_ID == 70
         
