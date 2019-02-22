@@ -1,12 +1,12 @@
 clear all
-% close all
+close all
 
-animal_name = 'ALK071'
-exp_date   = '2018-03-15'
+animal_name = 'ALK074'
+exp_date   = '2018-05-02'
 exp_series ='1'
 
-trial_from = 50          % visualise trace from this trial
-trial_to = 250          % visualise trace up to this trial
+trial_from = 35          % visualise trace from this trial
+trial_to = 55      % visualise trace up to this trial
 
 
 % NB trial_to-trial_from = 50
@@ -86,7 +86,7 @@ TimeStamps=photoMdata.Time_s_;
 % 13: stimulus (dotted line)
 % 14: reward (green = reward, red = no reward)
 
-
+%%
 % --------- Ca response trace ---------------------------
 f = figure('Position', [300 200 800 900]); hold on
 
@@ -104,15 +104,15 @@ for i = 1 : round((trial_to-trial_from)./10)
     % line([90 90], [-2 4])
 
     ax = gca;
-    ymin = -15
-    ymax = 27
+    ymin = -1
+    ymax = 2
     ylim([ymin ymax])
     xlim ([TrialTimingData(min(10*(i - 1) + 1:i*10), 12) - 1  TrialTimingData(max(10*(i - 1) + 1:i*10), 14) + 2])
 
             for ievent = min(10*(i - 1) + 1:i*10):max(10*(i - 1) + 1:i*10)
 
                 h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax+abs(ymin)],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
-                text(TrialTimingData(ievent, 13), 30, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
+                text(TrialTimingData(ievent, 13), 2, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
                 line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
                 line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
                 rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF, 10))) max(smooth(downsample(DeltaFoverF, 10)))], 'LineWidth', 1.5);

@@ -4,9 +4,9 @@
 clear all
 % close all
 
-animal_name = 'MMM006'
-exp_date   = '2019-01-29'
-exp_series ='1'
+animal_name = 'ALK074'
+exp_date   = '2018-05-02'
+exp_series = '1'
 
 
 %--------------- useful information --------------------------------------
@@ -208,14 +208,14 @@ for iChan = 1:NChan
     ax = gca;
     Visstart = 60; % visualise trace from this trial
     Visstop  = 100;  % visualise trace up to this trial
-    ymin = -15
-    ymax = 27
+    ymin = -5
+    ymax = 7
     ylim([ymin ymax])
     
     for ievent = Visstart: Visstop
         
         h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin TrialTimingData(ievent,14)-TrialTimingData(ievent,13) ymax-ymin],'EdgeColor',[1 1 1], 'FaceColor', [144/255 186/255 212/255 0.2]);
-        text(TrialTimingData(ievent, 13), 30, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
+        text(TrialTimingData(ievent, 13), 9, num2str(TrialTimingData(ievent, 2)), 'FontWeight', 'bold')
         line([TrialTimingData(ievent, 12) TrialTimingData(ievent, 12)], [min(smooth(downsample(DeltaFoverF(iChan,:), 10))) max(smooth(downsample(DeltaFoverF(iChan,:), 10)))], 'Color', [74/255 127/255 189/255], 'LineStyle', '--', 'LineWidth', 1.5);
         line([TrialTimingData(ievent, 13) TrialTimingData(ievent, 13)], [min(smooth(downsample(DeltaFoverF(iChan,:), 10))) max(smooth(downsample(DeltaFoverF(iChan,:), 10)))], 'color', [74/255 127/255 189/255] , 'LineWidth', 1.5);
         rl = line([TrialTimingData(ievent, 14) TrialTimingData(ievent, 14)], [min(smooth(downsample(DeltaFoverF(iChan,:), 10))) max(smooth(downsample(DeltaFoverF(iChan,:), 10)))], 'LineWidth', 1.5);
@@ -231,7 +231,7 @@ for iChan = 1:NChan
     end
     
     
-    text(TrialTimingData(14,13), 35, 'ALK070 2018-03-06', 'FontWeight', 'bold', 'FontSize', 10);
+    text(TrialTimingData(14,13), 18, 'ALK070 2018-03-06', 'FontWeight', 'bold', 'FontSize', 10);
     a = downsample(TimeStamps,10);
     xlim([0 a(end)])
     xlabel ('Time (s)')
