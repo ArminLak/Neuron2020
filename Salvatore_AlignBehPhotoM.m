@@ -21,7 +21,7 @@ legend('analog','TrialTimingData')
 ylabel('inter event interval')
 
 %a=TrialTimingData(TrialTimingData(:,9)==1,14);
-%s=regstats(reward_Times(1:100),a(1:100,:));         % find the time lag between beh file and neuronal file (regress water delivery time)
+%s=regstats(reward_Times(4:30),a(4:30,:));         % find the time lag between beh file and neuronal file (regress water delivery time)
 
 s=regstats(reward_Times,TrialTimingData(TrialTimingData(:,9)==1,14));         % find the time lag between beh file and neuronal file (regress water delivery time)
 
@@ -30,7 +30,7 @@ lag = s.beta(1)                                                                %
 
 TrialTimingData_aligned(:,[10, 12:14, 16]) = TrialTimingData(:,[10, 12:14, 16]) + lag;
 
-%unacounted_lag = nanmean(reward_Times(1:100)' - a(1:100))
+%unacounted_lag = nanmean(reward_Times(1:50)' - a(50))
 
 unacounted_lag = nanmean(reward_Times' - TrialTimingData_aligned(TrialTimingData(:,9)==1,14))
 
