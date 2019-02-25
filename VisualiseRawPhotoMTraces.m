@@ -11,8 +11,8 @@ close all
 
 animal_ID = 51
 
-animal_name = 'ALK071'
-exp_date   = '2018-03-01'
+animal_name = 'ALK074'
+exp_date   = '2018-05-10'
 exp_series ='1'
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
@@ -68,7 +68,7 @@ ylabel('Ca independent');
 % ylim(ax);
 ylim([0.3 0.6]);
 
-
+%------
 
 subplot(4, 1, 3);
 
@@ -79,6 +79,7 @@ xlabel('');
 ylabel('{\Delta} F / F');
 
 
+% ------------
 subplot(4, 1, 4);
 
 plot(TTL(sample_rate*start : sample_rate*stop));
