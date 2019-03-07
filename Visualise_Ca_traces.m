@@ -6,7 +6,7 @@ exp_date   = '2018-05-02'
 exp_series ='1'
 
 trial_from = 35          % visualise trace from this trial
-trial_to = 55      % visualise trace up to this trial
+trial_to = 85      % visualise trace up to this trial
 
 
 % NB trial_to-trial_from = 50
