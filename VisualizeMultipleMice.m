@@ -1,7 +1,7 @@
 clear all
-close all
+%close all
 
-Hem2show = 'both' % 'L' 'R' or 'both'
+Hem2show = 'R' % 'L' 'R' or 'both'
 
 % list of animals
 
@@ -10,13 +10,14 @@ Hem2show = 'both' % 'L' 'R' or 'both'
 %load('BehPhotoM_Exp23_VTA')
 
 % NAC
-Animals = [56 57 59 66]
+%Animals = [56 57 59 66]
 
-load('BehPhotoM_Exp23_NAc')
+%load('BehPhotoM_Exp23_NAc')
 
 % DMS
-%Animals = [53, 62, 63]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
-%load('BehPhotoM_Exp23_DMS')
+Animals = [53, 62, 63]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+%          53, 55,62, 63,64, 68
+load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8
@@ -318,6 +319,8 @@ for iAnimal = Animals
 end
 
 %%
+figure
+
 subplot(6,3,1); hold on
 xlabel('Contrast')
 ylabel('P(R)')

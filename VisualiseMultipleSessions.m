@@ -25,8 +25,8 @@ close all
 
 % select animal
 
-animal_ID = 68
-BrainStrucutre = 'DMS'
+animal_ID = 69
+BrainStrucutre = 'VTA'
 ExpID = '23'
 
 save2file = 0; % decide if you want to overwrite GrandSummary or not
@@ -269,11 +269,13 @@ for HemIter = 1:iter
     
     subplot(6,3,9); hold on
     
-    plot(nanmean(BeepData),'k','LineWidth',2)
+    plot(nanmean(BeepData(BehData(:,4)==1,:)),'k','LineWidth',2)
+        plot(nanmean(BeepData(BehData(:,4)==0,:)),'r','LineWidth',2)
+
     
     title('Beep Align')
     
-    xlim([3500 4900])
+    xlim([200 4900])
     %ylim([-0.3 2])
     
     
