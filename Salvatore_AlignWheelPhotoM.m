@@ -11,10 +11,28 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 % find path to beh and photometry data
 path2Data= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series];
 
-addpath (genpath(path2photoM))
+addpath (genpath(path2Data))
 
 
-AlignDelay = MiceExpInfo.mice(animal_ID).session.AlignDelay;
+filename_block = [exp_date,'_',num2str(exp_series),'_',animal_name,'_Block','.mat']
+%filename_Timeline = [exp_date,'_',num2str(exp_series),'_',animal_name,'_Timeline','.mat']
+
+
+
+
+TargetSessionFound = 0;
+isession = 1;
+while  TargetSessionFound == 0
+    TargetSessionFound = strcmp(MiceExpInfo.mice(animal_ID).session(isession).Blockname,[exp_date,'_',exp_series,'_',animal_name,'_Block.mat']); %find target session
+    isession = isession + 1;
+end
+TargetSession = isession - 1;
+
+    
+%TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData; %load trial timing data 
+
+load(filename_block)
+AlignDelay = MiceExpInfo.mice(animal_ID).session(TargetSession).AlignDelay;
 
 WheelTime= block.inputSensorPositionTimes(2:end) + AlignDelay;
 

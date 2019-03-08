@@ -6,13 +6,12 @@ close all
 
 % --------- enter reqs -----------------------------
 
-animal_name = 'MMM009'
-exp_date   = '2019-03-07'
-exp_series ='3';
+animal_name = 'ALK074'
+exp_date   = '2018-04-27'
+exp_series ='1';
 
-
-desired_contrasts = [-0.5, -0.12, 0.12, 0.25, 0.5];
-trial_seq_n = 6; %must be equal to or less tha nnumber of desired contrasts 
+desired_contrasts = [-0.5, -0.25,  0.25, 0.5];
+trial_seq_n = 4; %must be equal to or less tha nnumber of desired contrasts 
 
 % --------------------------------------------------
 
@@ -26,6 +25,9 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 
 path2Beh= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series]; addpath (genpath(path2Beh)) %add path to beh
 path2photoM= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\photoM']; addpath (genpath(path2photoM)) %add path to photom
+
+
+[WheelTime,WheelMove] = Salvatore_AlignWheelPhotoM(animal_name, exp_date, exp_series);
 
 
 
@@ -48,6 +50,8 @@ else
 end
     
 TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData; %load trial timing data 
+
+%desired_contrasts =unique(TrialTimingData(:,2))'; 
 Stimz=unique(TrialTimingData(:,2))';                % stims for that session 
 
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);% load photoM data
@@ -76,6 +80,8 @@ for i = 1: length(TrialTimingData)-trial_seq_n+1
 end
 
 trials2return %#ok<NOPTS>
+
+trials2return(trials2return==1)=[]
 
 %% figs each have 4 example traces 
 
@@ -113,9 +119,22 @@ for ihem = 1:numel(chan_ori)
             ymax = 1.2*max(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
             ymin = 1.2*min(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
             
+            hold on
+            
+            WheelStart= find(floor(100*WheelTime)/100==start_s,1);
+                        WheelEnd= find(floor(100*WheelTime)/100==end_s,1);
+                        
+                     %   WheelMove(WheelMove<1)=0;
+                        
+
+            plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1,'color',[0.8 0 0.8])
+                   %     plot(WheelTime,WheelMove,'b')
+
             
 %             ax = gca;
 %             ymin = ax.YLim(1); ymax = ax.YLim(2);
+
+ymin=ymin-3;
             ylim([ymin ymax])
             xlim([start_s  end_s])
             xticks([start_s:5:end_s])
