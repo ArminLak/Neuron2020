@@ -1,4 +1,4 @@
-function [TrialTimingData_aligned,lag] = Salvatore_AlignBehPhotoM(TrialTimingData,SynchData,sample_rate)
+function [TrialTimingData_aligned,lag] = Salvatore_AlignWheelPhotoM(TrialTimingData,SynchData,sample_rate)
 
 %Align times from Behaviour and photoM datafile (regression of reward analog time and reward time in the beh block file)
 % Armin Dec 2017

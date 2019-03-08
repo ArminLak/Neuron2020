@@ -25,7 +25,7 @@ close all
 
 % select animal
 
-animal_ID = 69
+animal_ID = 48
 BrainStrucutre = 'VTA'
 ExpID = '23'
 
@@ -207,6 +207,9 @@ for HemIter = 1:iter
     BehData(ToSmallR, 16)=-1;
     
     abzStim = unique(abs(BehData(:,2)))';
+    
+  
+    
     
     
     figure; hold on
@@ -1101,7 +1104,20 @@ end
     
     
 end
+%%
+figure
 
+scatter(NormBinStim(intersect(ToLargeR,find(BehData(:,9)==1))),NormBinReward(intersect(ToLargeR,find(BehData(:,9)==1))))
+
+hold on
+
+scatter(NormBinStim(intersect(ToSmallR,find(BehData(:,9)==1))),NormBinReward(intersect(ToSmallR,find(BehData(:,9)==1))))
+
+scatter(NormBinStim(find(BehData(:,9)==0)),NormBinReward(find(BehData(:,9)==0)))
+
+
+
+%%
 if save2file
 
 if strcmpi(getComputerName,'zopamine2')

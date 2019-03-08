@@ -6,8 +6,8 @@ Hem2show = 'R' % 'L' 'R' or 'both'
 % list of animals
 
 % VTA,
-%Animals = [48 50 51 64]
-%load('BehPhotoM_Exp23_VTA')
+Animals = [48 50 51 64]
+load('BehPhotoM_Exp23_VTA')
 
 % NAC
 %Animals = [56 57 59 66]
@@ -15,9 +15,9 @@ Hem2show = 'R' % 'L' 'R' or 'both'
 %load('BehPhotoM_Exp23_NAc')
 
 % DMS
-Animals = [53, 62, 63]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+%Animals = [53, 62, 63]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 %          53, 55,62, 63,64, 68
-load('BehPhotoM_Exp23_DMS')
+%load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8

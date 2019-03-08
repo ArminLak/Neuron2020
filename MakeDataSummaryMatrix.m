@@ -15,7 +15,7 @@ clear all
 close all
 
 
-animal_name = 'MMM006'
+animal_name = 'ALK085'
 Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '23';
