@@ -5,9 +5,9 @@ clear all
 % close all
 
 
-animal_name = 'ALK085'
-exp_date   = '2019-02-22'
-exp_series ='2'
+animal_name = 'MMM009'
+exp_date   = '2019-03-07'
+exp_series ='3'
 
 
 RawOrNorm = 'Norm'
@@ -154,21 +154,7 @@ sem = sqrt(V)./ sqrt(Noutof);
 
 for iChan = 1:NChan
     
-    %------------------------define event time for event-alinged responses--------------------------
-    
-    event_times = TrialTimingData(:,12); % trial initiation/ onset beep
-    
-    [Raster_MatrixOnsetBeep]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
-    
-    event_times = TrialTimingData(:,13); % vis stimulus onset
-    
-    [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
-    
-    event_times = TrialTimingData(:,14); %reward onset
-    
-    [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
-    
-    % --------------- wheel movement ----------------
+% --------------- wheel movement ----------------
     
     rawPos = block.inputSensorPositions;
     rawPos = wheel.correctCounterDiscont(rawPos); % correction because sometimes negative wheel positions wrap around
@@ -181,7 +167,7 @@ for iChan = 1:NChan
     pos = interp1(rawTimes, rawPos, t, 'linear');
     
     wheelRadius = 31; % mm (burgess wheel) (measured by Chris)
-    wheelRadius = 150; % mm (running wheel) (guess!)
+%     wheelRadius = 150; % mm (running wheel) (guess!)
     
     rotaryEncoderResolution = 360*4; % number of ticks for one revolution (factor of 4 is according to CB)
     
@@ -196,6 +182,29 @@ for iChan = 1:NChan
     
     posRel = wheel.resetAtEvent(t, pos, eventTimes);
     
+        %------------------------define event time for event-alinged responses--------------------------
+    
+    event_times = TrialTimingData(:,12); % trial initiation/ onset beep
+    
+    [Raster_MatrixOnsetBeep]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
+    
+    event_times = TrialTimingData(:,13); % vis stimulus onset
+    
+    [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
+    
+    event_times = TrialTimingData(:,14); %reward onset
+    
+    [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
+    
+    event_times = TrialTimingData(:,10); %action onset
+    
+    [Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
+    
+    event_times = TrialTimingData(:,10); %action onset
+    
+    [Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,posRel,start,stop,downsampleScale);
+    
+    
     % --------- make plots --------------
     %%
     
@@ -203,7 +212,7 @@ for iChan = 1:NChan
     
     
     % ---------- psych curve ------------------------------------------------
-    subplot(7,2,1); hold on% psych curve
+    subplot(8,2,1); hold on% psych curve
     %errorbar(unique(TrialTimingData(:,2)'), performance, sem, 'o', 'MarkerSize', 1);
     plot(unique(TrialTimingData(:,2)'), performance, 'color', [74/255 127/255 189/255],'LineWidth',2,'Marker','o','MarkerFaceColor', [74/255 127/255 189/255],'MarkerSize',3)
     xlabel('Contrast')
@@ -226,8 +235,8 @@ for iChan = 1:NChan
     % line([90 90], [-2 4])
     
     ax = gca;
-    Visstart = 60; % visualise trace from this trial
-    Visstop  = 100;  % visualise trace up to this trial
+    Visstart = 35; % visualise trace from this trial
+    Visstop  = 60;  % visualise trace up to this trial
     ymin = -5
     ymax = 7
     ylim([ymin ymax])
@@ -273,7 +282,7 @@ for iChan = 1:NChan
     % ylim([-200 200])
     
     %----------------------------- subplot for stumulus aligned normalised
-    subplot(7,2,2); hold on
+    subplot(8,2,2); hold on
     title('Normalised post-stim response')
     %xlim([ 0 (stop-start)* sample_rate]/downsampleScale)
     
@@ -307,7 +316,7 @@ for iChan = 1:NChan
     
     %%
     % -------------------------------------------------subplot for stimulus aligned, not normalised
-    subplot(7,2,9); hold on
+    subplot(8,2,9); hold on
     title ('Stimulus aligned ')
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     % xticks([0 1200 2400 3600 4800])
@@ -344,7 +353,7 @@ for iChan = 1:NChan
     xlabel ('Time (s)')
     
     
-    subplot(7,2,10); hold on
+    subplot(8,2,10); hold on
     title ('Stimulus aligned')
     c=1;
     
@@ -367,7 +376,7 @@ for iChan = 1:NChan
     
     
     
-    subplot(7,2,11); hold on
+    subplot(8,2,11); hold on
     
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
@@ -399,7 +408,7 @@ for iChan = 1:NChan
         
     end
     
-    subplot(7,2,12); hold on
+    subplot(8,2,12); hold on
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([start:1:stop])
@@ -413,7 +422,7 @@ for iChan = 1:NChan
     
     
     %------------------------------------------ post stim response by contrast for errors and correct trials-----
-    subplot(7, 2, 13); hold on
+    subplot(8, 2, 13); hold on
     title('Normalised post stim response') %separate line for correct and error trials
     
     % pre-allocate; col 1 = correct, col 2 = error
@@ -439,7 +448,7 @@ for iChan = 1:NChan
     
     %------------------------------- normalised post outcome response -------------
     
-    subplot(7, 2, 14); hold on
+    subplot(8, 2, 14); hold on
     title('Normalised post outcome response')
     
     outcomediff = nan(size(Raster_MatrixReward,1), 1); %pre-allocate
@@ -469,6 +478,52 @@ for iChan = 1:NChan
     xticks([Stimz])
     legend('Reward', 'No reward')
     
+    %------------------------------- signal aligned to time of action, not normalised  -------------
+    
+    
+        subplot(8,2,15); hold on
+    title ('Action aligned')
+    c=1;
+    
+    for istim = StimzAbs
+        
+        plot(nanmean(Raster_MatrixAction(abs(TrialTimingData(:,2))==istim & TrialTimingData(:,9)==1,:)),'color',colorGreen(c,:),'LineWidth',2)
+        plot(nanmean(Raster_MatrixAction(abs(TrialTimingData(:,2))==istim & TrialTimingData(:,9)==0,:)),'color',colorRed(c,:),'LineWidth',2)
+        
+        c=c+1;
+        
+    end
+    
+    
+    xlim([0 (stop-start)* sample_rate]/downsampleScale)
+    xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+    % 0:((stop*start)*sample_rate)/downsampleScale):(sample_rate/downsampleScale)
+    xticklabels([start:1:stop])
+    ylabel('{\Delta} F / F')
+    xlabel('Time (s)')
+    
+        %------------------------------- signal plotted with wheel position, not normalised  -------------
+    
+        subplot(8,2,16); hold on
+    title ('Signal and wheel position')
+    c=1;
+    
+    for istim = StimzAbs
+        
+        plot(nanmean(Raster_MatrixAction(abs(TrialTimingData(:,2))==istim & TrialTimingData(:,9)==1,:)),'color',colorGray4(c,:),'LineWidth',2)
+%       plot(nanmean(Raster_MatrixAction(abs(TrialTimingData(:,2))==istim & TrialTimingData(:,9)==0,:)),'color',colorRed(c,:),'LineWidth',2) % correct trials only
+        
+        c=c+1;
+        
+    end
+
+    xlim([0 (stop-start)* sample_rate]/downsampleScale)
+    xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
+    % 0:((stop*start)*sample_rate)/downsampleScale):(sample_rate/downsampleScale)
+    xticklabels([start:1:stop])
+    ylabel('{\Delta} F / F')
+    xlabel('Time (s)')
+        
 end
 
 % c=1;
