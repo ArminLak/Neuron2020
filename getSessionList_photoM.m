@@ -113,7 +113,7 @@ elseif strcmp(animal_name, 'MMM008')
     if exp_ID == '7'
         SessionList = [5:8]; % temporary
     elseif exp_ID == '23'
-        SessionList = [12:26]; % temporary (to be updated by Morgane)
+        SessionList = [12, 19, 21, 23]; % maybe:12,19,21, 23 // definitely not: 13,14, 15,16,17, 18,20,22, 24,25,16
         
     end
     
