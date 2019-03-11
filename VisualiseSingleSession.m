@@ -200,9 +200,9 @@ for iChan = 1:NChan
     
     [Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF(iChan,:),start,stop,downsampleScale);
     
-    event_times = TrialTimingData(:,10); %action onset
+    %event_times = TrialTimingData(:,10); %action onset
     
-    [Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,posRel,start,stop,downsampleScale);
+    %[Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,posRel,start,stop,downsampleScale);
     
     
     % --------- make plots --------------

@@ -91,28 +91,40 @@ elseif strcmp(animal_name, 'MMM005')
         
     end
     
+elseif strcmp(animal_name, 'ALK085')
+    if exp_ID == '7'
+        SessionList = [1:9, 12];
+    elseif exp_ID == '23'
+        SessionList = [15:23];
+        
+    elseif exp_ID == '38'
+        SessionList = [24:28]; % temporary
+    end
+    
 elseif strcmp(animal_name, 'MMM006')
     if exp_ID == '7'
         SessionList = [7:13]; % temporary
-      elseif exp_ID == '23'
-                     SessionList = [14:21]; % temporary
-
-    end
-    
-elseif strcmp(animal_name, 'ALK085')
-    if exp_ID == '7'
-        SessionList = [1:9, 12]; % temporary
+    elseif exp_ID == '23'
+        SessionList = [14:21]; % temporary
         
-         elseif exp_ID == '23'
-                     SessionList = [15:23]; % temporary
-
     end
-    
-    
+       
 elseif strcmp(animal_name, 'MMM008')
     if exp_ID == '7'
         SessionList = [5:8]; % temporary
+    elseif exp_ID == '23'
+        SessionList = [12:26]; % temporary (to be updated by Morgane)
+        
     end
+    
+elseif strcmp(animal_name, 'MMM009')
+    if exp_ID == '7'
+        SessionList = [1:9]; % temporary
+    elseif exp_ID == '23'
+        SessionList = [10:15]; % temporary
+        
+    end
+    
     
 end
 end

@@ -10,8 +10,12 @@ close all
 
 %VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084,
 %ALK085
-% DMS : [53, 55,62, 63,64, 68] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
-% ALK084(Un), MMM006(Un)
+% DMS 
+% Full list: [53, 55,62, 63,64, 68, 70, 71, 72] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
+% ALK084(Un), MMM006(Un), MMM008(Un), MMM009(Un), MMM010(Un), 
+% Usefull list: : [53, 55,62, 63, ] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
+% hopefully: 70, 71 and 72
+
 % NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),
 % MMM005(UN)
 
@@ -25,8 +29,8 @@ close all
 
 % select animal
 
-animal_ID = 48
-BrainStrucutre = 'VTA'
+animal_ID = 68
+BrainStrucutre = 'DMS'
 ExpID = '23'
 
 save2file = 0; % decide if you want to overwrite GrandSummary or not
