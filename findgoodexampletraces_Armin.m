@@ -6,18 +6,18 @@ close all
 
 % --------- enter reqs -----------------------------
 
-animal_name = 'ALK074'
-exp_date   = '2018-04-27'
+animal_name = 'MMM009'
+exp_date   = '2019-03-10'
 exp_series ='1';
 
-desired_contrasts = [-0.5, -0.25,  0.25, 0.5];
-trial_seq_n = 4; %must be equal to or less tha nnumber of desired contrasts 
+desired_contrasts = [-0.5, -0.25,  0.12, 0.25, 0.5];
+trial_seq_n = 6; %must be equal to or less tha nnumber of desired contrasts
 
 % --------------------------------------------------
 
 sample_rate = 12000;                                        % photoM recording sampling rate
 downsampleScale = 10;                                       % factor downsampling the Ca responses
-scale = sample_rate/downsampleScale;                        % for use in plotting 
+scale = sample_rate/downsampleScale;                        % for use in plotting
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name); %get animal ID
@@ -48,15 +48,15 @@ if isfield (MiceExpInfo.mice(animal_ID).session(TargetSession), 'Chan4') % if mo
 else
     chan_ori = 1; %if mouse is uni hem
 end
-    
-TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData; %load trial timing data 
 
-%desired_contrasts =unique(TrialTimingData(:,2))'; 
-Stimz=unique(TrialTimingData(:,2))';                % stims for that session 
+TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData; %load trial timing data
+
+%desired_contrasts =unique(TrialTimingData(:,2))';
+Stimz=unique(TrialTimingData(:,2))';                % stims for that session
 
 photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);% load photoM data
 load(photoMFileName);
-% TimeStamps=photoMdata.Time_s_; % get time stamps 
+% TimeStamps=photoMdata.Time_s_; % get time stamps
 
 TimeStamps = photoMdata.Time_s_;
 ds_TimeStamps = downsample(TimeStamps, 10);
@@ -65,25 +65,25 @@ trials2return = [];
 
 for i = 1: length(TrialTimingData)-trial_seq_n+1
     match = 0;
-    tempTrialz = unique(TrialTimingData(i:i+(trial_seq_n-1), 2)); %trials to test 
+    tempTrialz = unique(TrialTimingData(i:i+(trial_seq_n-1), 2)); %trials to test
     
-    for contrast = 1: length(tempTrialz)        
+    for contrast = 1: length(tempTrialz)
         if max(ismember(desired_contrasts, tempTrialz(contrast))) % is this trial's contrast in the desired contrasts list ?
             match = match + 1;
         end
     end
-
+    
     if match == length(desired_contrasts)
         trials2return = [trials2return;i];
     end
-
+    
 end
 
 trials2return %#ok<NOPTS>
 
-trials2return(trials2return==1)=[]
+trials2return(trials2return==1)=[]; 
 
-%% figs each have 4 example traces 
+%% figs each have 4 example traces
 
 for ihem = 1:numel(chan_ori)
     
@@ -122,19 +122,19 @@ for ihem = 1:numel(chan_ori)
             hold on
             
             WheelStart= find(floor(100*WheelTime)/100==start_s,1);
-                        WheelEnd= find(floor(100*WheelTime)/100==end_s,1);
-                        
-                     %   WheelMove(WheelMove<1)=0;
-                        
-
-            plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1,'color',[0.8 0 0.8])
-                   %     plot(WheelTime,WheelMove,'b')
-
+            WheelEnd= find(floor(100*WheelTime)/100==end_s,1);
             
-%             ax = gca;
-%             ymin = ax.YLim(1); ymax = ax.YLim(2);
-
-ymin=ymin-3;
+            %   WheelMove(WheelMove<1)=0;
+            
+            
+            plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1,'color',[0.8 0 0.8])
+            %     plot(WheelTime,WheelMove,'b')
+            
+            
+            %             ax = gca;
+            %             ymin = ax.YLim(1); ymax = ax.YLim(2);
+            
+            ymin=ymin-3;
             ylim([ymin ymax])
             xlim([start_s  end_s])
             xticks([start_s:5:end_s])
@@ -151,7 +151,7 @@ ymin=ymin-3;
             end
             
             for ievent = trials2return(itrial):trials2return(itrial)+trial_seq_n-1
-
+                
                 h=rectangle(ax, 'Position',[TrialTimingData(ievent,13) ymin (TrialTimingData(ievent,14)-TrialTimingData(ievent,13)) ymax+abs(ymin)], ...
                     'EdgeColor',[144/255 186/255 212/255 0.2], 'FaceColor', [144/255 186/255 212/255 0.2]); % trial in progress light blue rectangle
                 
