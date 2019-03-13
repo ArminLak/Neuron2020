@@ -6,8 +6,8 @@ clear all
 
 
 animal_name = 'MMM008'
-exp_date   = '2019-03-04'
-exp_series ='3'
+exp_date   = '2019-02-15'
+exp_series ='1'
 
 
 RawOrNorm = 'Norm'
