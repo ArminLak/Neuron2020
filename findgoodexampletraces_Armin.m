@@ -6,12 +6,15 @@ close all
 
 % --------- enter reqs -----------------------------
 
-animal_name = 'MMM009'
-exp_date   = '2019-03-12'
-exp_series ='2';
+% animal_name = 'MMM009'
+% exp_date   = '2019-03-12'
+% exp_series ='2';
 
-desired_contrasts = [-0.5 -0.12, 0.25, 0.5];
-trial_seq_n = 6; %must be equal to or less tha nnumber of desired contrasts
+animal_name = 'ALK074'
+exp_ID   = '23'
+
+desired_contrasts = [-0.5, -0.25, -0.12, 0, 0.12, 0.25, 0.5];
+trial_seq_n = 10; %must be equal to or more tha nnumber of desired contrasts
 
 % --------------------------------------------------
 
@@ -23,38 +26,43 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 [animal_ID, chan_order] =Salvatore_Get_chan_order(animal_name); %get animal ID
 
 
-path2Beh= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series]; addpath (genpath(path2Beh)) %add path to beh
-path2photoM= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\photoM']; addpath (genpath(path2photoM)) %add path to photom
+%path2Beh= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\',exp_series]; addpath (genpath(path2Beh)) %add path to beh
+%path2photoM= ['\\zubjects.cortexlab.net\Subjects\',animal_name,'\',exp_date,'\photoM']; addpath (genpath(path2photoM)) %add path to photom
 
 
-[WheelTime,WheelMove] = Salvatore_AlignWheelPhotoM(animal_name, exp_date, exp_series);
+path2data = ['\\zubjects.cortexlab.net\Subjects\',animal_name];
+addpath(genpath(path2data))
+
+[SessionList] = getSessionList_photoM(animal_name, exp_ID);
 
 
+for iSession = SessionList
 
-TargetSessionFound = 0;
-isession = 1;
-while  TargetSessionFound == 0
-    TargetSessionFound = strcmp(MiceExpInfo.mice(animal_ID).session(isession).Blockname,[exp_date,'_',exp_series,'_',animal_name,'_Block.mat']); %find target session
-    isession = isession + 1;
-end
-TargetSession = isession - 1;
+ 
 
-if isfield (MiceExpInfo.mice(animal_ID).session(TargetSession), 'Chan4') % if mouse is bi hem
-    if MiceExpInfo.mice(animal_ID).session(TargetSession).Chan2(1) == 'L'
+if isfield (MiceExpInfo.mice(animal_ID).session(iSession), 'Chan4') % if mouse is bi hem
+    if MiceExpInfo.mice(animal_ID).session(iSession).Chan2(1) == 'L'
         chan_ori = 'LR';
-    elseif MiceExpInfo.mice(animal_ID).session(TargetSession).Chan2(1) == 'R'
+    elseif MiceExpInfo.mice(animal_ID).session(iSession).Chan2(1) == 'R'
         chan_ori = 'RL';
     end
 else
     chan_ori = 1; %if mouse is uni hem
 end
 
-TrialTimingData = MiceExpInfo.mice(animal_ID).session(TargetSession).TrialTimingData; %load trial timing data
+exp_date   = MiceExpInfo.mice(animal_ID).session(iSession).Blockname(1:10);
+exp_series = MiceExpInfo.mice(animal_ID).session(iSession).Blockname(12);
+
+% extract aligned wheel trace : 
+[WheelTime,WheelMove] = Salvatore_AlignWheelPhotoM(animal_name, exp_date, exp_series);
+
+
+TrialTimingData = MiceExpInfo.mice(animal_ID).session(iSession).TrialTimingData; %load trial timing data
 
 %desired_contrasts =unique(TrialTimingData(:,2))';
 Stimz=unique(TrialTimingData(:,2))';                % stims for that session
 
-photoMFileName=MiceExpInfo.mice(animal_ID).session(TargetSession).Neuronfile(1:end-4);% load photoM data
+photoMFileName=MiceExpInfo.mice(animal_ID).session(iSession).Neuronfile(1:end-4);% load photoM data
 load(photoMFileName);
 % TimeStamps=photoMdata.Time_s_; % get time stamps
 
@@ -90,11 +98,11 @@ for ihem = 1:numel(chan_ori)
     itrial = 0;
     
     if ihem == 1
-        DeltaFoverF = photoMdata.AnalogIn_2_dF_F0; % get DF/F trace data
+        DeltaFoverF       = photoMdata.AnalogIn_2_dF_F0; % get DF/F trace data
         sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
     elseif ihem == 2
-        DeltaFoverF = [];
-        DeltaFoverF = photoMdata.AnalogIn_4_dF_F0; % get DF/F trace data
+        DeltaFoverF       = [];
+        DeltaFoverF       = photoMdata.AnalogIn_4_dF_F0; % get DF/F trace data
         sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
     end
     
@@ -112,17 +120,17 @@ for ihem = 1:numel(chan_ori)
             subplot(4, 1, iplot)
             
             start_s = floor(TrialTimingData(trials2return(itrial), 12)) - 1;
-            end_s = ceil(TrialTimingData(trials2return(itrial)+trial_seq_n-1, 14)) + 1;
+            end_s   = ceil(TrialTimingData(trials2return(itrial)+trial_seq_n-1, 14)) + 1;
             
 %             plot(ds_TimeStamps,sm_ds_DeltaFoverF,'color', [0.25 0.25 0.25]) %plot df/f between start -> end time
             
-            ymax = 1.2*max(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
-            ymin = 1.2*min(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
+            ymax = 1.2 * max(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
+            ymin = 0.9 * min(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
             
             hold on
             
             WheelStart= find(floor(100*WheelTime)/100==start_s,1);
-            WheelEnd= find(floor(100*WheelTime)/100==end_s,1);
+            WheelEnd  = find(floor(100*WheelTime)/100==end_s,1);
             
             %   WheelMove(WheelMove<1)=0;
             
@@ -147,7 +155,7 @@ for ihem = 1:numel(chan_ori)
             end
             
             if numel(chan_ori)==2 && iplot==1
-                text(TrialTimingData(trials2return(itrial),12)-4, 1.4*ymax, [chan_ori(ihem), ' HEM!!!! =)'], 'FontWeight', 'bold')
+                text(TrialTimingData(trials2return(itrial),12)-4, 1.4*ymax, [chan_ori(ihem), ' HEM', animal_name], 'FontWeight', 'bold')
             end
             
             for ievent = trials2return(itrial):trials2return(itrial)+trial_seq_n-1
@@ -175,5 +183,9 @@ for ihem = 1:numel(chan_ori)
             hold on
             
         end
+        
+        % cd and save figure
     end
+end
+
 end
