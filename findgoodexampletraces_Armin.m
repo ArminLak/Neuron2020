@@ -7,10 +7,10 @@ close all
 % --------- enter reqs -----------------------------
 
 animal_name = 'MMM009'
-exp_date   = '2019-03-10'
-exp_series ='1';
+exp_date   = '2019-03-12'
+exp_series ='2';
 
-desired_contrasts = [-0.5, -0.25,  0.12, 0.25, 0.5];
+desired_contrasts = [-0.5 -0.12, 0.25, 0.5];
 trial_seq_n = 6; %must be equal to or less tha nnumber of desired contrasts
 
 % --------------------------------------------------
@@ -91,11 +91,11 @@ for ihem = 1:numel(chan_ori)
     
     if ihem == 1
         DeltaFoverF = photoMdata.AnalogIn_2_dF_F0; % get DF/F trace data
-        sm_ds_DeltaFoverF = downsample(DeltaFoverF,10);
+        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
     elseif ihem == 2
         DeltaFoverF = [];
         DeltaFoverF = photoMdata.AnalogIn_4_dF_F0; % get DF/F trace data
-        sm_ds_DeltaFoverF = downsample(DeltaFoverF,10);
+        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
     end
     
     for ifig = 1:ceil(length(trials2return)/4)     % loop thru figs
@@ -114,7 +114,7 @@ for ihem = 1:numel(chan_ori)
             start_s = floor(TrialTimingData(trials2return(itrial), 12)) - 1;
             end_s = ceil(TrialTimingData(trials2return(itrial)+trial_seq_n-1, 14)) + 1;
             
-            plot(ds_TimeStamps,sm_ds_DeltaFoverF,'color', [0.25 0.25 0.25]) %plot df/f between start -> end time
+%             plot(ds_TimeStamps,sm_ds_DeltaFoverF,'color', [0.25 0.25 0.25]) %plot df/f between start -> end time
             
             ymax = 1.2*max(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
             ymin = 1.2*min(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
@@ -127,8 +127,8 @@ for ihem = 1:numel(chan_ori)
             %   WheelMove(WheelMove<1)=0;
             
             
-            plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1,'color',[0.8 0 0.8])
-            %     plot(WheelTime,WheelMove,'b')
+%             plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1,'color',[0.8 0 0.8])
+%             %     plot(WheelTime,WheelMove,'b')
             
             
             %             ax = gca;
@@ -167,6 +167,10 @@ for ihem = 1:numel(chan_ori)
                     rl.Color = [189/255 89/255 28/255];
                 end
             end
+            
+            plot(ds_TimeStamps,sm_ds_DeltaFoverF,'LineWidth', 1.2, 'color', [0.25 0.25 0.25]) %plot df/f
+            plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1, 'LineWidth', 1.2, 'color',[0.8 0 0.8])
+            %     plot(WheelTime,WheelMove,'b')
             
             hold on
             

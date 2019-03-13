@@ -5,9 +5,9 @@ clear all
 % close all
 
 
-animal_name = 'MMM008'
-exp_date   = '2019-03-04'
-exp_series ='3'
+animal_name = 'MMM009'
+exp_date   = '2019-03-12'
+exp_series ='2'
 
 
 RawOrNorm = 'Norm'
