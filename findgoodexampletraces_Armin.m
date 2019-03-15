@@ -10,11 +10,11 @@ close all
 % exp_date   = '2019-03-12'
 % exp_series ='2';
 
-animal_name = 'ALK074'
+animal_name = 'MMM009'
 exp_ID   = '23'
 
-desired_contrasts = [-0.5, -0.25, -0.12, 0, 0.12, 0.25, 0.5];
-trial_seq_n = 10; %must be equal to or more tha nnumber of desired contrasts
+desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
+trial_seq_n = 7; %must be equal to or more tha nnumber of desired contrasts
 
 % --------------------------------------------------
 
@@ -124,8 +124,8 @@ for ihem = 1:numel(chan_ori)
             
 %             plot(ds_TimeStamps,sm_ds_DeltaFoverF,'color', [0.25 0.25 0.25]) %plot df/f between start -> end time
             
-            ymax = 1.2 * max(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
-            ymin = 0.9 * min(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
+            ymax = 1.9 * max(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
+            ymin = 0.4 * min(sm_ds_DeltaFoverF(scale*start_s:scale*end_s));
             
             hold on
             
@@ -141,7 +141,7 @@ for ihem = 1:numel(chan_ori)
             
             %             ax = gca;
             %             ymin = ax.YLim(1); ymax = ax.YLim(2);
-            
+            yyaxis left
             ymin=ymin-3;
             ylim([ymin ymax])
             xlim([start_s  end_s])
@@ -177,14 +177,25 @@ for ihem = 1:numel(chan_ori)
             end
             
             plot(ds_TimeStamps,sm_ds_DeltaFoverF,'LineWidth', 1.2, 'color', [0.25 0.25 0.25]) %plot df/f
+            
+            yyaxis right 
             plot(WheelTime(WheelStart:WheelEnd),smooth(WheelMove(WheelStart:WheelEnd),8)-1, 'LineWidth', 1.2, 'color',[0.8 0 0.8])
+            ylabel('Wheel position')
             %     plot(WheelTime,WheelMove,'b')
             
             hold on
             
         end
         
-        % cd and save figure
+        cd('Y:\Share\Lak\Morgane\DMS Traces\autosave')
+        
+        figname=num2str(ifig);
+        
+        while exist([animal_name,'_',exp_date,'_',exp_series,'_fig',figname,'.fig'], 'file') == 2
+            figname = num2str(ifig+1);
+        end
+
+        savefig([animal_name,'_',exp_date,'_',exp_series,'_fig',num2str(ifig)])
     end
 end
 
