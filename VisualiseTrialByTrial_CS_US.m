@@ -9,7 +9,8 @@ close all
 % select animal
 
  Animals = [48 50 51 64 69]
- 
+
+
 BrainStrucutre = 'VTA'
 ExpID = '23'
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
@@ -257,8 +258,6 @@ for HemIter = 1:iter
     
   
     
-    
-    
     NormBinReward = mean(RewardData(:,4000:5300),2) - mean(RewardData(:,3400:3800),2);
     
     if animal_ID == 48
@@ -293,22 +292,43 @@ end
 NormBinStim = zscore(NormBinStim);
 NormBinReward = zscore(NormBinReward);
 
+% toRemove = unique([find(NormBinStim > 5); find(NormBinStim < -5);find(NormBinReward > 5);find(NormBinReward < -5)]);
+% 
+% NormBinStim(toRemove)=[];
+% NormBinReward(toRemove)=[];
+% BehData(toRemove,:)=[];
 
-
-%%
 figure(1)
+%%
+subplot(2,3,animalN)
+
+h=scatter(NormBinStim(intersect(ToLargeR,find(BehData(:,9)==1))),NormBinReward(intersect(ToLargeR,find(BehData(:,9)==1))));
+h.CData=[0.3 0.3 1];
+hold on
+
+
+h=scatter(NormBinStim(intersect(ToSmallR,find(BehData(:,9)==1))),NormBinReward(intersect(ToSmallR,find(BehData(:,9)==1))));
+h.CData=[0.3 1 0.3];
+
+h=scatter(NormBinStim(find(BehData(:,9)==0)),NormBinReward(find(BehData(:,9)==0)));
+h.CData=[1 0.3 0.3];
+
+z=lsline
+z(3).Color = [0 0 1];
+z(2).Color = [0 1 0];
+z(1).Color = [1 0 0];
+
+z(1).LineWidth=1.5;z(2).LineWidth=1.5;z(3).LineWidth=1.5;
+
 for istim = abzStim
 
 ax=gca
-%scatter(NormBinStim(intersect(ToLargeR,find(BehData(:,9)==1))),NormBinReward(intersect(ToLargeR,find(BehData(:,9)==1))))
 fit_ellipse( NormBinStim(mintersect(ToLargeR,find(BehData(:,9)==1),find(BehData(:,2)==istim))),NormBinReward(mintersect(ToLargeR,find(BehData(:,9)==1),find(BehData(:,2)==istim))),ax,[0 0 1])
 
 hold on
 
-%scatter(NormBinStim(intersect(ToSmallR,find(BehData(:,9)==1))),NormBinReward(intersect(ToSmallR,find(BehData(:,9)==1))))
 fit_ellipse( NormBinStim(mintersect(ToSmallR,find(BehData(:,9)==1),find(BehData(:,2)==istim))),NormBinReward(mintersect(ToSmallR,find(BehData(:,9)==1),find(BehData(:,2)==istim))),ax,[0 1 0])
 
-%scatter(NormBinStim(find(BehData(:,9)==0)),NormBinReward(find(BehData(:,9)==0)))
 fit_ellipse( NormBinStim(mintersect(find(BehData(:,9)==0),find(BehData(:,2)==istim))),NormBinReward(mintersect(find(BehData(:,9)==0),find(BehData(:,2)==istim))),ax,[1 0 0])
 
 end

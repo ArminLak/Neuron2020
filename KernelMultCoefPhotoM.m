@@ -25,7 +25,7 @@ load('BehPhotoM_Exp23_VTA')
 %load('BehPhotoM_Exp23_NAc.mat')
 
 %
-animal_ID = 48
+animal_ID = 51
 
 if animal_ID ==48
 animal_name = 'ALK068'
@@ -51,7 +51,7 @@ ModelArrangment = 11 %  ModelArrangement=15 (it is just similar to model 11) for
 RTLimit = 5.9; % in s, Dont change. excluding trials with RT longer than this
 
 % for visualsing mega rasters only 
-%RTLimit = 3; % for visualisng in s, Dont change. excluding trials with RT longer than this
+RTLimit = 3; % for visualisng in s, Dont change. excluding trials with RT longer than this
 
 
 Timereso = 50; %this is in unit of 1200 in s. dont change
@@ -113,14 +113,14 @@ plot(nanmean(StimData))
 
 % for mega raster of paper, comment this section
 
-if animal_ID ==48
-    StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
-elseif animal_ID ==50
-
-elseif animal_ID ==51
-
-    StimData(:,5100:end) = StimData(:,5100:end) - repmat(mean(StimData (:,5100:5500),2), 1, 13100-5099);
-end
+% if animal_ID ==48
+%     StimData(:,5500:end) = StimData(:,5500:end) - repmat(mean(StimData (:,5200:5500),2), 1, 13100-5499);
+% elseif animal_ID ==50
+% 
+% elseif animal_ID ==51
+% 
+%     StimData(:,5100:end) = StimData(:,5100:end) - repmat(mean(StimData (:,5100:5500),2), 1, 13100-5099);
+% end
 
 
 
@@ -197,8 +197,12 @@ inverted_Matrix_to_row = invertedStimData_to_row;
 inverted_Matrix_to_row = downsample(inverted_Matrix_to_row,Timereso);
 StimDataSmooth2Visualise = reshape(inverted_Matrix_to_row', 262,size(BehData,1))';
 
+inverted_Matrix_to_row = smooth(inverted_Matrix_to_row,5);
 
-[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smoooth
+inverted_Matrix_to_row = inverted_Matrix_to_row';
+
+% this doconvolve was working before but it is too slow recently:
+%[inverted_Matrix_to_row, s] = deconvolveCa(inverted_Matrix_to_row,'ar2'); % smoooth
 
 inverted_Matrix_to_row = inverted_Matrix_to_row - (mean(inverted_Matrix_to_row)/1.5);
 
@@ -218,7 +222,7 @@ t=downsample(t,Timereso);
 for fititer=1:1:4
     
     
-    [fitKernels, predictedSignals,cvErr] = kernelRegression(inverted_Matrix_to_row', t', eventTimes, eventValues, windows , [0], [0 0]);
+    [fitKernels, predictedSignals,cvErr] = kernelRegression(inverted_Matrix_to_row, t', eventTimes, eventValues, windows , [0], [0 0]);
     
     Coefiz=ones(length(beep_time),4);
     
@@ -294,17 +298,17 @@ for fititer=1:1:4
         if ModelArrangment ==11
             
             
-            zeroPadStim (71+4 :71+47+4) =  (fitKernels{2}');
-           % zeroPadStim (71+4 :71+55+4) =  (fitKernels{2}'); %for plotting mega raster
+%            zeroPadStim (71+4 :71+47+4) =  (fitKernels{2}');
+            zeroPadStim (71+4 :71+55+4) =  (fitKernels{2}'); %for plotting mega raster
             
             t_beep = floor((BehData(itrial, 13 ) - BehData(itrial, 12))*24); % 13.1 s is 262 samples, thus 1 s is 24
             zeroPadBeep(71-t_beep -8 : 71 -t_beep+ 31-8) = ( fitKernels{1}');
             
             t_out = floor((BehData(itrial, 14 ) - BehData(itrial, 13))*24); % 11 s is 328 samples, thus 1 s is 30
              
-            zeroPadOutcome(71+t_out: 71+t_out +39) = (fitKernels{3}');
+%            zeroPadOutcome(71+t_out: 71+t_out +39) = (fitKernels{3}');
             
-            %zeroPadOutcome(71+t_out-8: 71+t_out-8 +87) = (fitKernels{3}'); % for plotting mega raster
+            zeroPadOutcome(71+t_out-8: 71+t_out-8 +87) = (fitKernels{3}'); % for plotting mega raster
             
            [B] = regress(StimDataSmoothDownSample(itrial,:)',[zeroPadBeep',zeroPadStim',zeroPadOutcome']);
 
@@ -396,7 +400,7 @@ for fititer=1:1:4
     end
     
     % compute EV
-    EV(fititer) = 1-mean(mean((predictedSignals-inverted_Matrix_to_row').^2))/mean(mean(inverted_Matrix_to_row.^2));
+    EV(fititer) = 1-mean(mean((predictedSignals-inverted_Matrix_to_row).^2))/mean(mean(inverted_Matrix_to_row.^2));
     
 end
 
@@ -470,7 +474,7 @@ end
             
 figure
 
-plot(t,smooth(inverted_Matrix_to_row' + randn(1,length(inverted_Matrix_to_row)),20));
+plot(t,smooth(inverted_Matrix_to_row + randn(1,length(inverted_Matrix_to_row)),20));
 hold on
 
 plot(t,smooth(predictedSignals + randn(1,length(predictedSignals)),20));

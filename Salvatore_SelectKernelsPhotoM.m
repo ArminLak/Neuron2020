@@ -53,7 +53,7 @@ elseif ModelArrangment ==11
     windows = {[-400 800];[-400 2600];[-400 2000]}; %
    windows = {[-400 1200];[200 2600];[0 2000]}; %
    
-    %windows = {[-400 1200];[200 3000];[-400 4000]}; % for mega raster plotting
+    windows = {[-400 1200];[200 3000];[-400 4000]}; % for mega raster plotting
    
   %      eventTimes = {stim_time; outcome_time};
 

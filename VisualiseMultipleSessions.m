@@ -29,11 +29,11 @@ close all
 
 % select animal
 
-animal_ID = 70
+animal_ID = 71
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
-save2file = 0; % decide if you want to overwrite GrandSummary or not
+save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -394,6 +394,8 @@ for HemIter = 1:iter
     elseif animal_ID == 70
         
         NormBinStim = mean(StimData(:,4000:5000),2);
+        
+         
         
     else
         
@@ -912,6 +914,7 @@ for HemIter = 1:iter
             index_ConS = index_ConS+ 1; % go to the next trial
             
             
+             
             
              c = 1;
         for istim = unique(BehData(:,2))'
@@ -935,7 +938,78 @@ for HemIter = 1:iter
           
         
         cc=cc+1;
-end
+          end
+%%          
+   %%
+%       %  session by session (conditional to Da responses at
+%    %  the reward time) controlled for  stimulus and reward size
+%     firstTrialOfBlock=[1 ; find(diff(BehData01(:,1)) < 0)+1]';  % define block onset
+%     firstTrialOfBlock = [firstTrialOfBlock, size(BehData01,1)];
+% 
+%       
+%     cc=1;
+%           for istimPast = unique(BehData(:,2))'   
+%               
+%                     performance_ConLL  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%                     performance_ConLS  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%                     performance_ConRL  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+%                     performance_ConRS  = nan(length(firstTrialOfBlock),length(unique(BehData(:,2))'));
+% 
+%     for iblockZ = 1:length(firstTrialOfBlock)-1
+%         
+%         BehDataTemp = BehData01(firstTrialOfBlock(iblockZ):firstTrialOfBlock(iblockZ+1)-1,:);
+%         NormBinRewardTemp = NormBinReward(firstTrialOfBlock(iblockZ):firstTrialOfBlock(iblockZ+1)-1,:);
+%              
+%     DA_threshold_Reward = prctile(NormBinRewardTemp, 65);
+%            
+%     
+%            index_ConLL=mintersect(find(BehDataTemp(:,9)==1) ,   find(BehDataTemp(:,3)==-1) ,...
+%                find(NormBinRewardTemp > DA_threshold_Reward),find(BehDataTemp(:,2)==istimPast));
+%            
+%             index_ConLL = index_ConLL+ 1; % go to the next trial
+%             
+%             index_ConLS=mintersect(find(BehDataTemp(:,9)==1) ,   find(BehDataTemp(:,3)==-1) ,...
+%                find(NormBinRewardTemp < DA_threshold_Reward),find(BehDataTemp(:,2)==istimPast));
+%            
+%             index_ConLS = index_ConLS+ 1; % go to the next trial
+%             
+%          index_ConRL=mintersect(find(BehDataTemp(:,9)==1) ,   find(BehDataTemp(:,3)==1) ,...
+%                find(NormBinRewardTemp > DA_threshold_Reward),find(BehDataTemp(:,2)==istimPast));
+%            
+%             index_ConRL = index_ConRL+ 1; % go to the next trial
+%             
+%             index_ConRS=mintersect(find(BehDataTemp(:,9)==1) ,   find(BehDataTemp(:,3)==-1) ,...
+%                find(NormBinRewardTemp < DA_threshold_Reward),find(BehDataTemp(:,2)==istimPast));
+%            
+%             index_ConRS = index_ConRS+ 1; % go to the next trial
+%             
+%            
+%             
+%             
+%             
+%              c = 1;
+%         for istim = unique(BehData(:,2))'
+%               
+%             indexL = intersect(find(BehDataTemp(:,2)==istim),index_ConL);
+%           
+%             performance_ConL(iblockZ,c) = nanmean (BehDataTemp(indexL,3));
+%             
+%             indexS = intersect(find(BehDataTemp(:,2)==istim),index_ConS);
+%           
+%             performance_ConS(iblockZ,c) = nanmean (BehDataTemp(indexS,3));
+%             
+%             
+%             c=c+1;
+%         end
+%             
+%        
+%           end
+%           DAConditionedPerf.mice(1).Block(cc).perf(1,:)=nanmean(performance_ConL);
+%           DAConditionedPerf.mice(1).Block(cc).perf(2,:)=nanmean(performance_ConS);
+%           
+%         
+%         cc=cc+1;
+% end
           
     %%        
             
