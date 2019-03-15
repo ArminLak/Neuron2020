@@ -7,8 +7,8 @@ clear all
 
 
 animal_name = 'MMM009'
-exp_date   = '2019-03-12'
-exp_series ='2'
+exp_date   = '2019-03-14'
+exp_series ='1'
 
 
 RawOrNorm = 'Norm'
@@ -506,7 +506,7 @@ for iChan = 1:NChan
         %------------------------------- signal plotted with wheel position, not normalised  -------------
     
         subplot(8,2,16); hold on
-    title ('Signal and wheel position')
+    title ('Action aligned')
     c=1;
     
     for istim = StimzAbs
