@@ -10,7 +10,7 @@ close all
 % exp_date   = '2019-03-12'
 % exp_series ='2';
 
-animal_name = 'MMM009'
+animal_name = 'ALK068'
 exp_ID   = '23'
 
 desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
@@ -187,15 +187,15 @@ for ihem = 1:numel(chan_ori)
             
         end
         
-        cd('Y:\Share\Lak\Morgane\DMS Traces\autosave')
+        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\DMS Traces\autosave')
         
         figname=num2str(ifig);
         
-        while exist([animal_name,'_',exp_date,'_',exp_series,'_fig',figname,'.fig'], 'file') == 2
-            figname = num2str(ifig+1);
+        if exist([animal_name,'_',exp_date,'_',exp_series,'_fig',figname,'.fig'], 'file') > 1
+           figname = num2str(  exist([animal_name,'_',exp_date,'_',exp_series,'_fig',figname,'.fig'], 'file')+1);
         end
 
-        savefig([animal_name,'_',exp_date,'_',exp_series,'_fig',num2str(ifig)])
+        savefig([animal_name,'_',exp_date,'_',exp_series,'_fig',num2str(figname)])
     end
 end
 

@@ -123,6 +123,28 @@ errorbar(Stimuli,nanmean([a1; a2],1),nanstd([a1; a2])/3,'--k')
 hold on
 errorbar(Stimuli,nanmean([b1; b2],1),nanstd([a1; a2])/3,'k')
 
+z=[a1; a2];
+zz(:,1)=[z(:,1)+z(:,7)]./2;
+zz(:,2)=[z(:,2)+z(:,6)]./2;
+zz(:,3)=[z(:,3)+z(:,5)]./2;
+zz(:,4)=[z(:,4)+z(:,4)]./2;
+p=anova1(zz)
+zzz=zz;
+
+
+z=[b1; b2];
+zz(:,1)=[z(:,1)+z(:,7)]./2;
+zz(:,2)=[z(:,2)+z(:,6)]./2;
+zz(:,3)=[z(:,3)+z(:,5)]./2;
+zz(:,4)=[z(:,4)+z(:,4)]./2;
+p=anova1(zz)
+figure; hold on
+plot(nanmean(zzz)); hold on
+
+plot(nanmean(zz)); hold on
+
+[p h]=ttest(zz(1:7,4),zzz(1:7,4))
+
 %%
 
 clear all
@@ -156,6 +178,27 @@ errorbar(Stimuli,nanmean([a1;a2;a3],1),nanstd([a1;a2;a3])/3,'k')
 hold on
 errorbar(Stimuli,nanmean([b1;b2;b3],1),nanstd([b1;b2;b3])/3,'--k')
 
+z=[a1; a2;a3];
+zz(:,1)=[z(:,1)+z(:,7)]./2;
+zz(:,2)=[z(:,2)+z(:,6)]./2;
+zz(:,3)=[z(:,3)+z(:,5)]./2;
+zz(:,4)=[z(:,4)+z(:,4)]./2;
+p=anova1(zz)
+zzz=zz;
+
+
+z=[b1; b2;b3];
+zz(:,1)=[z(:,1)+z(:,7)]./2;
+zz(:,2)=[z(:,2)+z(:,6)]./2;
+zz(:,3)=[z(:,3)+z(:,5)]./2;
+zz(:,4)=[z(:,4)+z(:,4)]./2;
+p=anova1(zz)
+figure; hold on
+plot(nanmean(zzz)); hold on
+
+plot(nanmean(zz)); hold on
+
+[p h]=ttest(zz(:,4),zzz(:,4))
 
 %%
 clear all
