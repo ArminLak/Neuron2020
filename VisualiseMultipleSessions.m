@@ -29,7 +29,7 @@ close all
 
 % select animal
 
-animal_ID = 71
+animal_ID = 72
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
