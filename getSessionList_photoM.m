@@ -56,7 +56,7 @@ elseif strcmp(animal_name, 'ALK084')
     elseif exp_ID == '23'
         SessionList = [12:29];
     elseif exp_ID == '38'
-        SessionList = [33:38]; % better signal and better training
+        SessionList = [33:38];
         
     end
     
@@ -98,12 +98,12 @@ elseif strcmp(animal_name, 'ALK085')
         SessionList = [15:23];
         
     elseif exp_ID == '38'
-        SessionList = [24:28]; % temporary
+        SessionList = [24:27];
     end
     
 elseif strcmp(animal_name, 'MMM006')
     if exp_ID == '7'
-        SessionList = [7:13]; % temporary
+        SessionList = [7, 9:11]; % had a look - unusual responses to reward and stim
     elseif exp_ID == '23'
         SessionList = [14:21]; % temporary
         
@@ -111,28 +111,24 @@ elseif strcmp(animal_name, 'MMM006')
        
 elseif strcmp(animal_name, 'MMM008')
     if exp_ID == '7'
-        SessionList = [5:8]; % temporary
+        SessionList = [5, 7]; % 5 good. 6 bad. 7 ok. 8 bad. 
     elseif exp_ID == '23'
-        SessionList = []; % maybe:12,19,21, 23 // definitely not: 13,14, 15,16,17, 18,20,22, 24,25,16
+        SessionList = []; 
         
     end
     
 elseif strcmp(animal_name, 'MMM009')
     if exp_ID == '7'
-        SessionList = [1:9]; % temporary
+        SessionList = [1:4, 6:9]; % could not align 5
     elseif exp_ID == '23'
-        SessionList = [10:19]; % temporary
-    elseif exp_ID == '39'
-        SessionList = [20:25]; % temporary
-
-        
+        SessionList = [10:19]; 
     end
     
-    elseif strcmp(animal_name, 'MMM010')
+elseif strcmp(animal_name, 'MMM010')
     if exp_ID == '7'
-        SessionList = [1:5]; % temporary
+        SessionList = [1:5];
     elseif exp_ID == '23'
-        SessionList = [6:12]; % temporary
+        SessionList = [6:14]; 
     end
     
 end

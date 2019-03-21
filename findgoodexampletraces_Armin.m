@@ -10,8 +10,8 @@ close all
 % exp_date   = '2019-03-12'
 % exp_series ='2';
 
-animal_name = 'ALK068'
-exp_ID   = '23'
+animal_name = 'MMM009'
+exp_ID   = '39'
 
 desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
 trial_seq_n = 7; %must be equal to or more tha nnumber of desired contrasts
@@ -33,10 +33,10 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 path2data = ['\\zubjects.cortexlab.net\Subjects\',animal_name];
 addpath(genpath(path2data))
 
-[SessionList] = getSessionList_photoM(animal_name, exp_ID);
+%[SessionList] = getSessionList_photoM(animal_name, exp_ID);
 
 
-for iSession = SessionList
+for iSession = 20:25 % SessionList
 
  
 
