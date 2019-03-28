@@ -11,7 +11,7 @@ close all
 % exp_series ='2';
 
 animal_name = 'MMM009'
-exp_ID   = '39'
+exp_ID   = '23'
 
 desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
 trial_seq_n = 7; %must be equal to or more tha nnumber of desired contrasts
@@ -187,7 +187,7 @@ for ihem = 1:numel(chan_ori)
             
         end
         
-        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\DMS Traces\autosave')
+        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\DMS Traces\autosave2')
         
         figname=num2str(ifig);
         
