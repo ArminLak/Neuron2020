@@ -364,8 +364,8 @@ DataMatrix=[TrialCount',Sign_Contrast',ResponseSide',liquid', laser',laser_Stimt
 
 
 if ~strcmp(animal_name,'ALK068') && ~strcmp(animal_name,'ALK070') && ~strcmp(animal_name,'ALK083')...
-    && ~strcmp(animal_name,'ALK084') && ~strcmp(animal_name,'MMM005')  && ~strcmp(animal_name,'ALK085')
-    
+    && ~strcmp(animal_name,'ALK084') && ~strcmp(animal_name,'MMM005')  && ~strcmp(animal_name,'ALK085')...
+    && ~strcmp(animal_name,'MMM009')  && ~strcmp(animal_name,'MMM010')
 DataMatrix(DataMatrix(:,3)==3,:) = [];
 end
 
