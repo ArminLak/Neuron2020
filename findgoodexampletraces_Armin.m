@@ -10,8 +10,9 @@ close all
 % exp_date   = '2019-03-12'
 % exp_series ='2';
 
-animal_name = 'MMM009'
+animal_name = 'ALK068'
 exp_ID   = '23'
+
 
 desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
 trial_seq_n = 7; %must be equal to or more tha nnumber of desired contrasts
@@ -33,10 +34,10 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 path2data = ['\\zubjects.cortexlab.net\Subjects\',animal_name];
 addpath(genpath(path2data))
 
-%[SessionList] = getSessionList_photoM(animal_name, exp_ID);
+[SessionList] = getSessionList_photoM(animal_name, exp_ID);
 
 
-for iSession = 20:25 % SessionList
+for iSession = SessionList
 
  
 
@@ -187,7 +188,13 @@ for ihem = 1:numel(chan_ori)
             
         end
         
-        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\DMS Traces\autosave2')
+        if ihem == 1
+            brain_region = MiceExpInfo.mice(48).session(1).Chan2(end-2:end);
+        elseif ihem == 2
+            brain_region = MiceExpInfo.mice(48).session(1).Chan4(end-2:end);
+        end
+        
+        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\', brain_region, 'Traces\autosave2')
         
         figname=num2str(ifig);
         
