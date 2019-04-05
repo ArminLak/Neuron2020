@@ -106,6 +106,3 @@ ylim([-0.5 2])
 ylabel ('{\Delta} F / F')
 xlabel ('Time (s)')
 
-
-
-
