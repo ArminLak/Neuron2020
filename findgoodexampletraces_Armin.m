@@ -11,11 +11,11 @@ close all
 % exp_series ='2';
 
 animal_name = 'ALK068'
-exp_ID   = '23'
+exp_ID   = '7'
 
-
-desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
-trial_seq_n = 7; %must be equal to or more tha nnumber of desired contrasts
+smooth_factor = 50;
+desired_contrasts = [1, 0.5, -0.25];
+trial_seq_n = 5; %must be equal to or more tha number of desired contrasts
 
 % --------------------------------------------------
 
@@ -94,18 +94,21 @@ trials2return(trials2return==1)=[];
 
 %% figs each have 4 example traces
 
-for ihem = 1:numel(chan_ori)
+for ihem = 1:numel(chan_ori) 
     
     itrial = 0;
     
     if ihem == 1
         DeltaFoverF       = photoMdata.AnalogIn_2_dF_F0; % get DF/F trace data
-        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
+        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),smooth_factor);
+        brain_region = MiceExpInfo.mice(animal_ID).session(iSession).Chan2(end-2:end);
     elseif ihem == 2
         DeltaFoverF       = [];
         DeltaFoverF       = photoMdata.AnalogIn_4_dF_F0; % get DF/F trace data
-        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
+        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),smooth_factor);
+        brain_region = MiceExpInfo.mice(animal_ID).session(iSession).Chan4(end-2:end);
     end
+    
     
     for ifig = 1:ceil(length(trials2return)/4)     % loop thru figs
         
@@ -187,14 +190,9 @@ for ihem = 1:numel(chan_ori)
             hold on
             
         end
+
         
-        if ihem == 1
-            brain_region = MiceExpInfo.mice(48).session(1).Chan2(end-2:end);
-        elseif ihem == 2
-            brain_region = MiceExpInfo.mice(48).session(1).Chan4(end-2:end);
-        end
-        
-        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\', brain_region, 'Traces\autosave2')
+        cd(['\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\', brain_region, ' Traces\autosave2'])
         
         figname=num2str(ifig);
         
