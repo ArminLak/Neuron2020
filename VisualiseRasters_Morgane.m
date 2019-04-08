@@ -17,7 +17,7 @@ clear all
 
 animal_ID = 48
 animal_name = animal_ID + 20;
-load('BehPhotoM_Exp23')  % Database with data summary
+load('BehPhotoM_Exp23_VTA')  % Database with data summary
 
 %%
 concatenate = 'y' % y or n (show all trials from single animal)
