@@ -4,7 +4,7 @@
 clear all
 % close all
 
-animals = ['MMM009'] % ['MMM009', 'MMM010']
+animals = ['MMM009', 'MMM010'] % ['MMM009', 'MMM010']
 
 % -------------------------------------------------------------
 
@@ -91,14 +91,14 @@ subplot(2, 1,1) % air puff
 plot(nanmean(airPuffMatrix), 'Color', [0.4 0.4 0.4], 'LineWidth', 1.5)
 xlim ([(5+vis_from)*samplingRate/downsampleScale (5+vis_to)*samplingRate/downsampleScale])
 xticks([(5+vis_from) 5 (5+vis_to)]*samplingRate/downsampleScale)
-xticklabels([ ])
-yticklabels([ ])
+% xticklabels([ ])
+% yticklabels([ ])
 ylim([-0.5 2])
-
-
-subplot(2,1,2) % noise only
-
-plot(nanmean(noiseOnlyMatrix), 'Color', [0.4 0.4 0.4], 'LineWidth', 1.5)
+hold on;
+% 
+% subplot(2,1,2) % noise only
+% 
+plot(nanmean(noiseOnlyMatrix), 'Color', [1 0 0], 'LineWidth', 1.5)
 xlim([(5+vis_from)*samplingRate/downsampleScale (5+vis_to)*samplingRate/downsampleScale])
 xticks([(5+vis_from) 5 (5+vis_to)]*samplingRate/downsampleScale)
 xticklabels([vis_from 0 vis_to])

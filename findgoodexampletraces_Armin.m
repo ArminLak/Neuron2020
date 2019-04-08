@@ -10,7 +10,7 @@ close all
 % exp_date   = '2019-03-12'
 % exp_series ='2';
 
-animal_name = 'ALK068'
+animal_name = 'ALK078'
 exp_ID   = '7'
 
 smooth_factor = 50;
