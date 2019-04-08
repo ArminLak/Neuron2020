@@ -1,9 +1,9 @@
 clear all
 close all
 
-animal_name = 'ALK074'
-exp_date   = '2018-05-02'
-exp_series ='1'
+animal_name = 'ALK071'
+exp_date   = '2018-03-06'
+exp_series ='6'
 
 trial_from = 35          % visualise trace from this trial
 trial_to = 85      % visualise trace up to this trial

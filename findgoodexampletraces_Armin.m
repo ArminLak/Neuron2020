@@ -10,11 +10,12 @@ close all
 % exp_date   = '2019-03-12'
 % exp_series ='2';
 
-animal_name = 'MMM009'
-exp_ID   = '23'
+animal_name = 'ALK078'
+exp_ID   = '7'
 
-desired_contrasts = [-0.5, -0.25, 0, 0.12, 0.25, 0.5];
-trial_seq_n = 7; %must be equal to or more tha nnumber of desired contrasts
+smooth_factor = 50;
+desired_contrasts = [1, 0.5, -0.25];
+trial_seq_n = 5; %must be equal to or more tha number of desired contrasts
 
 % --------------------------------------------------
 
@@ -33,10 +34,10 @@ load('MiceExpInfoPhotoM')                                   % load beh data data
 path2data = ['\\zubjects.cortexlab.net\Subjects\',animal_name];
 addpath(genpath(path2data))
 
-%[SessionList] = getSessionList_photoM(animal_name, exp_ID);
+[SessionList] = getSessionList_photoM(animal_name, exp_ID);
 
 
-for iSession = 20:25 % SessionList
+for iSession = SessionList
 
  
 
@@ -93,18 +94,21 @@ trials2return(trials2return==1)=[];
 
 %% figs each have 4 example traces
 
-for ihem = 1:numel(chan_ori)
+for ihem = 1:numel(chan_ori) 
     
     itrial = 0;
     
     if ihem == 1
         DeltaFoverF       = photoMdata.AnalogIn_2_dF_F0; % get DF/F trace data
-        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
+        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),smooth_factor);
+        brain_region = MiceExpInfo.mice(animal_ID).session(iSession).Chan2(end-2:end);
     elseif ihem == 2
         DeltaFoverF       = [];
         DeltaFoverF       = photoMdata.AnalogIn_4_dF_F0; % get DF/F trace data
-        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),20);
+        sm_ds_DeltaFoverF = smooth(downsample(DeltaFoverF,10),smooth_factor);
+        brain_region = MiceExpInfo.mice(animal_ID).session(iSession).Chan4(end-2:end);
     end
+    
     
     for ifig = 1:ceil(length(trials2return)/4)     % loop thru figs
         
@@ -186,8 +190,9 @@ for ihem = 1:numel(chan_ori)
             hold on
             
         end
+
         
-        cd('\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\DMS Traces\autosave2')
+        cd(['\\zserver.cortexlab.net\Lab\Share\Lak\Morgane\', brain_region, ' Traces\autosave2'])
         
         figname=num2str(ifig);
         
