@@ -89,10 +89,10 @@ if concatenate == 'y'
         % for each of these, the event is at column 3700
         
         TempBehData = [TempBehData; BehPhotoM(animal_ID).Session(iSession).TrialTimingData];
-        TempBeepData   = [TempBeepData; BehPhotoM(animal_ID).Session(iSession).NeuronBeep];
-        TempStimData   = [TempStimData; BehPhotoM(animal_ID).Session(iSession).NeuronStim];
-        TempActionData = [TempActionData; BehPhotoM(animal_ID).Session(iSession).NeuronAction];
-        TempRewardData = [TempRewardData; BehPhotoM(animal_ID).Session(iSession).NeuronReward];
+        TempBeepData   = [TempBeepData; BehPhotoM(animal_ID).Session(iSession).NeuronBeepR];
+        TempStimData   = [TempStimData; BehPhotoM(animal_ID).Session(iSession).NeuronStimR];
+        TempActionData = [TempActionData; BehPhotoM(animal_ID).Session(iSession).NeuronActionR];
+        TempRewardData = [TempRewardData; BehPhotoM(animal_ID).Session(iSession).NeuronRewardR];
         
     end
     

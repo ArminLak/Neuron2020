@@ -11,7 +11,7 @@ close all
 % exp_series ='2';
 
 animal_name = 'ALK078'
-exp_ID   = '7'
+exp_ID   = '23'
 
 smooth_factor = 50;
 desired_contrasts = [1, 0.5, -0.25];
