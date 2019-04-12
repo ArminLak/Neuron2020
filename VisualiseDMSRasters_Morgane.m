@@ -1,0 +1,205 @@
+% creates 2 rasters for contra and ipsi (per animal or per session) ordered by
+% Error/Small/Large and by RTs. Works for unihem and bihem animals
+% Morgane April 2019
+
+
+
+close all
+clear all
+
+
+
+% ----- enter reqs --------------------------------------------------------
+animal_ID = 72
+brain_region = 'DMS'
+exp_ID = '23'
+
+concatenate = 1; %show all trials across all sessions for an animal
+
+stim_2_plot = 0.25; %should be positive
+smooth_factor = 100;
+colorRange=[-2 3]; % color range for plotting imagesc data
+
+% ------------------ start stop times for task events in second ------------------
+
+sStart = -0.3; %stimulus
+sStop = 3;
+
+aStart = -0.6; %action
+aStop = 0.2;
+
+rStart = -0.2; %reward
+rStop = 0.6;
+
+downSample = 1200; % sampling rate AFTER DOWNSAMPLING in makeDataSummaryMatrix
+eventOnset = 3700;  % in the saved matrix, the event occurs in this column
+
+% -------------------------------------------------------------------------
+
+
+load(['BehPhotoM_Exp',exp_ID,'_',brain_region,'.mat'])
+
+fullStim = [-stim_2_plot stim_2_plot];
+
+nSessions = 1:length(BehPhotoM(animal_ID).Session);
+
+for iSession = nSessions
+    
+    if iSession ==1 ||concatenate == 0
+        leftStimTrials = [];
+        rightStimTrials = [];
+        
+        BehDataIpsi     = [];
+        BehDataContra   = [];
+        StimDataIpsi    = [];  
+        StimDataContra  = [];     
+
+        errorTrialsIpsi      = [];
+        errorTrialsContra    = [];
+        smallRewTrialsIpsi   = [];
+        smallRewTrialsContra = [];
+        largeRewTrialsIpsi   = [];
+        largeRewTrialsContra = [];
+        
+    end
+    
+    leftStimTrials = find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot));
+    rightStimTrials = find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot);
+    
+    if isfield(BehPhotoM(animal_ID).Session, 'NeuronStimL')%load hemispheric deltaFoverF. add Action/Reward to the following two 'if's if desired. 
+        StimDataIpsi        = [StimDataIpsi;      BehPhotoM(animal_ID).Session(iSession).NeuronStimL(leftStimTrials,:)];
+        StimDataContra      = [StimDataContra;    BehPhotoM(animal_ID).Session(iSession).NeuronStimL(rightStimTrials,:)];
+        BehDataIpsi         = [BehDataIpsi;       BehPhotoM(animal_ID).Session(iSession).TrialTimingData(leftStimTrials,:)];
+        BehDataContra       = [BehDataContra;     BehPhotoM(animal_ID).Session(iSession).TrialTimingData(rightStimTrials,:)];
+    end
+    
+    if isfield(BehPhotoM(animal_ID).Session, 'NeuronStimR') 
+        StimDataIpsi        = [StimDataIpsi;      BehPhotoM(animal_ID).Session(iSession).NeuronStimR(rightStimTrials,:)];
+        StimDataContra      = [StimDataContra;    BehPhotoM(animal_ID).Session(iSession).NeuronStimR(leftStimTrials,:)];
+        BehDataIpsi         = [BehDataIpsi;       BehPhotoM(animal_ID).Session(iSession).TrialTimingData(rightStimTrials,:)];
+        BehDataContra       = [BehDataContra;     BehPhotoM(animal_ID).Session(iSession).TrialTimingData(leftStimTrials,:)];
+    end
+    
+    
+    if concatenate == 0 || iSession == max(nSessions) %sort once for each session if not concatenating or at the very end if concatenating
+        
+        
+        %ipsi and contra error / small rwd / large rwd indexing
+        errorTrialsIpsi(:,2) = find(BehDataIpsi(:,9)==0);
+        errorTrialsContra(:,2) = find(BehDataContra(:,9)==0);
+        
+        if strcmp(exp_ID, '7')
+            
+            smallRewTrialsIpsi(:,2)     = [find(BehDataIpsi(:,9)==1)];
+            
+            smallRewTrialsContra(:,2)   = [find(BehDataContra(:,9)==1)];
+            
+            
+        elseif strcmp(exp_ID, '23')
+            
+            smallRewTrialsIpsi(:,2)     = [intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==1), find(BehDataIpsi(:,2)<0))); ...
+                intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==2), find(BehDataIpsi(:,2)>0)))];
+            
+            smallRewTrialsContra(:,2) = [intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==1), find(BehDataContra(:,2)<0))); ...
+                intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==2), find(BehDataContra(:,2)>0)))];
+            
+            largeRewTrialsIpsi(:,2) = [intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==2), find(BehDataIpsi(:,2)<0))); ...
+                intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==1), find(BehDataIpsi(:,2)>0)))];
+            
+            largeRewTrialsContra(:,2) = [intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==2), find(BehDataContra(:,2)<0))); ...
+                intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==1), find(BehDataContra(:,2)>0)))];
+        end
+        
+    
+       
+        %get RTs for different trial types and sort by this
+        errorTrialsIpsi(:,1) = BehDataIpsi(errorTrialsIpsi(:,2), 10) - BehDataIpsi(errorTrialsIpsi(:,2), 13);
+        errorTrialsIpsi = sortrows(errorTrialsIpsi);
+        
+        errorTrialsContra(:,1) = BehDataContra(errorTrialsContra(:,2), 10) - BehDataContra(errorTrialsContra(:,2), 13);
+        errorTrialsContra = sortrows(errorTrialsContra); 
+        
+        
+        smallRewTrialsIpsi(:,1) = BehDataIpsi(smallRewTrialsIpsi(:,2), 10) - BehDataIpsi(smallRewTrialsIpsi(:,2), 13);
+        smallRewTrialsIpsi = sortrows(smallRewTrialsIpsi);
+        
+        smallRewTrialsContra(:,1) = BehDataContra(smallRewTrialsContra(:,2), 10) - BehDataContra(smallRewTrialsContra(:,2), 13);
+        smallRewTrialsContra = sortrows(smallRewTrialsContra);
+        
+        
+        if strcmp(exp_ID, '23')
+            largeRewTrialsIpsi(:,1) = BehDataIpsi(largeRewTrialsIpsi(:,2), 10) - BehDataIpsi(largeRewTrialsIpsi(:,2), 13);
+            largeRewTrialsIpsi = sortrows(largeRewTrialsIpsi);
+            
+            largeRewTrialsContra(:,1) = BehDataContra(largeRewTrialsContra(:,2), 10) - BehDataContra(largeRewTrialsContra(:,2), 13);
+            largeRewTrialsContra = sortrows(largeRewTrialsContra);
+        end
+        
+        % plotting order
+        if strcmp(exp_ID, '7')
+            plotIndexIpsi = [errorTrialsIpsi(:,2); smallRewTrialsIpsi(:,2)];
+            plotIndexContra = [errorTrialsContra(:,2); errorTrialsContra(:,2)];
+            
+            RTIpsi = [errorTrialsIpsi(:,1); smallRewTrialsIpsi(:,1)];
+            RTContra = [errorTrialsContra(:,1); smallRewTrialsContra(:,1)];
+        elseif strcmp(exp_ID, '23')
+            plotIndexIpsi = [errorTrialsIpsi(:,2); smallRewTrialsIpsi(:,2); largeRewTrialsIpsi(:,2)];
+            plotIndexContra = [errorTrialsContra(:,2); smallRewTrialsContra(:,2); largeRewTrialsContra(:,2)];
+            
+            RTIpsi = [errorTrialsIpsi(:,1); smallRewTrialsIpsi(:,1); largeRewTrialsIpsi(:,1)];
+            RTContra = [errorTrialsContra(:,1); smallRewTrialsContra(:,1); largeRewTrialsContra(:,1)];
+        end
+        
+        
+
+        actionTimesIpsi = abs(sStart*downSample) + (RTIpsi*downSample);
+        actionTimesContra = abs(sStart*downSample) + (RTContra*downSample);
+        
+    % ------------------- plot  ----------------------------------
+%     if concatenate == 0 || iSession == max(nSessions)
+        
+        M = [];
+        M = {StimDataContra, StimDataIpsi};
+        A = [];
+        A = {actionTimesContra, actionTimesIpsi};
+        P = [];
+        P = {plotIndexContra, plotIndexIpsi};
+        E = [];
+        E = {errorTrialsContra, errorTrialsIpsi};
+        R = [];
+        R = {smallRewTrialsContra, smallRewTrialsIpsi};
+        
+        figure;
+        
+        for iSubplot = 1:2
+            data = M{iSubplot}; % looping through StimDataContra / Ipsi
+            actionTimes = A{iSubplot};
+            plotIndex = P{iSubplot};
+            errorTrials = E{iSubplot};
+            smallRewTrials = R{iSubplot};
+            
+            subplot(1,2,iSubplot)
+            imagesc(smooth2a(data(plotIndex, (eventOnset+(sStart*downSample):eventOnset+(sStop*downSample))), 0, smooth_factor), colorRange)
+            colormap('bluewhitered')
+            hold on
+            for ievent = 1:length(actionTimes)
+                if ievent <= length(errorTrials)
+                    plot(actionTimes(ievent),ievent, 'o', 'MarkerEdgeColor', [0.7 0 0.2 ], 'MarkerFaceColor', [0.7 0 0.2 ], 'MarkerSize', 3)
+                elseif length(errorTrials) < ievent && ievent <= length(errorTrials)+length(smallRewTrials)
+                    plot(actionTimes(ievent),ievent, 'o', 'MarkerEdgeColor', [0 1 0 ], 'MarkerFaceColor', [0 1 0 ], 'MarkerSize', 3)
+                elseif ievent > length(errorTrials)+length(smallRewTrials)
+                    plot(actionTimes(ievent),ievent, 'o', 'MarkerEdgeColor', [0 0.7 0], 'MarkerFaceColor', [0 0.7 0], 'MarkerSize', 3)
+                end
+            end
+            
+            xticks([1 abs(sStart*downSample) (sStop-sStart)*downSample-1])
+            xticklabels([sStart 0 sStop])
+            ylabel('Trials')
+            xlabel('Time from stimulus (s)')
+            line([abs(sStart*downSample) abs(sStart*downSample)], [0 length(plotIndex)], 'LineStyle', '--', 'Color', 'black', 'LineWidth', 1.5); % stim onset line
+            
+        end
+%     end
+    
+    end
+end
