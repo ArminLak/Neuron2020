@@ -86,14 +86,12 @@ end
 
 figure; hold on
 
-subplot(2, 1,1) % air puff 
+
 
 plot(nanmean(airPuffMatrix), 'Color', [0.4 0.4 0.4], 'LineWidth', 1.5)
 xlim ([(5+vis_from)*samplingRate/downsampleScale (5+vis_to)*samplingRate/downsampleScale])
 xticks([(5+vis_from) 5 (5+vis_to)]*samplingRate/downsampleScale)
-% xticklabels([ ])
-% yticklabels([ ])
-ylim([-0.5 2])
+
 hold on;
 % 
 % subplot(2,1,2) % noise only
