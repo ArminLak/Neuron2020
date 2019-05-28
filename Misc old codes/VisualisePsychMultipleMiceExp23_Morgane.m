@@ -7,7 +7,7 @@ animal_ID = 48
 
 animals = [48 50 51]
 
-load('BehPhotoM_Exp23')
+load('BehPhotoM_Exp23_VTA.mat')
 
 plotCount = 1;
 figure;

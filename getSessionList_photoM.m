@@ -105,7 +105,7 @@ elseif strcmp(animal_name, 'MMM006')
     if exp_ID == '7'
         SessionList = [7, 9:11]; % had a look - unusual responses to reward and stim
     elseif exp_ID == '23'
-        SessionList = [14:21]; % temporary
+        SessionList = [14:21]; 
         
     end
        

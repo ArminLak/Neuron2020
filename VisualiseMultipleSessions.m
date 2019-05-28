@@ -8,16 +8,15 @@ close all
 % Armin July 2018 added bilateral recoding
 % Armin Dec 2018, changed to better handle bilateral recordings
 
-%VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084,
-%ALK085
+%VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084,ALK085
+
 % DMS 
 % Full list: [53, 55,62, 63,64, 68, 70, 71, 72] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
 % ALK084(Un), MMM006(Un), MMM008(Un), MMM009(Un), MMM010(Un), 
-% Usefull list: : [53, 55,62, 63, ] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
+% Usefull list: : [53, 55,62, 63, 72] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
 % hopefully: 70, 71 and 72
 
-% NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),
-% MMM005(UN)
+% NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),% MMM005(UN)
 
 % Exp:
 % 7: learning from scratch
@@ -29,7 +28,7 @@ close all
 
 % select animal
 
-animal_ID = 72
+animal_ID = 64
 BrainStrucutre = 'DMS'
 ExpID = '23'
 

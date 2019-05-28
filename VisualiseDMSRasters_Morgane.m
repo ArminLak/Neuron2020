@@ -18,7 +18,7 @@ concatenate = 1; %show all trials across all sessions for an animal
 
 stim_2_plot = 0.25; %should be positive
 smooth_factor = 100;
-colorRange=[-2 3]; % color range for plotting imagesc data
+colorRange=[-1 2]; % color range for plotting imagesc data
 
 % ------------------ start stop times for task events in second ------------------
 
