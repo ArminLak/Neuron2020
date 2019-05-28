@@ -394,8 +394,7 @@ for HemIter = 1:iter
         
         NormBinStim = mean(StimData(:,4000:5000),2);
         
-         
-        
+       
     else
         
         NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3400:3800),2);
@@ -542,8 +541,7 @@ for HemIter = 1:iter
         
         plot((smooth(AbsStimRasterSmallCorrect(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
         
-    
-        
+     
     end
     
     title('Stim Align')
