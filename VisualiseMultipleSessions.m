@@ -13,8 +13,8 @@ close all
 % DMS 
 % Full list: [53, 55,62, 63,64, 68, 70, 71, 72] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
 % ALK084(Un), MMM006(Un), MMM008(Un), MMM009(Un), MMM010(Un), 
-% Usefull list: : [53, 55,62, 63, 72] coresponding to ALK074(Bi), ALK075(Bi), MMM003(Un), ALK083(Bi),
-% hopefully: 70, 71 and 72
+% Usefull list: : [53, 62, 63, 71,72] 
+% 
 
 % NAc : [56, 57,59,66] coresponding to  ALK078(Bi), MMM001(Un), MMM002(Un),% MMM005(UN)
 
@@ -28,7 +28,7 @@ close all
 
 % select animal
 
-animal_ID = 64
+animal_ID = 53
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -530,6 +530,19 @@ for HemIter = 1:iter
         
         c=c+1;
     end
+    
+    
+    c=1;
+    for iStim = unique((BehData(:,2)))'
+        
+        StimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
+        StimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
+        
+        StimRasterLargeError(c,:)  =nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==0, :),1);
+        
+        c=c+1;
+    end
+    
     
     %plot((AbsStimRasterCorrect(2,:)),'g','LineWidth',2)
     %plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
@@ -1132,6 +1145,11 @@ for HemIter = 1:iter
         BehPhotoM(animal_ID).GrandSummaryL.performance_lowDA = performance_lowDA;
         BehPhotoM(animal_ID).GrandSummaryL.performance_highDA = performance_highDA;
         
+        
+        BehPhotoM(animal_ID).GrandSummaryL.StimRasterLargeCorrect = StimRasterLargeCorrect;
+        BehPhotoM(animal_ID).GrandSummaryL.StimRasterSmallCorrect = StimRasterSmallCorrect;
+        BehPhotoM(animal_ID).GrandSummaryL.StimRasterLargeError = StimRasterLargeError;
+        
     end
     
     if (HemIter ==1 && isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')) || (iter == 2 && HemIter ==2)
@@ -1175,6 +1193,9 @@ for HemIter = 1:iter
         BehPhotoM(animal_ID).GrandSummaryR.performance_lowDA = performance_lowDA;
         BehPhotoM(animal_ID).GrandSummaryR.performance_highDA = performance_highDA;
         
+        BehPhotoM(animal_ID).GrandSummaryR.StimRasterLargeCorrect = StimRasterLargeCorrect;
+        BehPhotoM(animal_ID).GrandSummaryR.StimRasterSmallCorrect = StimRasterSmallCorrect;
+        BehPhotoM(animal_ID).GrandSummaryR.StimRasterLargeError = StimRasterLargeError;
     end
     
     
