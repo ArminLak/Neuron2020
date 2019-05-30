@@ -32,7 +32,7 @@ animal_ID = 72
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -147,7 +147,7 @@ RT = BehData(:,10) - BehData(:,13);
 
 toRemove = find ( RT > RTLimit);
 
-toRemove2= find(BehData(:,1) < 50);
+toRemove2= find(BehData(:,1) < 20);
 toRemove = unique([toRemove; toRemove2]);
 
 BehData(toRemove,:) = [];
@@ -198,6 +198,8 @@ for HemIter = 1:iter
     StimData(toRemove,:) = [];
     ActionData(toRemove,:) = [];
     RewardData(toRemove,:) = [];
+    
+    StimData = StimData ./ mean(max(StimData));
     
     
     ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
@@ -397,7 +399,7 @@ for HemIter = 1:iter
        
     else
         
-        NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3400:3800),2);
+        NormBinStim = mean(StimData(:,4200:5000),2)- mean(StimData(:,3400:3800),2);
         
     end
     
@@ -1198,9 +1200,32 @@ for HemIter = 1:iter
         BehPhotoM(animal_ID).GrandSummaryR.StimRasterLargeError = StimRasterLargeError;
     end
     
+    figure 
+
+
+for istim = 1:7
+
+    subplot(1,3,1)
+    plot(smooth(StimRasterLargeCorrect(istim,:),70))
+    hold on
+        xlim([3300 7000])
+
+    subplot(1,3,2)
+    plot(smooth(StimRasterSmallCorrect(istim,:)))
+    hold on
+        xlim([3300 7000])
+
+    subplot(1,3,3)
+    plot(smooth(StimRasterLargeError(istim,:)))
+    hold on
     
+    xlim([3300 7000])
+end
 end
 %%
+
+
+
 figure
 
 scatter(NormBinStim(intersect(ToLargeR,find(BehData(:,9)==1))),NormBinReward(intersect(ToLargeR,find(BehData(:,9)==1))))
