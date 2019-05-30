@@ -28,7 +28,7 @@ close all
 
 % select animal
 
-animal_ID = 72
+animal_ID = 53
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -199,7 +199,7 @@ for HemIter = 1:iter
     ActionData(toRemove,:) = [];
     RewardData(toRemove,:) = [];
     
-    StimData = StimData ./ mean(max(StimData));
+    StimData = StimData ./ min(max(StimData));
     
     
     ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
@@ -1203,7 +1203,7 @@ for HemIter = 1:iter
     figure 
 
 
-for istim = 1:7
+for istim = 1:length(unique(BehData(:,2)))
 
     subplot(1,3,1)
     plot(smooth(StimRasterLargeCorrect(istim,:),70))
