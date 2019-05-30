@@ -1,7 +1,7 @@
 clear all
 %close all
 
-Hem2show = 'R' % 'L' 'R' or 'both'
+Hem2show = 'L' % 'L' 'R' or 'both'
 
 % list of animals
 
@@ -82,6 +82,10 @@ GrandPopStimBin = nan(4,4,length(Animals));
 
 GrandPopRewBin = nan(4,4,length(Animals));
 
+GrandPopStimLargeCorrect = zeros(7,13100);
+GrandPopStimSmallCorrect = zeros(7,13100);
+GrandPopStimLargeError   = zeros(7,13100);
+
 c=1;
 for iAnimal = Animals
     
@@ -144,7 +148,23 @@ for iAnimal = Animals
             
             PerBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.Performance(2,:);
             RTBlock2(c,:)=BehPhotoM(iAnimal).GrandSummary.RT(2,:);
+         
+               
+            % Stim-align rastersCor Large full stim
+            SingleAnimalStimTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeCorrect;
+            SingleAnimalNormStimTraceLargeCorrect = SingleAnimalStimTraceLargeCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            GrandPopStimLargeCorrect              = SingleAnimalNormStimTraceLargeCorrect + GrandPopStimLargeCorrect ;
             
+            % Stim-align rastersErr Large full stim
+            SingleAnimalStimTraceLargeError      = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeError;
+            SingleAnimalNormStimTraceLargeError  = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            GrandPopStimLargeError               = SingleAnimalNormStimTraceLargeError + GrandPopStimLargeError ;
+            
+            
+            % Stim-align rastersCor Small full stim
+            SingleAnimalStimTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.StimRasterSmallCorrect;
+            SingleAnimalNormStimTraceSmallCorrect = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            GrandPopStimSmallCorrect              = SingleAnimalNormStimTraceSmallCorrect + GrandPopStimSmallCorrect ;
             
             % Stim-align rastersCor
             SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster;
@@ -319,6 +339,7 @@ for iAnimal = Animals
             
         end
     end
+    animalCount = animalCount +1; 
 end
 
 %%
@@ -654,3 +675,79 @@ set(gca, 'XTickLabel', {'0','0.2'},'TickDir','out','Box','off');
 
 xlabel('Time (s)')
 ylabel('Norm response')
+
+%%
+figure
+
+colorGray = [ 0.9 0.9 0.9
+              0.8 0.8 0.8
+              0.6 0.6 0.6
+              0.5 0.5 0.5
+              0.4 0.4 0.4
+              0.2 0.2 0.2
+               0 0 0  ];
+
+for c = 1:7
+        
+    subplot(1,3,1); hold on
+    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    
+end
+
+
+title('Stimulus Align')
+
+ylim([-0.3 1])
+
+
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
+xlabel('Time (s)')
+ylabel('Norm response')
+
+for c = 1:7
+        
+    subplot(1,3,2); hold on
+    plot(smooth((GrandPopStimSmallCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    
+end
+
+
+title('Stimulus Align')
+
+ylim([-0.3 1])
+
+
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
+xlabel('Time (s)')
+ylabel('Norm response')
+
+
+for c = 1:7
+        
+    subplot(1,3,3); hold on
+    plot(smooth((GrandPopStimLargeError(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    
+end
+
+
+title('Stimulus Align')
+
+ylim([-0.3 1])
+
+
+xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
+xlabel('Time (s)')
+ylabel('Norm response')
+

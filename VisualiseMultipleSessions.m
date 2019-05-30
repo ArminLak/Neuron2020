@@ -28,7 +28,7 @@ close all
 
 % select animal
 
-animal_ID = 53
+animal_ID = 72
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -535,10 +535,10 @@ for HemIter = 1:iter
     c=1;
     for iStim = unique((BehData(:,2)))'
         
-        StimRasterLargeCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
-        StimRasterSmallCorrect(c,:)=nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
+        StimRasterLargeCorrect(c,:)=nanmean(StimData(BehData(:,2)==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
+        StimRasterSmallCorrect(c,:)=nanmean(StimData(BehData(:,2)==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
         
-        StimRasterLargeError(c,:)  =nanmean(StimData(abs(BehData(:,2))==iStim & BehData(:,16)==1 & BehData(:,9)==0, :),1);
+        StimRasterLargeError(c,:)  =nanmean(StimData(BehData(:,2)==iStim & BehData(:,16)==1 & BehData(:,9)==0, :),1);
         
         c=c+1;
     end
