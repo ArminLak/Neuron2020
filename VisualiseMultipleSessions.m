@@ -1240,7 +1240,7 @@ for istim = 1:length(unique(BehData(:,2)))
     xlabel('Time (s)')
     ylabel('Norm response')
     subplot(1,3,3)
-    plot(smooth(StimRasterLargeError(istim,:),100))
+    plot(smooth(StimRasterLargeError(istim,:),120))
     hold on
     
  title('Large Error')
