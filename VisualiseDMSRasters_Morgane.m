@@ -10,15 +10,18 @@ clear all
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 72
+animal_ID = 72 %next 71
 brain_region = 'DMS'
 exp_ID = '23'
 
 concatenate = 1; %show all trials across all sessions for an animal
 
 stim_2_plot = 0.25; %should be positive
-smooth_factor = 100;
-colorRange=[-1 2]; % color range for plotting imagesc data
+smooth_factor = 200;
+colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
+
+RT_min = 1;
+RT_max = 2.6; % reaction time range to include
 
 % ------------------ start stop times for task events in second ------------------
 
@@ -61,10 +64,15 @@ for iSession = nSessions
         largeRewTrialsIpsi   = [];
         largeRewTrialsContra = [];
         
+        RTs = [];
+        RTExcludeTrials = [];
+        
     end
     
-    leftStimTrials = find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot));
-    rightStimTrials = find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot);
+    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,10) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
+    RTExcludeTrials = [(find(RTs < RT_min)) ; (find(RTs >RT_max))];
+    leftStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot)),RTExcludeTrials);
+    rightStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot), RTExcludeTrials);
     
     if isfield(BehPhotoM(animal_ID).Session, 'NeuronStimL')%load hemispheric deltaFoverF. add Action/Reward to the following two 'if's if desired. 
         StimDataIpsi        = [StimDataIpsi;      BehPhotoM(animal_ID).Session(iSession).NeuronStimL(leftStimTrials,:)];
@@ -202,4 +210,30 @@ for iSession = nSessions
 %     end
     
     end
+end
+
+
+%%
+
+function [colorRange] = getColorRange(animal_ID, expID)
+
+if animal_ID == 72
+    if strcmp(expID, '23')
+        [colorRange] = [-2 5.2]
+    end
+elseif animal_ID == 71
+    if strcmp(expID, '23')
+        [colorRange] = [-4 8]
+    end
+elseif animal_ID == 64
+    if strcmp(expID, '23')
+        [colorRange] = [-8 20]
+    end
+elseif animal_ID == 63
+    if strcmp(expID, '23')
+        [colorRange] = [-3 3]
+    end
+else [colorRange] = [-5 7]
+end
+
 end
