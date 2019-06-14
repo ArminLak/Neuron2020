@@ -10,7 +10,7 @@ clear all
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 72 %next 71
+animal_ID = 53 %next 71
 brain_region = 'DMS'
 exp_ID = '23'
 
@@ -20,8 +20,8 @@ stim_2_plot = 0.25; %should be positive
 smooth_factor = 200;
 colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
 
-RT_min = 1;
-RT_max = 2.6; % reaction time range to include
+RT_min = 0.2;
+RT_max = 2.9; % reaction time range to include
 
 % ------------------ start stop times for task events in second ------------------
 
@@ -233,7 +233,7 @@ elseif animal_ID == 63
     if strcmp(expID, '23')
         [colorRange] = [-3 3]
     end
-else [colorRange] = [-5 7]
+else [colorRange] = [-2 4]
 end
 
 end
