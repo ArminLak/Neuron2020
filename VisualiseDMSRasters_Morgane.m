@@ -10,8 +10,8 @@ clear all
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 53 %next 71
-brain_region = 'DMS'
+animal_ID = 66 %next 71
+brain_region = 'NAc'
 exp_ID = '23'
 
 concatenate = 1; %show all trials across all sessions for an animal
@@ -123,24 +123,32 @@ for iSession = nSessions
         %get RTs for different trial types and sort by this
         errorTrialsIpsi(:,1) = BehDataIpsi(errorTrialsIpsi(:,2), 10) - BehDataIpsi(errorTrialsIpsi(:,2), 13);
         errorTrialsIpsi = sortrows(errorTrialsIpsi);
-        
+                errorTrialsIpsiOutcome(:,1) = BehDataIpsi(errorTrialsIpsi(:,2), 14) - BehDataIpsi(errorTrialsIpsi(:,2), 13);
+
         errorTrialsContra(:,1) = BehDataContra(errorTrialsContra(:,2), 10) - BehDataContra(errorTrialsContra(:,2), 13);
         errorTrialsContra = sortrows(errorTrialsContra); 
-        
+                errorTrialsContraOutcome(:,1) = BehDataContra(errorTrialsContra(:,2), 14) - BehDataContra(errorTrialsContra(:,2), 13);
+
         
         smallRewTrialsIpsi(:,1) = BehDataIpsi(smallRewTrialsIpsi(:,2), 10) - BehDataIpsi(smallRewTrialsIpsi(:,2), 13);
         smallRewTrialsIpsi = sortrows(smallRewTrialsIpsi);
+        smallRewTrialsIpsiOutcome(:,1) = BehDataIpsi(smallRewTrialsIpsi(:,2), 14) - BehDataIpsi(smallRewTrialsIpsi(:,2), 13);
         
         smallRewTrialsContra(:,1) = BehDataContra(smallRewTrialsContra(:,2), 10) - BehDataContra(smallRewTrialsContra(:,2), 13);
         smallRewTrialsContra = sortrows(smallRewTrialsContra);
-        
+                smallRewTrialsContraOutcome(:,1) = BehDataContra(smallRewTrialsContra(:,2), 14) - BehDataContra(smallRewTrialsContra(:,2), 13);
+
         
         if strcmp(exp_ID, '23')
             largeRewTrialsIpsi(:,1) = BehDataIpsi(largeRewTrialsIpsi(:,2), 10) - BehDataIpsi(largeRewTrialsIpsi(:,2), 13);
             largeRewTrialsIpsi = sortrows(largeRewTrialsIpsi);
+                        largeRewTrialsIpsiOutcome(:,1) = BehDataIpsi(largeRewTrialsIpsi(:,2), 14) - BehDataIpsi(largeRewTrialsIpsi(:,2), 13);
+
             
             largeRewTrialsContra(:,1) = BehDataContra(largeRewTrialsContra(:,2), 10) - BehDataContra(largeRewTrialsContra(:,2), 13);
             largeRewTrialsContra = sortrows(largeRewTrialsContra);
+                        largeRewTrialsContraOutcome(:,1) = BehDataContra(largeRewTrialsContra(:,2), 14) - BehDataContra(largeRewTrialsContra(:,2), 13);
+
         end
         
         % plotting order
@@ -150,18 +158,28 @@ for iSession = nSessions
             
             RTIpsi = [errorTrialsIpsi(:,1); smallRewTrialsIpsi(:,1)];
             RTContra = [errorTrialsContra(:,1); smallRewTrialsContra(:,1)];
+            
+            TIpsiOutcome = [errorTrialsIpsiOutcome(:,1); smallRewTrialsIpsiOutcome(:,1)];
+            TContraOutcome = [errorTrialsContraOutcome(:,1); smallRewTrialsContraOutcome(:,1)];
+            
         elseif strcmp(exp_ID, '23')
             plotIndexIpsi = [errorTrialsIpsi(:,2); smallRewTrialsIpsi(:,2); largeRewTrialsIpsi(:,2)];
             plotIndexContra = [errorTrialsContra(:,2); smallRewTrialsContra(:,2); largeRewTrialsContra(:,2)];
             
             RTIpsi = [errorTrialsIpsi(:,1); smallRewTrialsIpsi(:,1); largeRewTrialsIpsi(:,1)];
             RTContra = [errorTrialsContra(:,1); smallRewTrialsContra(:,1); largeRewTrialsContra(:,1)];
+            
+            TIpsiOutcome = [errorTrialsIpsiOutcome(:,1); smallRewTrialsIpsiOutcome(:,1); largeRewTrialsIpsiOutcome(:,1)];
+            TContraOutcome = [errorTrialsContraOutcome(:,1); smallRewTrialsContraOutcome(:,1); largeRewTrialsContraOutcome(:,1)];
         end
         
         
 
         actionTimesIpsi = abs(sStart*downSample) + (RTIpsi*downSample);
         actionTimesContra = abs(sStart*downSample) + (RTContra*downSample);
+        
+        outcomeTimesIpsi = abs(sStart*downSample) + (TIpsiOutcome*downSample);
+        outcomeTimesContra = abs(sStart*downSample) + (TContraOutcome*downSample);
         
     % ------------------- plot  ----------------------------------
 %     if concatenate == 0 || iSession == max(nSessions)
@@ -170,6 +188,9 @@ for iSession = nSessions
         M = {StimDataContra, StimDataIpsi};
         A = [];
         A = {actionTimesContra, actionTimesIpsi};
+        Ar = [];
+        Ar = {outcomeTimesContra, outcomeTimesIpsi};
+       
         P = [];
         P = {plotIndexContra, plotIndexIpsi};
         E = [];
@@ -182,6 +203,8 @@ for iSession = nSessions
         for iSubplot = 1:2
             data = M{iSubplot}; % looping through StimDataContra / Ipsi
             actionTimes = A{iSubplot};
+            outcomeTimes = Ar{iSubplot};
+            
             plotIndex = P{iSubplot};
             errorTrials = E{iSubplot};
             smallRewTrials = R{iSubplot};
@@ -200,6 +223,15 @@ for iSession = nSessions
                 end
             end
             
+              for ievent = 1:length(outcomeTimes)
+                if ievent <= length(errorTrials)
+                    plot(outcomeTimes(ievent),ievent, 'x', 'MarkerEdgeColor', [0.7 0 0.2 ], 'MarkerFaceColor', [0.7 0 0.2 ], 'MarkerSize', 5)
+                elseif length(errorTrials) < ievent && ievent <= length(errorTrials)+length(smallRewTrials)
+                    plot(outcomeTimes(ievent),ievent, 'x', 'MarkerEdgeColor', [0 1 0 ], 'MarkerFaceColor', [0 1 0 ], 'MarkerSize', 5)
+                elseif ievent > length(errorTrials)+length(smallRewTrials)
+                    plot(outcomeTimes(ievent),ievent, 'x', 'MarkerEdgeColor', [0 0.7 0], 'MarkerFaceColor', [0 0.7 0], 'MarkerSize', 5)
+                end
+            end
             xticks([1 abs(sStart*downSample) (sStop-sStart)*downSample-1])
             xticklabels([sStart 0 sStop])
             ylabel('Trials')
@@ -219,11 +251,11 @@ function [colorRange] = getColorRange(animal_ID, expID)
 
 if animal_ID == 72
     if strcmp(expID, '23')
-        [colorRange] = [-2 5.2]
+        [colorRange] = [-3 4]
     end
 elseif animal_ID == 71
     if strcmp(expID, '23')
-        [colorRange] = [-4 8]
+        [colorRange] = [-3 8]
     end
 elseif animal_ID == 64
     if strcmp(expID, '23')
@@ -233,7 +265,8 @@ elseif animal_ID == 63
     if strcmp(expID, '23')
         [colorRange] = [-3 3]
     end
-else [colorRange] = [-2 4]
+else [colorRange] = [-3 6]
+    
 end
 
 end

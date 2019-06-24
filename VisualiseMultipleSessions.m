@@ -28,11 +28,11 @@ close all
 
 % select animal
 
-animal_ID = 53
+animal_ID = 63
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -562,6 +562,10 @@ RewardData = RewardData ./ StimTimeDenom;
         plot((smooth(AbsStimRasterSmallCorrect(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
         
      
+       % plot((smooth(AbsActionRasterLargeCorrect(i,:),70)),'color',colorGray(i,:),'LineWidth',2)
+        
+       % plot((smooth(AbsActionRasterSmallCorrect(i,:),70)),'color',colorRed(i,:),'LineWidth',2)
+        
     end
     
     title('Stim Align')

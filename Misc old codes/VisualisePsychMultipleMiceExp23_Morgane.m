@@ -7,7 +7,14 @@ animal_ID = 48
 
 animals = [48 50 51]
 
-load('BehPhotoM_Exp23_VTA.mat')
+%load('BehPhotoM_Exp23_VTA.mat')
+
+animals = [53, 62, 63, 71,72] 
+%load('BehPhotoM_Exp23_DMS')
+
+animals = [56 57 59 66]
+load('BehPhotoM_Exp23_NAc')
+
 
 plotCount = 1;
 figure;
@@ -25,15 +32,6 @@ RewardData = [];
     for iSession = sessionz
 
         TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
-        TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
-        TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
-        TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronAction;
-        TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
-
-        BeepData = [BeepData;TempBeepData];
-        StimData = [StimData;TempStimData];
-        ActionData = [ActionData;TempActionData];
-        RewardData = [RewardData;TempRewardData];
         BehData = [BehData; TempBehData];
 
     end
@@ -48,10 +46,7 @@ RT = BehData(:,10) - BehData(:,13);
 
 toRemove = find ( RT > RTLimit); %remove trials with slow reaction time
 BehData(toRemove,:) = [];
-StimData(toRemove,:) = [];
-ActionData(toRemove,:) = [];
-RewardData(toRemove,:) = [];
-BeepData(toRemove,:) = [];
+
 
 testedStims = unique(BehData(:, 2));  % find tested stimuli
 
@@ -88,7 +83,7 @@ psuccess=Ncorrect ./ Noutof;
 std = sqrt(V)./100
 
 subplot(1, length(animals), plotCount)
-[paramsValues] = Fit_psych_fun_Armin(testedStims', Nhit, Noutof,[1 1 1 1],1,color(1,:), 2)
+[paramsValues] = Fit_psych_fun_Armin(testedStims', Nhit, Noutof,[1 1 1 1],1,color(1,:))
 ylim([0 1]), xlabel('Contrast'), ylabel('Rightward Choice (%)')
 xlim([min(testedStims) max(testedStims)])
 yticks([0 0.5 1])
@@ -142,7 +137,7 @@ psuccess=Ncorrect ./ Noutof;
 std = sqrt(V)./100
 
 
-[paramsValues] = Fit_psych_fun_Armin(testedStims', Nhit, Noutof,[1 1 1 1],1,color(2,:), 2)
+[paramsValues] = Fit_psych_fun_Armin(testedStims', Nhit, Noutof,[1 1 1 1],1,color(2,:))
 % ylim([0 1]), xlabel('Contrast'), ylabel('% Rightward Choice')
 % xlim([min(testedStims) max(testedStims)])
 % yticks([0 0.5 1])

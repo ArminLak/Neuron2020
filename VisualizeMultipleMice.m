@@ -1,12 +1,12 @@
 clear all
-%close all
+close all
 
 Hem2show = 'L' % 'L' 'R' or 'both'
 
 % list of animals
 
 % VTA,
-Animals = [48 50 51 64]
+%Animals = [48 50 51 64]
 %load('BehPhotoM_Exp23_VTA')
 
 % NAC
@@ -19,6 +19,8 @@ Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some c
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
+
+Animals = [53, 62, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 
 load('BehPhotoM_Exp23_DMS')
 
@@ -87,6 +89,7 @@ GrandPopStimSmallCorrect = zeros(7,13100);
 GrandPopStimLargeError   = zeros(7,13100);
 
 c=1;
+animalCount = 1;
 for iAnimal = Animals
     
     
@@ -152,18 +155,18 @@ for iAnimal = Animals
                
             % Stim-align rastersCor Large full stim
             SingleAnimalStimTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeCorrect;
-            SingleAnimalNormStimTraceLargeCorrect = SingleAnimalStimTraceLargeCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            SingleAnimalNormStimTraceLargeCorrect = SingleAnimalStimTraceLargeCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));                        
             GrandPopStimLargeCorrect              = SingleAnimalNormStimTraceLargeCorrect + GrandPopStimLargeCorrect ;
             
             % Stim-align rastersErr Large full stim
             SingleAnimalStimTraceLargeError      = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeError;
-            SingleAnimalNormStimTraceLargeError  = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            SingleAnimalNormStimTraceLargeError  = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeCorrect));                        
             GrandPopStimLargeError               = SingleAnimalNormStimTraceLargeError + GrandPopStimLargeError ;
             
             
             % Stim-align rastersCor Small full stim
             SingleAnimalStimTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.StimRasterSmallCorrect;
-            SingleAnimalNormStimTraceSmallCorrect = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            SingleAnimalNormStimTraceSmallCorrect = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));            
             GrandPopStimSmallCorrect              = SingleAnimalNormStimTraceSmallCorrect + GrandPopStimSmallCorrect ;
             
             % Stim-align rastersCor
