@@ -28,11 +28,11 @@ close all
 
 % select animal
 
-animal_ID = 63
-BrainStrucutre = 'DMS'
+animal_ID = 66
+BrainStrucutre = 'NAc'
 ExpID = '23'
 
-save2file = 0; % decide if you want to overwrite GrandSummary or not
+save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -546,6 +546,11 @@ RewardData = RewardData ./ StimTimeDenom;
         StimRasterSmallCorrect(c,:)=nanmean(StimData(BehData(:,2)==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
         
         StimRasterLargeError(c,:)  =nanmean(StimData(BehData(:,2)==iStim & BehData(:,16)==1 & BehData(:,9)==0, :),1);
+        
+         ActRasterLargeCorrect(c,:)=nanmean(ActionData(BehData(:,2)==iStim & BehData(:,16)==1 & BehData(:,9)==1, :),1);
+        ActRasterSmallCorrect(c,:)=nanmean(ActionData(BehData(:,2)==iStim & BehData(:,16)==-1  & BehData(:,9)==1, :),1);
+        
+        ActRasterLargeError(c,:)  =nanmean(ActionData(BehData(:,2)==iStim & BehData(:,16)==1 & BehData(:,9)==0, :),1);
         
         c=c+1;
     end
@@ -1162,6 +1167,11 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.StimRasterSmallCorrect = StimRasterSmallCorrect;
         BehPhotoM(animal_ID).GrandSummaryL.StimRasterLargeError = StimRasterLargeError;
         
+        
+            BehPhotoM(animal_ID).GrandSummaryL.ActionRasterLargeCorrect = ActRasterLargeCorrect;
+        BehPhotoM(animal_ID).GrandSummaryL.ActionRasterSmallCorrect = ActRasterSmallCorrect;
+        BehPhotoM(animal_ID).GrandSummaryL.ActionRasterLargeError = ActRasterLargeError;
+        
     end
     
     if (HemIter ==1 && isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')) || (iter == 2 && HemIter ==2)
@@ -1208,6 +1218,10 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryR.StimRasterLargeCorrect = StimRasterLargeCorrect;
         BehPhotoM(animal_ID).GrandSummaryR.StimRasterSmallCorrect = StimRasterSmallCorrect;
         BehPhotoM(animal_ID).GrandSummaryR.StimRasterLargeError = StimRasterLargeError;
+        
+            BehPhotoM(animal_ID).GrandSummaryR.ActionRasterLargeCorrect = ActRasterLargeCorrect;
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterSmallCorrect = ActRasterSmallCorrect;
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterLargeError = ActRasterLargeError;
     end
     
     figure 
@@ -1215,7 +1229,7 @@ RewardData = RewardData ./ StimTimeDenom;
 
 for istim = 1:length(unique(BehData(:,2)))
 
-    subplot(1,3,1)
+    subplot(2,3,1)
     plot(smooth(StimRasterLargeCorrect(istim,:),70))
     hold on
 
@@ -1230,7 +1244,7 @@ for istim = 1:length(unique(BehData(:,2)))
     xlabel('Time (s)')
     ylabel('Norm response')
     
-    subplot(1,3,2)
+    subplot(2,3,2)
     plot(smooth(StimRasterSmallCorrect(istim,:),80))
     hold on
  title('Small Correct')
@@ -1243,7 +1257,7 @@ for istim = 1:length(unique(BehData(:,2)))
     set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')
-    subplot(1,3,3)
+    subplot(2,3,3)
     plot(smooth(StimRasterLargeError(istim,:),120))
     hold on
     
@@ -1258,8 +1272,161 @@ for istim = 1:length(unique(BehData(:,2)))
     xlabel('Time (s)')
     ylabel('Norm response')
 
+    
+        subplot(2,3,4)
+    plot(smooth(ActRasterLargeCorrect(istim,:),70))
+    hold on
+
+         title('Large Correct')
+    
+    xlim([3000 4400])
+    ylim([-0.2 1])
+    
+    
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
+           subplot(2,3,5)
+    plot(smooth(ActRasterSmallCorrect(istim,:),70))
+    hold on
+
+         title('Small Correct')
+    
+    xlim([3000 4400])
+    ylim([-0.2 1])
+    
+    
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
+           subplot(2,3,6)
+    plot(smooth(ActRasterLargeError(istim,:),70))
+    hold on
+
+         title('Large Error')
+    
+    xlim([3000 4400])
+    ylim([-0.2 1])
+    
+    
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
+    
+  
+    
 end
 
+   figure 
+    
+   subplot(2,3,1)
+    plot(smooth(mean(StimRasterLargeCorrect(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(StimRasterLargeCorrect(5:7,:)),70),'b')
+    
+    hold on
+
+         title('Large Correct')
+    
+    xlim([3500 4900])
+    ylim([-0.5 1])
+    
+    
+    set(gca, 'XTick', [3700, 4300, 4900]);
+    set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')   
+    
+      subplot(2,3,2)
+    plot(smooth(mean(StimRasterSmallCorrect(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(StimRasterSmallCorrect(5:7,:)),70),'b')
+    
+    hold on
+
+         title('Small Correct')
+    
+    xlim([3500 4900])
+    ylim([-0.5 1])
+    
+    
+    set(gca, 'XTick', [3700, 4300, 4900]);
+    set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')   
+    
+    
+      subplot(2,3,3)
+    plot(smooth(mean(StimRasterLargeError(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(StimRasterLargeError(5:7,:)),70),'b')
+    
+    hold on
+
+         title('Large Error')
+    
+    xlim([3500 4900])
+    ylim([-0.5 1])
+    
+    
+    set(gca, 'XTick', [3700, 4300, 4900]);
+    set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
+     subplot(2,3,4)
+    plot(smooth(mean(ActRasterLargeCorrect(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(ActRasterLargeCorrect(5:7,:)),70),'b')
+    
+    hold on
+
+        xlim([3000 4400])
+    ylim([-0.5 1])
+    
+    
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
+      subplot(2,3,5)
+    plot(smooth(mean(ActRasterSmallCorrect(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(ActRasterSmallCorrect(5:7,:)),70),'b')
+    
+    hold on
+
+          xlim([3000 4400])
+    ylim([-0.5 1])
+    
+    
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
+    
+      subplot(2,3,6)
+    plot(smooth(mean(ActRasterLargeError(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(ActRasterLargeError(5:7,:)),70),'b')
+    
+    hold on
+  xlim([3000 4400])
+    ylim([-0.5 1])
+    
+    
+    set(gca, 'XTick', [3000, 3700, 4400]);
+    set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
 end
 %%
 

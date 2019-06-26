@@ -1,7 +1,7 @@
 clear all
 close all
 
-Hem2show = 'L' % 'L' 'R' or 'both'
+Hem2show = 'R' % 'L' 'R' or 'both'
 
 % list of animals
 
@@ -19,8 +19,6 @@ Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some c
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
-
-Animals = [53, 62, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 
 load('BehPhotoM_Exp23_DMS')
 
@@ -87,6 +85,11 @@ GrandPopRewBin = nan(4,4,length(Animals));
 GrandPopStimLargeCorrect = zeros(7,13100);
 GrandPopStimSmallCorrect = zeros(7,13100);
 GrandPopStimLargeError   = zeros(7,13100);
+
+GrandPopActionLargeCorrect = zeros(7,13100);
+GrandPopActionSmallCorrect = zeros(7,13100);
+GrandPopActionLargeError   = zeros(7,13100);
+
 
 c=1;
 animalCount = 1;
@@ -163,20 +166,42 @@ for iAnimal = Animals
             SingleAnimalNormStimTraceLargeError  = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeCorrect));                        
             GrandPopStimLargeError               = SingleAnimalNormStimTraceLargeError + GrandPopStimLargeError ;
             
-            
-            % Stim-align rastersCor Small full stim
+             % Stim-align rastersCor Small full stim
             SingleAnimalStimTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.StimRasterSmallCorrect;
             SingleAnimalNormStimTraceSmallCorrect = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));            
             GrandPopStimSmallCorrect              = SingleAnimalNormStimTraceSmallCorrect + GrandPopStimSmallCorrect ;
+           
+            
+            % Stim-align rastersCor Small full action
+            SingleAnimalActionTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterSmallCorrect;
+            SingleAnimalNormActionTraceSmallCorrect = SingleAnimalActionTraceSmallCorrect ./ max(max(SingleAnimalActionTraceSmallCorrect));            
+            GrandPopActionSmallCorrect              = SingleAnimalNormActionTraceSmallCorrect + GrandPopActionSmallCorrect ;
+            
+                        % Stim-align rastersCor Large full action
+            SingleAnimalActionTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeCorrect;
+            SingleAnimalNormActionTraceLargeCorrect = SingleAnimalActionTraceLargeCorrect ./ max(max(SingleAnimalActionTraceLargeCorrect));                        
+            GrandPopActionLargeCorrect              = SingleAnimalNormActionTraceLargeCorrect + GrandPopActionLargeCorrect ;
+            
+            % Stim-align rastersErr Large full action
+            SingleAnimalActionTraceLargeError      = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeError;
+            SingleAnimalNormActionTraceLargeError  = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeCorrect));                        
+            GrandPopActionLargeError               = SingleAnimalNormActionTraceLargeError + GrandPopActionLargeError ;
+            
+            
+            
             
             % Stim-align rastersCor
             SingleAnimalStimTrace= BehPhotoM(iAnimal).GrandSummary.AbsStimRaster;
             SingleAnimalNormStimTrace = SingleAnimalStimTrace ./ max(max(SingleAnimalStimTrace));
+           
             GrandPopAbsStimResp = SingleAnimalNormStimTrace + GrandPopAbsStimResp ;
             
             % Action-align rastersCor
             SingleAnimalActionTrace= BehPhotoM(iAnimal).GrandSummary.AbsActionRaster;
             SingleAnimalNormActionTrace = SingleAnimalActionTrace ./ max(max(SingleAnimalActionTrace));
+            
+            if iAnimal==63
+            SingleAnimalNormActionTrace = SingleAnimalActionTrace; end
             GrandPopAbsActionResp = SingleAnimalNormActionTrace + GrandPopAbsActionResp ;
             
             % Stim-align rasters(correct/error)
@@ -748,6 +773,75 @@ ylim([-0.3 1])
 
 xlim([StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)])
 set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
+xlabel('Time (s)')
+ylabel('Norm response')
+
+
+figure
+
+TimingVisualise(2,:) = [-0.8 0.5]; 
+
+for c = 1:7
+        
+    subplot(1,3,1); hold on
+    plot(smooth((GrandPopActionLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    
+end
+
+
+title('Action Align')
+
+ylim([-0.3 1])
+
+
+xlim([StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
+xlabel('Time (s)')
+ylabel('Norm response')
+
+for c = 1:7
+        
+    subplot(1,3,2); hold on
+    plot(smooth((GrandPopActionSmallCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    
+end
+
+
+title('Action Align')
+
+ylim([-0.3 1])
+
+
+xlim([StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)]);
+set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
+
+
+xlabel('Time (s)')
+ylabel('Norm response')
+
+
+for c = 1:7
+        
+    subplot(1,3,3); hold on
+    plot(smooth((GrandPopActionLargeError(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    
+end
+
+
+title('Action Align')
+
+ylim([-0.3 1])
+
+
+xlim([StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)])
+set(gca, 'XTick', [StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)]);
 set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 
 
