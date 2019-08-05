@@ -12,15 +12,15 @@ Hem2show = 'R' % 'L' 'R' or 'both'
 % NAC
 Animals = [56 57 59 66]
 
-%load('BehPhotoM_Exp23_NAc')
+load('BehPhotoM_Exp23_NAc')
 
 % DMS
-Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+%Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
 
-load('BehPhotoM_Exp23_DMS')
+%load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8

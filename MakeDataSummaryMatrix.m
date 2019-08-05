@@ -15,7 +15,7 @@ clear all
 close all
 
 
-animal_name = 'MMM006'
+animal_name = 'ALK068'
 Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
 exp_ID = '23';
@@ -152,6 +152,10 @@ for iSession =  SessionList
         
         [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
+%           event_times = TrialTimingData(:,15); %go cue onset
+%         
+%         [Raster_MatrixGoCue]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
+%         
         if iChan == 1 || string(r1) ~= string(r2)
             BehPhotoM(animal_ID).Session(SessionC).TrialTimingData   =  TrialTimingData;
         end

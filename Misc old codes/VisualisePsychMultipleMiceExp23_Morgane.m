@@ -5,15 +5,15 @@ clear
 
 animal_ID = 48
 
-animals = [48 50 51]
+%animals = [48 50 51]
 
 %load('BehPhotoM_Exp23_VTA.mat')
 
 animals = [53, 62, 63, 71,72] 
-%load('BehPhotoM_Exp23_DMS')
+load('BehPhotoM_Exp23_DMS')
 
-animals = [56 57 59 66]
-load('BehPhotoM_Exp23_NAc')
+%animals = [56 57 59 66]
+%load('BehPhotoM_Exp23_NAc')
 
 
 plotCount = 1;

@@ -10,15 +10,19 @@ close all
 
 
 
-animal_list= [{'ALK068', 'ALK070', 'ALK071','ALK084','ALK085'}];
+animal_list= [{'ALK068', 'ALK070', 'ALK071','ALK084','ALK085'}]; %VTA
 
 
-%animal_list= [{'ALK078', 'MMM001', 'MMM002'}];
+%animal_list= [{'ALK074', 'ALK075','ALK083','MMM003', 'MMM006', 'MMM008','MMM009','MMM010'}]; %DMS all
+
+animal_list= [{'ALK074','ALK083','MMM003','MMM009','MMM010'}]; %DMS good
+
+animal_list= [{'ALK078', 'MMM001', 'MMM002','MMM005'}];
 
 
-animal_list= [{'ALK085'}];
+%animal_list= [{'MMM010'}];
 
-BrainStrucutre = 'VTA'
+BrainStrucutre = 'NAc'
 
 %animal_list= [{'ALK068'}];
 

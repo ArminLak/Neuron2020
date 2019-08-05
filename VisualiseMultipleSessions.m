@@ -28,11 +28,11 @@ close all
 
 % select animal
 
-animal_ID = 66
-BrainStrucutre = 'NAc'
+animal_ID = 69
+BrainStrucutre = 'VTA'
 ExpID = '23'
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
