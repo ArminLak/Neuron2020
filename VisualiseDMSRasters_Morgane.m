@@ -2,7 +2,7 @@
 % Error/Small/Large and by RTs. Works for unihem and bihem animals
 % Morgane April 2019
 
-% can you see this?
+% can you see this? yes
 
 
 close all
@@ -11,7 +11,7 @@ clear all
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 66 %next 71
+animal_ID = 66
 brain_region = 'NAc'
 exp_ID = '23'
 
