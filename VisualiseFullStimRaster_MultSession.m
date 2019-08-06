@@ -17,7 +17,7 @@ close all
 
 
 % select animal
-animal_ID = 59
+animal_ID = 56
 
 % select database
 % load('BehPhotoM_Exp23')
@@ -126,13 +126,21 @@ for iSession = sessionz
     
     TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
     
-    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
+    if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
     
-    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
+    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepL;
+    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimL;
+    TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionL;
+    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardL;
     
-    TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronAction;
-
-    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+    elseif isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
+       
+    TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
+    TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
+    TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionR;
+    TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
+    end
+    
     
     BeepData = [BeepData;TempBeepData];
     
