@@ -1359,110 +1359,127 @@ for istim = 1:length(unique(BehData(:,2)))
     
 end
 
-   figure 
+   figure %figure 4
     
-   subplot(2,3,1)
+   subplot(3,3,1)
     plot(smooth(mean(StimRasterLargeCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(StimRasterLargeCorrect(5:7,:)),70),'b')
-    
     hold on
-
-         title('Large Correct')
-    
+         title('Large Correct') %Stim-aligned
     xlim([3500 4900])
     ylim([-0.5 1])
-    
-    
     set(gca, 'XTick', [3700, 4300, 4900]);
     set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')   
     
-      subplot(2,3,2)
+      subplot(3,3,2)
     plot(smooth(mean(StimRasterSmallCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(StimRasterSmallCorrect(5:7,:)),70),'b')
-    
     hold on
-
-         title('Small Correct')
-    
+         title('Small Correct') %Stim-aligned
     xlim([3500 4900])
     ylim([-0.5 1])
-    
-    
     set(gca, 'XTick', [3700, 4300, 4900]);
     set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')   
     
     
-      subplot(2,3,3)
+      subplot(3,3,3)
     plot(smooth(mean(StimRasterLargeError(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(StimRasterLargeError(5:7,:)),70),'b')
-    
     hold on
-
-         title('Large Error')
-    
+         title('Small Error') %Stim-aligned
     xlim([3500 4900])
     ylim([-0.5 1])
-    
-    
     set(gca, 'XTick', [3700, 4300, 4900]);
     set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')
     
-     subplot(2,3,4)
+     subplot(3,3,4)
     plot(smooth(mean(ActRasterLargeCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(ActRasterLargeCorrect(5:7,:)),70),'b')
-    
     hold on
-
         xlim([3000 4400])
     ylim([-0.5 1])
-    
-    
     set(gca, 'XTick', [3000, 3700, 4400]);
     set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')
     
-      subplot(2,3,5)
+      subplot(3,3,5)
     plot(smooth(mean(ActRasterSmallCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(ActRasterSmallCorrect(5:7,:)),70),'b')
-    
     hold on
-
           xlim([3000 4400])
     ylim([-0.5 1])
-    
-    
     set(gca, 'XTick', [3000, 3700, 4400]);
     set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')
     
     
-      subplot(2,3,6)
+      subplot(3,3,6)
     plot(smooth(mean(ActRasterLargeError(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(ActRasterLargeError(5:7,:)),70),'b')
-    
     hold on
   xlim([3000 4400])
     ylim([-0.5 1])
-    
-    
     set(gca, 'XTick', [3000, 3700, 4400]);
     set(gca, 'XTickLabel', {'-.7','0','0.7'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')
+    
+    
+    
+       subplot(3,3,7)
+    plot(smooth(mean(RewardRasterLargeCorrect(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(RewardRasterLargeCorrect(5:7,:)),70),'b')
+    hold on
+         title('Large Correct') %Stim-aligned
+    xlim([3500 4900])
+    ylim([-0.5 1])
+    set(gca, 'XTick', [3700, 4300, 4900]);
+    set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')   
+    
+      subplot(3,3,8)
+    plot(smooth(mean(RewardRasterSmallCorrect(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(RewardRasterSmallCorrect(5:7,:)),70),'b')
+    hold on
+         title('Small Correct') %Stim-aligned
+    xlim([3500 4900])
+    ylim([-0.5 1])
+    set(gca, 'XTick', [3700, 4300, 4900]);
+    set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')   
+    
+    
+      subplot(3,3,9)
+    plot(smooth(mean(RewardRasterLargeError(1:3,:)),70),'k')
+    hold on
+    plot(smooth(mean(RewardRasterLargeError(5:7,:)),70),'b')
+    hold on
+         title('Small Error') %Stim-aligned
+    xlim([3500 4900])
+    ylim([-0.5 1])
+    set(gca, 'XTick', [3700, 4300, 4900]);
+    set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
+    xlabel('Time (s)')
+    ylabel('Norm response')
+    
 end
 %%
 
