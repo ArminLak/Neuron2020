@@ -2,6 +2,11 @@
 
 % Morgane August 2018
 
+% September 2019 Morgane inspected this code, not sure exactly what it
+% does, probably similar to VisualiseLearningSessionsMorgane.m but it needs
+% to be updated because the new data naming system includes L/R and this
+% code does not accommodate. It is not urgently needed now. 
+
 
 % to do instead of z-scoring normalise to max response 
 

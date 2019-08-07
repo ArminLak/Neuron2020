@@ -2,6 +2,9 @@
 
 % Morgane August 2018
 
+% September 2019 Morgane inspected this code. Functional but not
+% immediately needed 
+
 
 clear all
 close all
@@ -36,7 +39,7 @@ elseif animal_name == 'MMM002'
     ylimrwd = [-4 7];
     ylimstim = [-3 3];
 elseif animal_name == 'ALK068'
-    SessionList = [1, 3, 5, 6];
+    SessionList = [1, 2, 3, 5, 6];
     ylimrwd = [-4 4];
     ylimstim = [-1 3];
 end

@@ -5,6 +5,9 @@
 % 14 jan 2019; to do: make the code work with L and R hem
 % to do instead of z-scoring normalise to max response
 
+% September 2019 Morgane inspected this code, it needs work (see to-do
+% list above). Not needed immediately.
+
 clear all
 close all
 

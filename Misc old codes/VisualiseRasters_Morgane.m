@@ -2,14 +2,11 @@
 % This code plots trial by trial rasters of photometry signal
 % Morgane Moss June 2018
 
+% August 2019 inspected by Morgane, it is functional and makes a few raster
+% plots. Used in masters write-up
+
 clear all
 % close all
-
-% things to do:
-%1. tickdirection out
-%2. render as painter
-% in the sorting based on CrrErrContRT, plot a thick green line on the
-% boarders between trials
 
 
 %[48, 50,51]  coresponding to ALK068, 70 and 71

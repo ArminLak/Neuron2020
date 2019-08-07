@@ -7,6 +7,9 @@ close all
 
 % adapted from Armin 2018
 % Morgane October 2018
+% August 2019 Morgane inspected this code, made few updates, it is
+% functional and shows the PSTHs for each contrast (including for each
+% side).
 
 
 % animal_list = [48, 50, 51] %corresponding to VTA: ALK068, 70 and 71
@@ -15,12 +18,9 @@ close all
 
 animal_list = 51
 
- load('BehPhotoM_Exp23')
+ load('BehPhotoM_Exp23_VTA')
 %load('BehPhotoM_Exp23_NAc')
 % load('BehPhotoM_Exp23_DMS')
-
-LImplantList = [50 59];
-RImplantList = [48 51 57];
 
 RTLimit = 6; 
 
@@ -101,16 +101,16 @@ for animal_ID = animal_list
     
     
     %------------------------- GET LEFT HEM DATA --------------------------
-    if strcmp(Implant,'Left') || strcmp(Implant, 'Bi') % left hem
+    if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
         for iSession = sessionz
             
             TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
             BehData = [BehData; TempBehData];
             
-            TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
-            TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
-            TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronAction;
-            TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+            TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepL;
+            TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimL;
+            TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionL;
+            TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardL;
             
             BeepDataL = [BeepDataL;TempBeepData];
             StimDataL = [StimDataL;TempStimData];
@@ -118,7 +118,7 @@ for animal_ID = animal_list
             RewardDataL = [RewardDataL;TempRewardData];
         
             
-            if strcmp(Implant, 'Bi') %right hem for bi animals
+            if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR') %right hem for bi animals
                 TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
                 TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
                 TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionR;
@@ -253,16 +253,16 @@ for animal_ID = animal_list
         
         
         % ------------- GET RIGHT HEM DATA --------------------------
-    elseif strcmp(Implant,'Right')  % get right hem data for uni animals
+    elseif isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')  % get right hem data for uni animals
         for iSession = sessionz
             
             TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
             BehData = [BehData; TempBehData];
             
-            TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeep;
-            TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStim;
-            TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronAction;
-            TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronReward;
+            TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
+            TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
+            TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionR;
+            TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
             
             BeepDataR = [BeepDataR;TempBeepData];
             StimDataR = [StimDataR;TempStimData];

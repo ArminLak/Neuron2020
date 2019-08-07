@@ -3,6 +3,11 @@ close all
 
 % plot trial-by-trial scatter plots of Stim resposne vs outcome response 
 
+%Sep 2019 Morgane inspected this code, added axis labels and legend. For
+%now not needed for paper/poster prep. 
+
+
+
 %VTA : [48, 50,51, 64, 69]  coresponding to ALK068, 70 and 71, ALK084,
 %ALK085, 
 
@@ -306,7 +311,8 @@ h=scatter(NormBinStim(intersect(ToLargeR,find(BehData(:,9)==1))),NormBinReward(i
 h.CData=[0.3 0.3 1];
 hold on
 
-
+xlabel('Stim response')
+ylabel('Outcome response')
 h=scatter(NormBinStim(intersect(ToSmallR,find(BehData(:,9)==1))),NormBinReward(intersect(ToSmallR,find(BehData(:,9)==1))));
 h.CData=[0.3 1 0.3];
 
@@ -319,6 +325,8 @@ z(2).Color = [0 1 0];
 z(1).Color = [1 0 0];
 
 z(1).LineWidth=1.5;z(2).LineWidth=1.5;z(3).LineWidth=1.5;
+
+legend('Large reward', 'Small reward', 'No reward')
 
 for istim = abzStim
 

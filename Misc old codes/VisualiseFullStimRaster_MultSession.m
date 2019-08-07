@@ -10,6 +10,10 @@ close all
 % Morgane October 2018
 
 
+% September 2019 Morgane inspected this code, it is redundant to
+% VisualiseFullStimRaster_MultMice
+
+
 
 %VTA : [48, 50,51]  coresponding to ALK068, 70 and 71
 % DMS : [53, 55] coresponding to ALK074(Bi), ALK075(Bi)
