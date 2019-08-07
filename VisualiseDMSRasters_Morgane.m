@@ -11,7 +11,7 @@ clear all
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 66
+animal_ID = 57
 brain_region = 'NAc'
 exp_ID = '23'
 
@@ -106,16 +106,16 @@ for iSession = nSessions
             
         elseif strcmp(exp_ID, '23')
             
-            smallRewTrialsIpsi(:,2)     = [intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==1), find(BehDataIpsi(:,2)<0))); ...
+            largeRewTrialsIpsi(:,2)     = [intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==1), find(BehDataIpsi(:,2)<0))); ...
                 intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==2), find(BehDataIpsi(:,2)>0)))];
             
-            smallRewTrialsContra(:,2) = [intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==1), find(BehDataContra(:,2)<0))); ...
+            largeRewTrialsContra(:,2) = [intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==1), find(BehDataContra(:,2)<0))); ...
                 intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==2), find(BehDataContra(:,2)>0)))];
             
-            largeRewTrialsIpsi(:,2) = [intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==2), find(BehDataIpsi(:,2)<0))); ...
+            smallRewTrialsIpsi(:,2) = [intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==2), find(BehDataIpsi(:,2)<0))); ...
                 intersect(find(BehDataIpsi(:,9)==1), intersect(find(BehDataIpsi(:,8)==1), find(BehDataIpsi(:,2)>0)))];
             
-            largeRewTrialsContra(:,2) = [intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==2), find(BehDataContra(:,2)<0))); ...
+            smallRewTrialsContra(:,2) = [intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==2), find(BehDataContra(:,2)<0))); ...
                 intersect(find(BehDataContra(:,9)==1), intersect(find(BehDataContra(:,8)==1), find(BehDataContra(:,2)>0)))];
         end
         
@@ -265,6 +265,10 @@ elseif animal_ID == 64
 elseif animal_ID == 63
     if strcmp(expID, '23')
         [colorRange] = [-3 3]
+    end
+elseif animal_ID == 57
+    if strcmp(expID, '23')
+        [colorRange] = [-2 3]
     end
 else [colorRange] = [-3 6]
     
