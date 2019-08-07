@@ -1,18 +1,18 @@
 clear all
 close all
 
-Hem2show = 'both' % 'L' 'R' or 'both'
+Hem2show = 'L' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
 
 % list of animals
 
 % VTA,
-Animals = [48 50 51 64]
-load('BehPhotoM_Exp23_VTA')
+%Animals = [48 50 51 64]
+%load('BehPhotoM_Exp23_VTA')
 
 % NAC
-% Animals = [56 57 59 66]
+ Animals = [56 57 59 66]
 % 
-% load('BehPhotoM_Exp23_NAc')
+ load('BehPhotoM_Exp23_NAc')
 
 % DMS
 %Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
