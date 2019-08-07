@@ -1401,11 +1401,12 @@ end
     xlabel('Time (s)')
     ylabel('Norm response')
     
-     subplot(3,3,4)
+     subplot(3,3,4) %action aligned
     plot(smooth(mean(ActRasterLargeCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(ActRasterLargeCorrect(5:7,:)),70),'b')
     hold on
+             title('act->') 
         xlim([3000 4400])
     ylim([-0.5 1])
     set(gca, 'XTick', [3000, 3700, 4400]);
@@ -1413,7 +1414,7 @@ end
     xlabel('Time (s)')
     ylabel('Norm response')
     
-      subplot(3,3,5)
+      subplot(3,3,5) %action aligned 
     plot(smooth(mean(ActRasterSmallCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(ActRasterSmallCorrect(5:7,:)),70),'b')
@@ -1426,7 +1427,7 @@ end
     ylabel('Norm response')
     
     
-      subplot(3,3,6)
+      subplot(3,3,6) %action aligned 
     plot(smooth(mean(ActRasterLargeError(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(ActRasterLargeError(5:7,:)),70),'b')
@@ -1440,12 +1441,12 @@ end
     
     
     
-       subplot(3,3,7)
+       subplot(3,3,7) % large correct outcome
     plot(smooth(mean(RewardRasterLargeCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(RewardRasterLargeCorrect(5:7,:)),70),'b')
     hold on
-         title('Large Correct') %Stim-aligned
+         title('rwd->') 
     xlim([3500 4900])
     ylim([-0.5 1])
     set(gca, 'XTick', [3700, 4300, 4900]);
@@ -1453,12 +1454,11 @@ end
     xlabel('Time (s)')
     ylabel('Norm response')   
     
-      subplot(3,3,8)
+      subplot(3,3,8) %small correct outcome
     plot(smooth(mean(RewardRasterSmallCorrect(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(RewardRasterSmallCorrect(5:7,:)),70),'b')
     hold on
-         title('Small Correct') %Stim-aligned
     xlim([3500 4900])
     ylim([-0.5 1])
     set(gca, 'XTick', [3700, 4300, 4900]);
@@ -1467,12 +1467,11 @@ end
     ylabel('Norm response')   
     
     
-      subplot(3,3,9)
+      subplot(3,3,9) %large error outcome
     plot(smooth(mean(RewardRasterLargeError(1:3,:)),70),'k')
     hold on
     plot(smooth(mean(RewardRasterLargeError(5:7,:)),70),'b')
     hold on
-         title('Small Error') %Stim-aligned
     xlim([3500 4900])
     ylim([-0.5 1])
     set(gca, 'XTick', [3700, 4300, 4900]);
