@@ -28,7 +28,8 @@ close all
 
 % select animal
 
-animal_ID = 57
+animal_ID_list = [56 57 59 66]
+%animal_ID = 57
 BrainStrucutre = 'NAc'
 ExpID = '23'
 
@@ -48,14 +49,16 @@ color = [
     0  0.5 1      % medium blue
     0 0 1];       % blue
 
-colorGray = [ 0.8 0.8 0.8
-    0.6 0.6 0.6
-    0.4 0.4 0.4
+colorGray = [0.8 0.8 0.8
+    0.66 0.66 0.66
+    0.45 0.45 0.45
+    0.22 0.22 0.22
     0 0 0];
 
 colorRed = [ 1 0.8 0.8
-    1 0.6 0.6
-    1 0.4 0.4
+    1 0.66 0.66
+    1 0.45 0.45
+    1 0.22 0.22
     1 0 0];
 
 
@@ -66,109 +69,129 @@ StimData = [];
 ActionData = [];
 RewardData = [];
 
+BehDataL    = [];
 BeepDataL   = [];
 StimDataL   = [];
 ActionDataL = [];
 RewardDataL = [];
 
+BehDataR    = [];
 BeepDataR   = [];
 StimDataR   = [];
 ActionDataR = [];
 RewardDataR = [];
 
-
-sessionz = 1:length(BehPhotoM(animal_ID).Session);
-
-iter = 0;
-if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
+for animalC = 1:length(animal_ID_list)
     
-    for iSession = sessionz % left hem
+    animal_ID = animal_ID_list(animalC);
+    
+    sessionz = 1:length(BehPhotoM(animal_ID).Session);
+    
+    iter = 0;
+    if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
         
-        TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
-        BehData = [BehData; TempBehData];
+        for iSession = sessionz % left hem
+            
+            TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
+            BehDataL = [BehDataL; TempBehData];
+            
+            % left
+            TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepL;
+            
+            TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimL;
+            
+            TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionL;
+            
+            TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardL;
+            
+            BeepDataL = [BeepDataL;TempBeepData];
+            
+            StimDataL = [StimDataL;TempStimData];
+            
+            ActionDataL = [ActionDataL;TempActionData];
+            
+            RewardDataL = [RewardDataL;TempRewardData];
+            
+        end
         
-        % left
-        TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepL;
+        iter = iter + 1;
+    end
+    
+    
+    if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
+%         BehData = [];
         
-        TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimL;
+        for iSession = sessionz % left hem
+            
+            TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
+            BehDataR = [BehDataR; TempBehData];
+            
+            % right
+            TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
+            
+            TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
+            
+            TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionR;
+            
+            TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
+            
+            BeepDataR = [BeepDataR;TempBeepData];
+            
+            StimDataR = [StimDataR;TempStimData];
+            
+            ActionDataR = [ActionDataR;TempActionData];
+            
+            RewardDataR = [RewardDataR;TempRewardData];
+            
+            
+        end
         
-        TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionL;
-        
-        TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardL;
-        
-        BeepDataL = [BeepDataL;TempBeepData];
-        
-        StimDataL = [StimDataL;TempStimData];
-        
-        ActionDataL = [ActionDataL;TempActionData];
-        
-        RewardDataL = [RewardDataL;TempRewardData];
+        iter = iter + 1;
         
     end
     
-    iter = iter + 1;
 end
 
 
-if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
-    BehData = [];
+
+% left RT exclusions
+    RT = BehDataL(:,10) - BehDataL(:,13);
+    L_toRemove = find ( RT > RTLimit);
+    L_toRemove2= find(BehDataL(:,1) < 20);
+    L_toRemove = unique([L_toRemove; L_toRemove2]);
+%     BehDataL(L_toRemove,:) = [];
     
-    for iSession = sessionz % left hem
-        
-        TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
-        BehData = [BehData; TempBehData];
-        
-        % right
-        TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
-        
-        TempStimData= BehPhotoM(animal_ID).Session(iSession).NeuronStimR;
-        
-        TempActionData= BehPhotoM(animal_ID).Session(iSession).NeuronActionR;
-        
-        TempRewardData= BehPhotoM(animal_ID).Session(iSession).NeuronRewardR;
-        
-        BeepDataR = [BeepDataR;TempBeepData];
-        
-        StimDataR = [StimDataR;TempStimData];
-        
-        ActionDataR = [ActionDataR;TempActionData];
-        
-        RewardDataR = [RewardDataR;TempRewardData];
-        
-        
-    end
-    
-    iter = iter + 1;
-    
-end
-
-
-RT = BehData(:,10) - BehData(:,13);
-
-toRemove = find ( RT > RTLimit);
-
-toRemove2= find(BehData(:,1) < 20);
-toRemove = unique([toRemove; toRemove2]);
-
-BehData(toRemove,:) = [];
+ % right RT exclusions
+    RT = [];
+    RT = BehDataR(:,10) - BehDataR(:,13);
+    R_toRemove = find ( RT > RTLimit);
+    R_toRemove2= find(BehDataR(:,1) < 20);
+    R_toRemove = unique([R_toRemove; L_toRemove2]);
+%     BehDataR(R_toRemove,:) = [];
 
 for HemIter = 1:iter
     
     if iter == 2 && HemIter ==1
         
+        BehData  = BehDataL;
         BeepData = BeepDataL;
         StimData = StimDataL;
         ActionData = ActionDataL;
         RewardData = RewardDataL;
         
+        toRemove = L_toRemove; 
+        
     end
     
     if iter == 2 && HemIter ==2
         
+        BehData  = BehDataR;
         BeepData = BeepDataR;
         StimData = StimDataR;
         ActionData = ActionDataR;
         RewardData = RewardDataR;
+        
+        toRemove = R_toRemove;
         
     end
     
@@ -176,24 +199,30 @@ for HemIter = 1:iter
         
         if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
             
+            BehData  = BehDataL;
             BeepData = BeepDataL;
             StimData = StimDataL;
             ActionData = ActionDataL;
             RewardData = RewardDataL;
             
+            toRemove = L_toRemove;
+            
             
         elseif isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
             
+            BehData  = BehDataR;
             BeepData = BeepDataR;
             StimData = StimDataR;
             ActionData = ActionDataR;
             RewardData = RewardDataR;
             
+            toRemove = R_toRemove;
+            
         end
         
     end
     
-    
+    BehData(toRemove,:) = [];
     BeepData(toRemove,:) = [];
     StimData(toRemove,:) = [];
     ActionData(toRemove,:) = [];
