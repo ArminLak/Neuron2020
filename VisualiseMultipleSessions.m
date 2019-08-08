@@ -1180,9 +1180,9 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.ActionRasterLargeError = ActRasterLargeError;
         
         
-        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeCorrect = RewardRasterLargeCorrect;
-        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterSmallCorrect = RewardRasterSmallCorrect;
-        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeError = RewardRasterLargeError;
+%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeCorrect = RewardRasterLargeCorrect;
+%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterSmallCorrect = RewardRasterSmallCorrect;
+%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeError = RewardRasterLargeError;
         
         
     end
