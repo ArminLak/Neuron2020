@@ -11,11 +11,12 @@ clear all
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 57
-brain_region = 'NAc'
+animal_ID = 48
+brain_region = 'VTA'
 exp_ID = '23'
 
 concatenate = 1; %show all trials across all sessions for an animal
+IpsiContra = 1; %separate rasters based on ipsi / contra? 
 
 stim_2_plot = 0.25; %should be positive
 smooth_factor = 200;
@@ -250,7 +251,11 @@ end
 
 function [colorRange] = getColorRange(animal_ID, expID)
 
-if animal_ID == 72
+if animal_ID == 48
+    if strcmp(expID, '23')
+        [colorRange] = [-3 4]
+    end
+elseif animal_ID == 72
     if strcmp(expID, '23')
         [colorRange] = [-3 4]
     end
@@ -268,7 +273,7 @@ elseif animal_ID == 63
     end
 elseif animal_ID == 57
     if strcmp(expID, '23')
-        [colorRange] = [-2 3]
+        [colorRange] = [-2 2]
     end
 else [colorRange] = [-3 6]
     
