@@ -1,7 +1,7 @@
 clear all
 close all
 
-Hem2show = 'both' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
+Hem2show = 'R' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
 IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action) ONLY IF HEM = BOTH
 
 % list of animals
@@ -19,7 +19,6 @@ load('BehPhotoM_Exp23_NAc')
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
-
 % load('BehPhotoM_Exp23_DMS')
 
 
@@ -430,7 +429,7 @@ plot(StimAllowed,nanmean(RTBlock2),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o
 
 
 subplot(6,3,4); hold on % errorbars reflecting across sessions
-errorbar(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals),...
+errorbar(StimAllowed,GrandPopNormBinStimNoFold(1,:)./ length(Animals), ...
     nanstd(GrandPopNormBinStimNoFold1) ./ sqrt(12),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
 errorbar(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),...
     nanstd(GrandPopNormBinStimNoFold2) ./ sqrt(12),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
@@ -493,6 +492,15 @@ errorbar(StimAllowed,GrandPopNormBinRewardNoFoldCorrError(2,:)./ length(Animals)
 
 set(gca,'TickDir','out','Box','off');
 title('Outcome Align')
+xlabel('Contrast')
+
+subplot(6,3,9); hold on % errorbars reflecting across sessions
+errorbar(StimAllowed,mean(GrandPopNormBinStimNoFold)./ length(Animals), ...
+    nanstd([GrandPopNormBinStimNoFold1;GrandPopNormBinStimNoFold2]) ./ sqrt(12),'color', 'k','LineWidth',2,'Marker','o','MarkerSize',5)
+% errorbar(StimAllowed,GrandPopNormBinStimNoFold(2,:)./ length(Animals),...
+%     nanstd(GrandPopNormBinStimNoFold2) ./ sqrt(12),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+set(gca,'TickDir','out','Box','off');
+title('Stimulus Align')
 xlabel('Contrast')
 
 

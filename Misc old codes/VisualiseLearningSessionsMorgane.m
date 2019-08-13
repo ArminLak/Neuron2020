@@ -9,40 +9,48 @@
 clear all
 close all
 
-animal_name = 'ALK068'
+animal_name = 'MMM010'
+exp_ID = '7'
+
+% start and stop of time axis for plot (in second before and after the event)
+start = 0 % s this should be -1 or less
+stop = 2    % s
+
+astart = -1 % for action plots
+astop = 2
+
+SessionList = getSessionList_photoM(animal_name, exp_ID)
 
 
-
-
-if animal_name == 'MMM001'
-    SessionList = [1, 2, 3, 5, 7]; % to review: error with session 6
-%     exp_dates   = [{'2018-07-09', '2018-07-10', '2018-07-11', '2018-07-12', '2018-07-16'}];
-%     exp_series =[{'1', '1', '1', '1', '3'}];
-    ylimrwd = [-3 6];
-    ylimstim = [-3 2];
-elseif animal_name == 'ALK071'
-    SessionList = [1, 3, 4, 5];
-%     exp_dates   = [{'2018-02-23', '2018-02-27', '2018-02-28', '2018-03-01', '2018-03-02'}];
-%     exp_series =[{'1', '1', '1', '1', '3'}];
-    ylimrwd = [-1 15];
-    ylimstim = [-2 8];
-elseif animal_name == 'ALK070'
-    SessionList = [1, 2, 3, 4, 5];
-%     exp_dates   = [{'2018-01-24', '2018-01-25', '2018-01-29', '2018-01-30'}];
-%     exp_series =[{'1', '3', '2', '2'}];
-    ylimrwd = [-1 2];
-    ylimstim = [-1 2];
-elseif animal_name == 'MMM002'
-    SessionList = [1, 2, 3, 4, 5, 6, 7];
-%     exp_dates   = [{'2018-08-01', '2018-08-02', '2018-08-06', '2018-08-07', '2018-08-08', '2018-08-10'}];
-%     exp_series =[{'1', '1', '1', '1', '1', '2'}];
-    ylimrwd = [-4 7];
-    ylimstim = [-3 3];
-elseif animal_name == 'ALK068'
-    SessionList = [1, 2, 3, 5, 6];
-    ylimrwd = [-4 4];
-    ylimstim = [-1 3];
-end
+% if animal_name == 'MMM001'
+%     SessionList = [1, 2, 3, 5, 7]; % to review: error with session 6
+% %     exp_dates   = [{'2018-07-09', '2018-07-10', '2018-07-11', '2018-07-12', '2018-07-16'}];
+% %     exp_series =[{'1', '1', '1', '1', '3'}];
+%     ylimrwd = [-3 6];
+%     ylimstim = [-3 2];
+% elseif animal_name == 'ALK071'
+%     SessionList = [1, 3, 4, 5];
+% %     exp_dates   = [{'2018-02-23', '2018-02-27', '2018-02-28', '2018-03-01', '2018-03-02'}];
+% %     exp_series =[{'1', '1', '1', '1', '3'}];
+%     ylimrwd = [-1 15];
+%     ylimstim = [-2 8];
+% elseif animal_name == 'ALK070'
+%     SessionList = [1, 2, 3, 4, 5];
+% %     exp_dates   = [{'2018-01-24', '2018-01-25', '2018-01-29', '2018-01-30'}];
+% %     exp_series =[{'1', '3', '2', '2'}];
+%     ylimrwd = [-1 2];
+%     ylimstim = [-1 2];
+% elseif animal_name == 'MMM002'
+%     SessionList = [1, 2, 3, 4, 5, 6, 7];
+% %     exp_dates   = [{'2018-08-01', '2018-08-02', '2018-08-06', '2018-08-07', '2018-08-08', '2018-08-10'}];
+% %     exp_series =[{'1', '1', '1', '1', '1', '2'}];
+%     ylimrwd = [-4 7];
+%     ylimstim = [-3 3];
+% elseif animal_name == 'ALK068'
+%     SessionList = [1, 2, 3, 5, 6];
+%     ylimrwd = [-4 4];
+%     ylimstim = [-1 3];
+% end
 
 
 %--------------- useful information --------------------------------------
@@ -52,9 +60,7 @@ end
 % 13: stimulus 
 % 14: reward
 % ------------------------------------------------------------------------
-% start and stop of time axis for plot (in second before and after the event)
-start = 0 % s this should be -1 or less
-stop = 2    % s
+
 
 
 load('MiceExpInfoPhotoM')                                   % load beh data databse
@@ -117,12 +123,12 @@ for iSession = SessionList
     event_times = TrialTimingData(:,13); % stimulus onset
     [Raster_MatrixStim]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
 
-    subplot(length(SessionList), 2, plotnum ); hold on
+    subplot(length(SessionList), 3, plotnum ); hold on
     
     
     c=1;
     for istim = StimzAbs
-        h = plot(nanmean(Raster_MatrixStim(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray4(c,:),'LineWidth',2)
+        h = plot(nanmean(Raster_MatrixStim(abs(TrialTimingData(:,2))==istim,:)),'color',colorGray4(c,:),'LineWidth',2);
 
         if length(StimzAbs)==4
             set(h, 'color', colorGray4(c,:));
@@ -150,40 +156,64 @@ for iSession = SessionList
         title('Stimulus response')
     end
     
-    ylim(ylimstim)
+%    ylim(ylimstim)
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([''])
     ylabel('{\Delta} F / F')
-    if plotnum == length(SessionList)*2 - 1
+    if plotnum == length(SessionList)*3 - 2
         xlabel ('Time (s)')
         xticklabels([start:1:stop])
     end
 
     plotnum = plotnum + 1;
     
+    % ------------------- action plot --------------------------------
     
+    event_times = TrialTimingData(:, 13); %time of first action 
+    [Raster_MatrixAction]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,astart,astop,downsampleScale);
+    
+    subplot(length(SessionList), 3, plotnum ); hold on
+    
+    plot(nanmean(Raster_MatrixAction(TrialTimingData(:,9)==1,:)), 'green', 'LineWidth', 2)
+    plot(nanmean(Raster_MatrixAction(TrialTimingData(:,9)==0,:)), 'red', 'LineWidth', 2)
+    
+    if plotnum == 2
+        title('Action response')
+    end
+    
+%    ylim(ylimrwd)
+    xlim([0 (astop-astart)* sample_rate]/downsampleScale)
+    xticks([0:(sample_rate/downsampleScale):((astop-astart)* sample_rate/downsampleScale)])
+    xticklabels([''])
+
+    if plotnum == length(SessionList)*3-1
+        xlabel ('Time (s)')
+        xticklabels([astart:1:astop])
+    end
+    
+    plotnum = plotnum + 1;
     
     % ------------------- reward plot --------------------------------
     
     event_times = TrialTimingData(:,14); %reward onset
     [Raster_MatrixReward]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);
     
-    subplot(length(SessionList), 2, plotnum ); hold on
+    subplot(length(SessionList), 3, plotnum ); hold on
     
     plot(nanmean(Raster_MatrixReward(TrialTimingData(:,9)==1,:)), 'green', 'LineWidth', 2)
     plot(nanmean(Raster_MatrixReward(TrialTimingData(:,9)==0,:)), 'red', 'LineWidth', 2)
     
-    if plotnum == 2
+    if plotnum == 3
         title('Reward response')
     end
     
-    ylim(ylimrwd)
+%    ylim(ylimrwd)
     xlim([0 (stop-start)* sample_rate]/downsampleScale)
     xticks([0:(sample_rate/downsampleScale):((stop-start)* sample_rate/downsampleScale)])
     xticklabels([''])
 
-    if plotnum == length(SessionList)*2
+    if plotnum == length(SessionList)*3
         xlabel ('Time (s)')
         xticklabels([start:1:stop])
     end
