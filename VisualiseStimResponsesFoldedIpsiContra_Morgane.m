@@ -1,5 +1,11 @@
 
-% close all
+% August 2019 Morgane Moss
+% This code compares responses to ipsi- and contralateral stimuli, 
+% depending on stimulus contrast, choice accuracy, and value of pending 
+% reward. 
+
+
+close all
 clear all
 
 % VTA,
@@ -19,18 +25,8 @@ load('BehPhotoM_Exp23_DMS')
 
 %%
 
-IpsiContraColor = [ 0 0 0
-                    153/255 51/255 1
-                    ];
-                
-ErrorCorrectColor = [   'r'
-                        'g'
-                        ];
-                    
-SmallLargeColor = [ 0.15 0.75 0
-                    0.15 0.4 0
-                    ];
-
+[IpsiContraColor, ErrorCorrectColor, SmallLargeColor] = getColors();
+totalChannels = getTotalChanN(region);
 [yaxes] = getAxes(region);
 
 StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
@@ -38,13 +34,13 @@ StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
 GrandPopNormBinStimNoFold = zeros(2,7); %(
 GrandPopNormBinStimNoFoldCorrError = zeros(2,7);
 
-StimAbsResponsesIpsiContra = zeros(2,4, length(Animals)); % separated by ipsi/contra. Ipsi is row 1; dim2 = contrast 0-0.5
+StimAbsResponsesIpsiContra = zeros(2,4, totalChannels); % separated by ipsi/contra. Ipsi is row 1; dim2 = contrast 0-0.5
 
-StimResponsesErrorCorrectContra = zeros(2,4, length(Animals)); % separated by err/corr. Error is row 1.
-StimResponsesErrorCorrectIpsi = zeros(2,4, length(Animals));
+StimResponsesErrorCorrectContra = zeros(2,4, totalChannels); % separated by err/corr. Error is row 1.
+StimResponsesErrorCorrectIpsi = zeros(2,4, totalChannels);
 
-StimResponsesRewardSizeContra = zeros(2,4, length(Animals)); % separated by large/small reward. Small reward is row 1
-StimResponsesRewardSizeIpsi = zeros(2, 4, length(Animals));
+StimResponsesRewardSizeContra = zeros(2,4, totalChannels); % separated by large/small reward. Small reward is row 1
+StimResponsesRewardSizeIpsi = zeros(2, 4, totalChannels);
 c = 1;
 animal_count = 0;
 for iAnimal = Animals
@@ -99,67 +95,68 @@ for iAnimal = Animals
             SingleAnimalTunningRewardCorrError = SingleAnimalTunningRewardCorrError + abs(min(min(SingleAnimalTunningRewardCorrError)));
         end
         
-        c = c+1;
+        
         %average across blocks
         %     GrandPopNormBinStimNoFold = mean(GrandPopNormBinStimNoFold);
         
         if strcmpi(hem, 'l')
             
-            StimAbsResponsesIpsiContra(1,:, animal_count) = (StimAbsResponsesIpsiContra(1,:,animal_count) + ...
+            StimAbsResponsesIpsiContra(1,:, c) = (StimAbsResponsesIpsiContra(1,:,c) + ...
                 fliplr(mean(GrandPopNormBinStimNoFold(:,1:4))))/iChan; %ipsi = contrast -0.5 to 0
             
-            StimAbsResponsesIpsiContra(2,:,animal_count) = (StimAbsResponsesIpsiContra(2,:,animal_count) + ...
+            StimAbsResponsesIpsiContra(2,:,c) = (StimAbsResponsesIpsiContra(2,:,c) + ...
                 mean(GrandPopNormBinStimNoFold(:,4:7)))/iChan; %contra = contrast 0 to 0.5
             
-            StimResponsesErrorCorrectIpsi(:,:, animal_count) = (StimResponsesErrorCorrectContra(:, :, animal_count) + ...
+            StimResponsesErrorCorrectIpsi(:,:, c) = (StimResponsesErrorCorrectContra(:, :, c) + ...
                 fliplr(GrandPopNormBinStimNoFoldCorrError(:,1:4)))/iChan;
             
-            StimResponsesErrorCorrectContra(:,:, animal_count) = (StimResponsesErrorCorrectIpsi(:,:,animal_count) + ...
+            StimResponsesErrorCorrectContra(:,:, c) = (StimResponsesErrorCorrectIpsi(:,:,c) + ...
                 GrandPopNormBinStimNoFoldCorrError(:,4:7))/iChan;
             
-            StimResponsesRewardSizeIpsi(2,:, animal_count) = (StimResponsesRewardSizeIpsi(2,:, animal_count) +...
+            StimResponsesRewardSizeIpsi(2,:, c) = (StimResponsesRewardSizeIpsi(2,:, c) +...
                 fliplr(GrandPopNormBinStimNoFold(1,1:4)))/iChan; %large reward + ipsi (left)
             
-            StimResponsesRewardSizeContra(1,:, animal_count) = (StimResponsesRewardSizeIpsi(1,:,animal_count) + ...
+            StimResponsesRewardSizeContra(1,:, c) = (StimResponsesRewardSizeIpsi(1,:,c) + ...
                 GrandPopNormBinStimNoFold(1,4:7))/iChan; % small reward and contra
             
-            StimResponsesRewardSizeIpsi(1,:, animal_count) = (StimResponsesRewardSizeIpsi(1,:, animal_count) +...
+            StimResponsesRewardSizeIpsi(1,:, c) = (StimResponsesRewardSizeIpsi(1,:, c) +...
                 fliplr(GrandPopNormBinStimNoFold(2,1:4)))/iChan; %small reward + ipsi (left)
             
-            StimResponsesRewardSizeContra(2,:, animal_count) = (StimResponsesRewardSizeIpsi(2,:,animal_count) + ...
+            StimResponsesRewardSizeContra(2,:, c) = (StimResponsesRewardSizeIpsi(2,:,c) + ...
                 GrandPopNormBinStimNoFold(2,4:7))/iChan; % large reward + contra
             
             
         elseif strcmpi(hem, 'r')
             
-            StimAbsResponsesIpsiContra(1,:,animal_count) = (StimAbsResponsesIpsiContra(1,:,animal_count) + ...
-                mean(GrandPopNormBinStimNoFold(:,4:7)))/animal_count; % ipsi = 0 to 0.5
+            StimAbsResponsesIpsiContra(1,:,c) = (StimAbsResponsesIpsiContra(1,:,c) + ...
+                mean(GrandPopNormBinStimNoFold(:,4:7)))/iChan; % ipsi = 0 to 0.5
             
-            StimAbsResponsesIpsiContra(2,:,animal_count) = (StimAbsResponsesIpsiContra(2,:,animal_count) + ...
-                fliplr(mean(GrandPopNormBinStimNoFold(:,1:4))))/animal_count;  % contra = 0 to -0.5
+            StimAbsResponsesIpsiContra(2,:,c) = (StimAbsResponsesIpsiContra(2,:,c) + ...
+                fliplr(mean(GrandPopNormBinStimNoFold(:,1:4))))/iChan;  % contra = 0 to -0.5
             
-            StimResponsesErrorCorrectContra(:,:, animal_count) = (StimResponsesErrorCorrectContra(:, :, animal_count) + ...
+            StimResponsesErrorCorrectContra(:,:, c) = (StimResponsesErrorCorrectContra(:, :, c) + ...
                 fliplr(GrandPopNormBinStimNoFoldCorrError(:,1:4)))/iChan;
             
-            StimResponsesErrorCorrectIpsi(:,:, animal_count) = (StimResponsesErrorCorrectIpsi(:,:,animal_count) + ...
+            StimResponsesErrorCorrectIpsi(:,:, c) = (StimResponsesErrorCorrectIpsi(:,:,c) + ...
                 GrandPopNormBinStimNoFoldCorrError(:,4:7))/iChan;
             
             
             
-            StimResponsesRewardSizeIpsi(1,:, animal_count) = (StimResponsesRewardSizeIpsi(1,:, animal_count) +...
+            StimResponsesRewardSizeIpsi(1,:, c) = (StimResponsesRewardSizeIpsi(1,:, c) +...
                 GrandPopNormBinStimNoFold(1,4:7))/iChan; % small reward + ipsi (right)
             
-            StimResponsesRewardSizeContra(2,:, animal_count) = (StimResponsesRewardSizeContra(2,:,animal_count) + ...
+            StimResponsesRewardSizeContra(2,:, c) = (StimResponsesRewardSizeContra(2,:,c) + ...
                 fliplr(GrandPopNormBinStimNoFold(1, 1:4)))/iChan; % large reward and contra (left)
             
-            StimResponsesRewardSizeIpsi(2,:, animal_count) = (StimResponsesRewardSizeIpsi(2,:, animal_count) +...
+            StimResponsesRewardSizeIpsi(2,:, c) = (StimResponsesRewardSizeIpsi(2,:, c) +...
                 GrandPopNormBinStimNoFold(2,4:7))/iChan; % large reward + ipsi (right)
             
-            StimResponsesRewardSizeContra(1,:, animal_count) = (StimResponsesRewardSizeContra(1,:,animal_count) + ...
+            StimResponsesRewardSizeContra(1,:, c) = (StimResponsesRewardSizeContra(1,:,c) + ...
                 fliplr(GrandPopNormBinStimNoFold(2, 1:4)))/iChan; % small reward and contra (left)
             
         end
         
+        c = c+1;
     end
     
 end
@@ -180,7 +177,6 @@ for iHem = 1:2
     plot(StimAbsResponsesIpsiContra(iHem,:),'color', IpsiContraColor(iHem,:),'LineWidth',2,'Marker','o','MarkerSize',5)
     
 end
-% ylim(yaxes)
 title('All stim responses')
 legend('Ipsi', 'Contra')
 
@@ -190,9 +186,10 @@ for iErrCorr = 1:2
     hold on;
     plot(StimResponsesErrorCorrectIpsi(iErrCorr,:),'color', ErrorCorrectColor(iErrCorr), 'LineWidth', 2, 'Marker', 'o', 'MarkerSize', 5)
 end
-% ylim(yaxes)
+ylim(yaxes)
 title('Ipsi stim responses')
 xticklabels(num2str(unique(abs(StimAllowed))))
+
 subplot(3, 2, 4) % ERROR VS CORRECT, CONTRA ONLY
 
 for iErrCorr = 1:2
@@ -200,30 +197,59 @@ for iErrCorr = 1:2
     plot(StimResponsesErrorCorrectContra(iErrCorr,:),'color', ErrorCorrectColor(iErrCorr), 'LineWidth', 2, 'Marker', 'o', 'MarkerSize', 5)
 end    
 title('Contra stim responses')
-
+ylim(yaxes)
 subplot(3, 2, 5) % LARGE VS SMALL, IPSI ONLY
 
 for iSmallLarge = 1:2
     hold on;
     plot(StimResponsesRewardSizeIpsi(iSmallLarge,:),'color', SmallLargeColor(iSmallLarge,:), 'LineWidth', 2, 'Marker', 'o', 'MarkerSize', 5)
 end
+ylim(yaxes)
 
 subplot(3, 2, 6) % LARGE VS SMALL, CONTRA ONLY
 for iSmallLarge = 1:2
     hold on;
     plot(StimResponsesRewardSizeContra(iSmallLarge,:),'color', SmallLargeColor(iSmallLarge,:), 'LineWidth', 2, 'Marker', 'o', 'MarkerSize', 5)
 end
+ylim(yaxes)
 
 
+% ------- colors and functions
 function [yaxes] = getAxes(region)
 
     if strcmpi(region, 'DMS')
-        yaxes = [-0.5 4];
+        yaxes = [-1 4];
     elseif strcmpi(region, 'VTA')
-        yaxes = [-1 3];
+        yaxes = [-5 5];
+    elseif strcmpi(region, 'NAC')
+        yaxes = [0 4];
     end
 
 end
 
+function [IpsiContraColor, ErrorCorrectColor, SmallLargeColor] = getColors()
+IpsiContraColor = [ 0 0 0
+                    153/255 51/255 1
+                    ];
+                
+ErrorCorrectColor = [   'r'
+                        'g'
+                        ];
+                    
+SmallLargeColor = [ 0.15 0.75 0
+                    0.15 0.4 0
+                    ];
 
+end
+
+function totalChannels = getTotalChanN(region)
+
+if strcmpi(region, 'DMS')
+    totalChannels = 7;
+elseif strcmpi(region, 'NAC')
+    totalChannels = 5;
+elseif strcmpi(region, 'VTA')
+    totalChannels = 4;
+end
+end
 
