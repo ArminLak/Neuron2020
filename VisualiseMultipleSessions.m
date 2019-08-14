@@ -28,8 +28,8 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 57
-BrainStrucutre = 'NAc'
+animal_ID = 69
+BrainStrucutre = 'VTA'
 ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
@@ -1180,9 +1180,9 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.ActionRasterLargeError = ActRasterLargeError;
         
         
-        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeCorrect = RewardRasterLargeCorrect;
-        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterSmallCorrect = RewardRasterSmallCorrect;
-        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeError = RewardRasterLargeError;
+%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeCorrect = RewardRasterLargeCorrect;
+%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterSmallCorrect = RewardRasterSmallCorrect;
+%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeError = RewardRasterLargeError;
         
         
     end
