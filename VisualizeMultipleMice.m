@@ -1,7 +1,7 @@
 clear all
 close all
 
-Hem2show = 'R' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
+Hem2show = 'L' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
 IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action) ONLY IF HEM = BOTH
 
 % list of animals
@@ -11,15 +11,15 @@ IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action
 % load('BehPhotoM_Exp23_VTA')
 
 % NAC
-Animals = [56 57 59 66]
-load('BehPhotoM_Exp23_NAc')
+% Animals = [56 57 59 66]
+% load('BehPhotoM_Exp23_NAc')
 
 % DMS
-% Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
-% load('BehPhotoM_Exp23_DMS')
+load('BehPhotoM_Exp23_DMS')
 
 
 TimingVisualise = [-0.2 0.8
@@ -174,7 +174,7 @@ for iAnimal = Animals
                 if iChan == 1
                     GrandPopStimLargeError               = SingleAnimalNormStimTraceLargeError + GrandPopStimLargeError ;
                 elseif iChan == 2
-                    GrandPopStimLargeError               = SingleAnimalNormStimTraceLargeError + GrandPopStimLargeError ;
+                    GrandPopStimLargeError               = flipud(SingleAnimalNormStimTraceLargeError) + GrandPopStimLargeError ;
                 end
             end
             
@@ -185,7 +185,7 @@ for iAnimal = Animals
                 if iChan == 1
                     GrandPopStimSmallCorrect              = SingleAnimalNormStimTraceSmallCorrect + GrandPopStimSmallCorrect ;
                 elseif iChan == 2
-                    GrandPopStimSmallCorrect              = SingleAnimalNormStimTraceSmallCorrect + GrandPopStimSmallCorrect ;
+                    GrandPopStimSmallCorrect              = flipud(SingleAnimalNormStimTraceSmallCorrect) + GrandPopStimSmallCorrect ;
                 end
             end
                 
@@ -193,20 +193,35 @@ for iAnimal = Animals
             
             % Stim-align rastersCor Small full action
             SingleAnimalActionTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterSmallCorrect;
-            SingleAnimalNormActionTraceSmallCorrect = SingleAnimalActionTraceSmallCorrect ./ max(max(SingleAnimalActionTraceSmallCorrect));            
+            SingleAnimalNormActionTraceSmallCorrect = SingleAnimalActionTraceSmallCorrect ./ max(max(SingleAnimalActionTraceSmallCorrect));  
+            if strcmpi(Hem2show, 'both') && IpsiContra
+                if iChan == 1
             GrandPopActionSmallCorrect              = SingleAnimalNormActionTraceSmallCorrect + GrandPopActionSmallCorrect ;
-            
+                elseif iChan ==2
+            GrandPopActionSmallCorrect              = flipud(SingleAnimalNormActionTraceSmallCorrect) + GrandPopActionSmallCorrect ;
+                end
+            end
                         % Stim-align rastersCor Large full action
             SingleAnimalActionTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeCorrect;
-            SingleAnimalNormActionTraceLargeCorrect = SingleAnimalActionTraceLargeCorrect ./ max(max(SingleAnimalActionTraceLargeCorrect));                        
+            SingleAnimalNormActionTraceLargeCorrect = SingleAnimalActionTraceLargeCorrect ./ max(max(SingleAnimalActionTraceLargeCorrect));
+            if strcmpi(Hem2show, 'both') && IpsiContra
+                if iChan == 1
             GrandPopActionLargeCorrect              = SingleAnimalNormActionTraceLargeCorrect + GrandPopActionLargeCorrect ;
+                elseif iChan ==2
+            GrandPopActionLargeCorrect              = flipud(SingleAnimalNormActionTraceLargeCorrect) + GrandPopActionLargeCorrect ;
+                end
+            end
             
             % Stim-align rastersErr Large full action
             SingleAnimalActionTraceLargeError      = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeError;
-            SingleAnimalNormActionTraceLargeError  = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeCorrect));                        
+            SingleAnimalNormActionTraceLargeError  = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeCorrect));   
+            if strcmpi(Hem2show, 'both') && IpsiContra
+                if iChan == 1
             GrandPopActionLargeError               = SingleAnimalNormActionTraceLargeError + GrandPopActionLargeError ;
-            
-            
+                elseif iChan == 2
+            GrandPopActionLargeError               = flipud(SingleAnimalNormActionTraceLargeError) + GrandPopActionLargeError ;
+                end
+            end
             
             
             % Stim-align rastersCor
@@ -746,11 +761,11 @@ colorGray = [ 0 0 0
 for c = 1:7
         
     subplot(1,3,1); hold on
-    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2) 
     
 end
 
-legend('0.5 Contra', '0.25 Contra', '0.12 Contra', '0', '0.12 Ipsi', '0.25 Ipsi', '0.5 Ipsi')
+% legend('0.5 Ipsi', '0.25 Ipsi', '0.12 Ipsi', '0', '0.12 Contra', '0.25 Contra', '0.5 Contra')
 
 
 title('Stimulus Align')
