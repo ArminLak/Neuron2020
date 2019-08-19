@@ -5,13 +5,13 @@
 % reward. 
 
 
-close all
+%close all
 clear all
 
 % VTA,
-% region = 'VTA';
-% Animals = [48 50 51 64]
-% load('BehPhotoM_Exp23_VTA')
+ %region = 'VTA';
+ %Animals = [48 50 51 64]
+ %load('BehPhotoM_Exp23_VTA')
 
 % NAC
 % region = 'NAC';
