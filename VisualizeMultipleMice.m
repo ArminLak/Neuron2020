@@ -1,7 +1,7 @@
 clear all
 close all
 
-Hem2show = 'L' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
+Hem2show = 'R' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
 IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action) ONLY IF HEM = BOTH
 
 % list of animals

@@ -4,7 +4,7 @@
 % reward. 
 
 
-close all
+%close all
 clear all
 
 % VTA,
