@@ -427,7 +427,7 @@ RewardData = RewardData ./ StimTimeDenom;
     subplot(6,3,4); hold on
     
     plot(unique(BehData(:,2))',PopNormBinStimBlocksNoFold(1,:),'color',[0.5 0.2 0.1],'LineWidth',2,'Marker','o','MarkerSize',5)
-    plot(unique(BehData(:,2))',PopNormBinStimBlocksNoFold(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
+%     plot(unique(BehData(:,2))',PopNormBinStimBlocksNoFold(2,:),'color',[1 0.6 0.2],'LineWidth',2,'Marker','o','MarkerSize',5)
     title('Stimulus Align')
     xlabel('Contrast')
     ylabel('Norm response')

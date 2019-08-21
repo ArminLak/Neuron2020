@@ -8,9 +8,9 @@
 clear all
 
 % VTA,
-% region = 'VTA';
-% Animals = [48 50 51 64]
-% load('BehPhotoM_Exp23_VTA')
+region = 'VTA';
+Animals = [48 50 51 64]
+load('BehPhotoM_Exp23_VTA')
 
 % NAC
 % region = 'NAC';
@@ -18,9 +18,9 @@ clear all
 % load('BehPhotoM_Exp23_NAc')
 
 %DMS
-region = 'DMS';
-Animals = [53, 62, 63, 71,72]
-load('BehPhotoM_Exp23_DMS')
+% region = 'DMS';
+% Animals = [53, 62, 63, 71,72]
+% load('BehPhotoM_Exp23_DMS')
 
 %%
 
@@ -124,20 +124,20 @@ figure;
     
 subplot(3, 2, 1) % responses to absolute stim contrast, broken by ipsi and contra
 
-    errorbar(fliplr(mean(GrandPopNormBinStimNoFold(:,1:4))),nanstd([GrandPopNormBinStimNoFold1(:,1:4);GrandPopNormBinStimNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-        'color', IpsiContraColor(1,:),'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi
+    errorbar(fliplr(GrandPopNormBinStimNoFold(1,1:4)),nanstd([GrandPopNormBinStimNoFold1(:,1:4);GrandPopNormBinStimNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
+        'color', IpsiContraColor(1,:),'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi; large correct trials only. to average across all correct, average rows 1 and 2. 
     hold on;
-    errorbar(mean(GrandPopNormBinStimNoFold(:,4:7)), nanstd([GrandPopNormBinStimNoFold2(:,4:7);GrandPopNormBinStimNoFold1(:,4:7)])./sqrt(totalChannels), ...
+    errorbar(GrandPopNormBinStimNoFold(1,4:7), nanstd([GrandPopNormBinStimNoFold2(:,4:7);GrandPopNormBinStimNoFold1(:,4:7)])./sqrt(totalChannels), ...
         'color', IpsiContraColor(2,:),'LineWidth',2,'Marker','o','MarkerSize',5)
     title('All stim responses')
     legend('Ipsi', 'Contra')
 
 subplot(3, 2, 3) % ERROR VS CORRECT, IPSI ONLY (col 1:4)
      errorbar(fliplr(GrandPopNormBinStimErrCorrNoFold(1,1:4)), nanstd(GrandPopNormBinStimNoFoldCorrError1(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi small
+         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi error
      hold on;
      errorbar(fliplr(GrandPopNormBinStimErrCorrNoFold(2,1:4)), nanstd(GrandPopNormBinStimNoFoldCorrError2(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
+         'color', ErrorCorrectColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi correct large *(unsure) 
      title('Ipsi responses')
      xticks([])
      
