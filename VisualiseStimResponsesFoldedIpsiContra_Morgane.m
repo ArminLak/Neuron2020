@@ -8,26 +8,21 @@
 clear all
 
 % VTA,
+% 
+%  region = 'VTA';
+%  Animals = [48 50 51 64]
+%  load('BehPhotoM_Exp23_VTA')
 
- region = 'VTA';
- Animals = [48 50 51 64]
- load('BehPhotoM_Exp23_VTA')
-
-region = 'VTA';
-Animals = [48 50 51 64]
-load('BehPhotoM_Exp23_VTA')
 
 
 % NAC
-% region = 'NAC';
-% Animals = [56 57 59 66]
-% load('BehPhotoM_Exp23_NAc')
+ region = 'NAC';
+ Animals = [56 57 59 66]
+ load('BehPhotoM_Exp23_NAc')
 
 %DMS
 
-%region = 'DMS';
-%Animals = [53, 62, 63, 71,72]
-%load('BehPhotoM_Exp23_DMS')
+
 
 % region = 'DMS';
 % Animals = [53, 62, 63, 71,72]
@@ -92,6 +87,9 @@ for iAnimal = Animals
         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
         
+        SingleAnimalNormTunningStim = SingleAnimalNormTunningStim + abs(min(min(SingleAnimalNormTunningStim)));
+        SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError + abs(min(min(SingleAnimalNormTunningStimCorrError)));
+
         
         if strcmp(hem, 'l')
             GrandPopNormBinStimNoFold_L = GrandPopNormBinStimNoFold_L + SingleAnimalNormTunningStim; %+ GrandPopNormBinStimNoFold ;
