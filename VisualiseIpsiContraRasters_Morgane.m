@@ -246,7 +246,23 @@ for iSession = nSessions
     end
 end
 
+%% average signal through trial aligned  at stimulus onset 
+figure; 
 
+subplot(2,1,1)
+data = M{1};
+plot(mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)))));
+            xticks([1 abs(sStart*downSample) (sStop-sStart)*downSample-1])
+            xticklabels([sStart 0 sStop])
+
+subplot(2,3,4) % stimulus time distribution
+
+
+subplot(2, 3, 5) % action time distribution
+
+
+subplot (2, 3, 6) % reward time distribution 
+            
 %%
 
 function [colorRange] = getColorRange(animal_ID, expID)
