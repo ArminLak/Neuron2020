@@ -9,9 +9,16 @@ clear all
 
 % VTA,
 % 
+
+
  % region = 'VTA';
  % Animals = [48 50 51 64]
  % load('BehPhotoM_Exp23_VTA')
+
+ 
+%  region = 'VTA';
+%  Animals = [48 50 51 64]
+%  load('BehPhotoM_Exp23_VTA')
 
 % NAC
 %   region = 'NAC';
@@ -19,9 +26,15 @@ clear all
 %   load('BehPhotoM_Exp23_NAc')
 
 %DMS
+
   region = 'DMS';
   Animals = [53, 62, 63, 71,72]
   load('BehPhotoM_Exp23_DMS')
+
+  region = 'DMS';
+Animals = [53, 62, 63, 71,72]
+load('BehPhotoM_Exp23_DMS')
+
 
 %%
 

@@ -7,7 +7,7 @@ clear all
 % ----- enter reqs --------------------------------------------------------
 animal_ID = 70
 brain_region = 'DMS'
-exp_ID = '7'
+exp_ID = '23'
 
 
 stim_2_plot = 0.25; %should be positive
@@ -136,7 +136,6 @@ xticklabels([sStart 0 sStop])
 ylabel('Trials')
 xlabel('Time from stimulus (s)')
 line([abs(sStart*downSample) abs(sStart*downSample)], [0 size(masterData,1)], 'LineStyle', '--', 'Color', 'black', 'LineWidth', 1.5); % stim onset line
-
 
 
 
