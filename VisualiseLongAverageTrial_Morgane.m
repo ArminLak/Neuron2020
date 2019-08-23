@@ -5,22 +5,32 @@
 % can you see this? yes
 
 
-close all
+% close all
 clear all
 
 
 
 % ----- enter reqs --------------------------------------------------------
-animal_ID = 71
-brain_region = 'DMS'
+% Animals = [53, 62, 63, 71,72]
+% brain_region = 'DMS'
+
+% NAC
+% Animals = [56 57 59 66]
+% brain_region = 'NAc'
+
+Animals = [48 50 51 64]
+brain_region = 'VTA'
+
 exp_ID = '23'
+plotRasters = 0;
 
 concatenate = 1; %show all trials across all sessions for an animal
 IpsiContra = 1; %separate rasters based on ipsi / contra? 
 
 stim_2_plot = 0.25; %should be positive
 smooth_factor = 200;
-colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
+
+% colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
 
 RT_min = 0.2;
 RT_max = 2.9; % reaction time range to include
@@ -46,12 +56,15 @@ load(['BehPhotoM_Exp',exp_ID,'_',brain_region,'.mat'])
 
 fullStim = [-stim_2_plot stim_2_plot];
 
-for iAnimal = Animals
+animal_count = 0;
+
+for animal_ID = Animals
+    animal_count = animal_count +1;
 nSessions = 1:length(BehPhotoM(animal_ID).Session);
 
 for iSession = nSessions
     
-    if iSession ==1 ||concatenate == 0
+    if animal_count ==1 && iSession ==1
         leftStimTrials = [];
         rightStimTrials = [];
         
@@ -91,9 +104,8 @@ for iSession = nSessions
         BehDataContra       = [BehDataContra;     BehPhotoM(animal_ID).Session(iSession).TrialTimingData(leftStimTrials,:)];
     end
     
-    
-    if concatenate == 0 || iSession == max(nSessions) %sort once for each session if not concatenating or at the very end if concatenating
-        
+end
+end
         
         %ipsi and contra error / small rwd / large rwd indexing
         errorTrialsIpsi(:,2) = find(BehDataIpsi(:,9)==0);
@@ -201,7 +213,9 @@ for iSession = nSessions
         E = {errorTrialsContra, errorTrialsIpsi};
         R = [];
         R = {smallRewTrialsContra, smallRewTrialsIpsi};
-        
+   
+        if plotRasters 
+            
         figure;
         
         for iSubplot = 1:2
@@ -246,14 +260,14 @@ for iSession = nSessions
 %     end
     
     end
-end
+
 
 %% average signal through trial aligned  at stimulus onset 
 
         actionTimesContra = [];
-        actionTimesContra = abs(sStart) + (largeRewTrialsContra(:,1));
+        actionTimesContra = abs(sStart)*downSample + (largeRewTrialsContra(:,1))*downSample;
         outcomeTimesContra = [];
-        outcomeTimesContra = abs(sStart) + (largeRewTrialsContraOutcome(:,1));
+        outcomeTimesContra = abs(sStart)*downSample + (largeRewTrialsContraOutcome(:,1))*downSample;
         
         figure; 
 
@@ -265,10 +279,12 @@ plot(mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eve
 
 
 subplot(2, 2, 3) % action time distribution
-histfit(actionTimesContra);
+histfit(actionTimesContra, 20);
 
 subplot(2, 2, 4) % reward time distribution
-histfit(outcomeTimesContra);
+histfit(outcomeTimesContra, 20);
+
+ linkaxes(get(gcf,'children'),'x')
             
 %%
 
