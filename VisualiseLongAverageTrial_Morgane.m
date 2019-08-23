@@ -5,21 +5,21 @@
 % can you see this? yes
 
 
-% close all
+%close all
 clear all
 
 
 
 % ----- enter reqs --------------------------------------------------------
-% Animals = [53, 62, 63, 71,72]
-% brain_region = 'DMS'
+ Animals = [53, 62, 63, 71,72]
+ brain_region = 'DMS'
 
 % NAC
 % Animals = [56 57 59 66]
 % brain_region = 'NAc'
 
-Animals = [48 50 51 64]
-brain_region = 'VTA'
+%Animals = [48 50 51 64]
+%brain_region = 'VTA'
 
 exp_ID = '23'
 plotRasters = 0;
@@ -27,18 +27,18 @@ plotRasters = 0;
 concatenate = 1; %show all trials across all sessions for an animal
 IpsiContra = 1; %separate rasters based on ipsi / contra? 
 
-stim_2_plot = 0.25; %should be positive
+stim_2_plot = 0.5; %should be positive
 smooth_factor = 200;
 
 % colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
 
 RT_min = 0.2;
-RT_max = 2.9; % reaction time range to include
+RT_max = 2.5; % reaction time range to include
 
 % ------------------ start stop times for task events in second ------------------
 
-sStart = -0.3; %stimulus
-sStop = 3;
+sStart = -0.05; %stimulus
+sStop = 2.5;
 
 aStart = -0.6; %action
 aStop = 0.2;
@@ -85,7 +85,9 @@ for iSession = nSessions
         
     end
     
-    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,10) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
+    % this is interval between outcome and stimulus 
+    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,14) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
+    
     RTExcludeTrials = [(find(RTs < RT_min)) ; (find(RTs >RT_max))];
     leftStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot)),RTExcludeTrials);
     rightStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot), RTExcludeTrials);
@@ -279,10 +281,10 @@ plot(mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eve
 
 
 subplot(2, 2, 3) % action time distribution
-histfit(actionTimesContra, 20);
+histfit(actionTimesContra, 60);
 
 subplot(2, 2, 4) % reward time distribution
-histfit(outcomeTimesContra, 20);
+histfit(outcomeTimesContra, 60);
 
  linkaxes(get(gcf,'children'),'x')
             

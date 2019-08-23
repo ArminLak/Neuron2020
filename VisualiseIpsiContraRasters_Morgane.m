@@ -271,7 +271,7 @@ subplot(2, 2, 4) % reward time distribution
 histfit(outcomeTimesContra);
             
 %%
-
+end
 function [colorRange] = getColorRange(animal_ID, expID)
 
 if animal_ID == 48
@@ -301,5 +301,6 @@ elseif animal_ID == 57
 else [colorRange] = [-3 6]
     
 end
-
 end
+
+
