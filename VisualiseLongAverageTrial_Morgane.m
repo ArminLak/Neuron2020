@@ -5,21 +5,37 @@
 % can you see this? yes
 
 
-%close all
-clear all
+% close all
+% clear all
 
 
 
 % ----- enter reqs --------------------------------------------------------
- Animals = [53, 62, 63, 71,72]
- brain_region = 'DMS'
+%DMS 
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
+%      clearvars -except BehPhotoM
+%  else clear all
+%  end
+%  Animals = [53, 62, 63, 71,72]
+%  brain_region = 'DMS'
 
 % NAC
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
+%      clearvars -except BehPhotoM
+%   else clear all
+%  end
 % Animals = [56 57 59 66]
 % brain_region = 'NAc'
 
-%Animals = [48 50 51 64]
-%brain_region = 'VTA'
+% VTA: 
+ if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
+     clearvars -except BehPhotoM
+ else clear all
+ end
+Animals = [48 50 51 64]
+brain_region = 'VTA'
+% ------ -----------------------------------
+
 
 exp_ID = '23'
 plotRasters = 0;
@@ -28,17 +44,17 @@ concatenate = 1; %show all trials across all sessions for an animal
 IpsiContra = 1; %separate rasters based on ipsi / contra? 
 
 stim_2_plot = 0.5; %should be positive
-smooth_factor = 200;
+smooth_factor = 30;
 
 % colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
 
 RT_min = 0.2;
-RT_max = 2.5; % reaction time range to include
+RT_max = 3; % reaction time range to include
 
 % ------------------ start stop times for task events in second ------------------
 
-sStart = -0.05; %stimulus
-sStop = 2.5;
+sStart = -0.1; %stimulus
+sStop = 3;
 
 aStart = -0.6; %action
 aStop = 0.2;
@@ -273,18 +289,39 @@ end
         
         figure; 
 
-subplot(2,1,1)
-data = M{1};
-plot(mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)))));
-            xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
-            xticklabels([sStart 0 1 2 sStop])
+subplot(3,1,1)
+data = smooth2a(M{1},0,smooth_factor);
+yyaxis left
+tempdata = mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample))));
+tempdata = tempdata./max(tempdata);
+plot(tempdata, 'LineWidth', 1, 'Color', 'k');
+xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
+xticklabels([sStart 0 1 2 sStop])
+ylim([-0.2 1.1])
+hold on; 
+txt = '\nabla';
+text(nanmedian(actionTimesContra), tempdata(floor(nanmedian(actionTimesContra)))+0.2, txt)
 
+hold on; 
+txt2 = '\nabla';
+text(nanmedian(outcomeTimesContra), tempdata(floor(nanmedian(outcomeTimesContra)))+0.2, txt2)
 
-subplot(2, 2, 3) % action time distribution
-histfit(actionTimesContra, 60);
+% subplot(3, 1, 2) % action time distribution
+% title('Action times')
+hold on;
+yyaxis right
+histogram(actionTimesContra, 'BinWidth', 90, 'FaceColor', [0.07 0.62 1.00], 'EdgeColor', [0.07 0.62 1.00], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+%xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
+%xticklabels([sStart 0 1 2 sStop])
+ylim([0 400])
 
-subplot(2, 2, 4) % reward time distribution
-histfit(outcomeTimesContra, 60);
+% subplot(3, 1, 3) % reward time distribution
+% title('Reward times')
+hold on; 
+yyaxis right
+histogram(outcomeTimesContra, 'BinWidth', 90, 'FaceColor', [0.47 0.67 0.19], 'EdgeColor', [0.47 0.67 0.19], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+%xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
+%xticklabels([sStart 0 1 2 sStop])
 
  linkaxes(get(gcf,'children'),'x')
             
