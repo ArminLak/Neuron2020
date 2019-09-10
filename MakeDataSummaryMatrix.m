@@ -2,7 +2,7 @@
 % specify anial name, experiment ID, and list of sessions of interest
 
 % it calcuate trial-by-trial data from each session and stores them in a
-% large strucutre (i.e. BehPhotoM_Exp23.mat)
+% large strucutre (i.e. BehPhotoM_Exp23_DMS.mat)
 
 % be careful because it SAVES without you having to. 
 

@@ -4,6 +4,7 @@
 
 % can you see this? yes
 
+% for information about normalisation, check end of this code. 
 
 % close all
 % clear all
@@ -44,12 +45,15 @@ concatenate = 1; %show all trials across all sessions for an animal
 IpsiContra = 1; %separate rasters based on ipsi / contra? 
 
 stim_2_plot = 0.5; %should be positive
-smooth_factor = 30;
+smooth_factor = 100;
 
 % colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
 
 RT_min = 0.2;
 RT_max = 3; % reaction time range to include
+
+OT_min = 0;
+OT_max = 3; % outcome time range to include 
 
 % ------------------ start stop times for task events in second ------------------
 
@@ -102,9 +106,10 @@ for iSession = nSessions
     end
     
     % this is interval between outcome and stimulus 
-    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,14) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
+    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,10) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
+    OTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,14) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
     
-    RTExcludeTrials = [(find(RTs < RT_min)) ; (find(RTs >RT_max))];
+    RTExcludeTrials = [(find(RTs < RT_min)) ; (find(RTs >RT_max)) ; (find(OTs < OT_min)) ; (find(OTs > OT_max))];
     leftStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot)),RTExcludeTrials);
     rightStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot), RTExcludeTrials);
     
@@ -301,6 +306,8 @@ ylim([-0.2 1.1])
 hold on; 
 txt = '\nabla';
 text(nanmedian(actionTimesContra), tempdata(floor(nanmedian(actionTimesContra)))+0.2, txt)
+ax = gca; 
+ax.TickDir = 'out';
 
 hold on; 
 txt2 = '\nabla';
@@ -325,7 +332,7 @@ histogram(outcomeTimesContra, 'BinWidth', 90, 'FaceColor', [0.47 0.67 0.19], 'Ed
 
  linkaxes(get(gcf,'children'),'x')
             
-%%
+%% script-specficic functions
 
 function [colorRange] = getColorRange(animal_ID, expID)
 

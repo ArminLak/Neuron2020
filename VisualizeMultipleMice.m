@@ -23,6 +23,7 @@ IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action
 
 load('BehPhotoM_Exp23_DMS')
 
+smooth_factor = 100;
 
 TimingVisualise = [-0.2 0.8
                    -0.8, 0.2
@@ -763,7 +764,7 @@ colorGray = [ 0 0 0
 for c = 1:7
         
     subplot(1,3,1); hold on
-    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2) 
+    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2) 
     
 end
 
@@ -786,7 +787,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,2); hold on
-    plot(smooth((GrandPopStimSmallCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopStimSmallCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -808,7 +809,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,3); hold on
-    plot(smooth((GrandPopStimLargeError(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopStimLargeError(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -834,7 +835,7 @@ TimingVisualise(2,:) = [-0.8 0.5];
 for c = 1:7
         
     subplot(1,3,1); hold on
-    plot(smooth((GrandPopActionLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopActionLargeCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -855,7 +856,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,2); hold on
-    plot(smooth((GrandPopActionSmallCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopActionSmallCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -877,7 +878,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,3); hold on
-    plot(smooth((GrandPopActionLargeError(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopActionLargeError(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
