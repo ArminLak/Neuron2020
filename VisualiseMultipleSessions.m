@@ -25,11 +25,11 @@ close all
 
 % 23: double reward size 
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 69
-BrainStrucutre = 'VTA'
+animal_ID = 71
+BrainStrucutre = 'DMS'
 ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);

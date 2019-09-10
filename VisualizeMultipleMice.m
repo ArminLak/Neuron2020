@@ -1,5 +1,5 @@
-% clear all
-% close all
+ clear all
+ close all
 
 clearvars -except DMS_PerBlock1 DMS_PerBlock2 NAC_PerBlock1 NAC_PerBlock2
 
