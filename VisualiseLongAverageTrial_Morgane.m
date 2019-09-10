@@ -7,7 +7,7 @@
 % for information about normalisation, check end of this code. 
 
 % close all
-% clear all
+clear all
 
 
 
@@ -21,20 +21,20 @@
 %  brain_region = 'DMS'
 
 % NAC
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
-%      clearvars -except BehPhotoM
-%   else clear all
-%  end
-% Animals = [56 57 59 66]
-% brain_region = 'NAc'
+ if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
+     clearvars -except BehPhotoM
+  else clear all
+ end
+Animals = [56 57 59 66]
+brain_region = 'NAc'
 
 % VTA: 
- if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
-     clearvars -except BehPhotoM
- else clear all
- end
-Animals = [48 50 51 64]
-brain_region = 'VTA'
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
+%      clearvars -except BehPhotoM
+%  else clear all
+%  end
+% Animals = [48 50 51 64]
+% brain_region = 'VTA'
 % ------ -----------------------------------
 
 
@@ -47,12 +47,13 @@ IpsiContra = 1; %separate rasters based on ipsi / contra?
 stim_2_plot = 0.5; %should be positive
 smooth_factor = 100;
 
+[ActionColor, IpsiContraColor, ErrorCorrectColor, SmallLargeColor] = getColors();
 % colorRange= getColorRange(animal_ID, exp_ID); % color range for plotting imagesc data
 
 RT_min = 0.2;
 RT_max = 3; % reaction time range to include
 
-OT_min = 0;
+OT_min = 0.2;
 OT_max = 3; % outcome time range to include 
 
 % ------------------ start stop times for task events in second ------------------
@@ -317,7 +318,7 @@ text(nanmedian(outcomeTimesContra), tempdata(floor(nanmedian(outcomeTimesContra)
 % title('Action times')
 hold on;
 yyaxis right
-histogram(actionTimesContra, 'BinWidth', 90, 'FaceColor', [0.07 0.62 1.00], 'EdgeColor', [0.07 0.62 1.00], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram(actionTimesContra, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
 %xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
 %xticklabels([sStart 0 1 2 sStop])
 ylim([0 400])
@@ -326,11 +327,13 @@ ylim([0 400])
 % title('Reward times')
 hold on; 
 yyaxis right
-histogram(outcomeTimesContra, 'BinWidth', 90, 'FaceColor', [0.47 0.67 0.19], 'EdgeColor', [0.47 0.67 0.19], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram(outcomeTimesContra, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
 %xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
 %xticklabels([sStart 0 1 2 sStop])
 
  linkaxes(get(gcf,'children'),'x')
+ 
+ % alt action color = [0.07 0.62 1.00]
             
 %% script-specficic functions
 
@@ -363,5 +366,22 @@ elseif animal_ID == 57
 else [colorRange] = [-3 6]
     
 end
+
+end
+
+function [ActionColor, IpsiContraColor, ErrorCorrectColor, SmallLargeColor] = getColors()
+IpsiContraColor = [ 0 0 0
+                    153/255 51/255 1
+                    ];
+                
+ErrorCorrectColor = [   'r'
+                        'g'
+                        ];
+                    
+SmallLargeColor = [ 0.15 0.75 0
+                    0.15 0.4 0
+                    ];
+                
+ActionColor = [0.35 0.65 0.86];
 
 end
