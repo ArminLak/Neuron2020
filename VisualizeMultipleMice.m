@@ -17,11 +17,10 @@ IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action
 % load('BehPhotoM_Exp23_NAc')
 
 % DMS
-%  Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
+  Animals = [53, 62, 63, 71,72]  % 55 has 6 stimuli. so I will need to make some changes to be able to add this
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
-Animals = [71];
 load('BehPhotoM_Exp23_DMS')
 
 
@@ -31,10 +30,8 @@ TimingVisualise = [-0.2 0.8
                    -0.8, 0.2
                    -0.2, 0.8]; % stim, action, reward in s
 
-
 sampleRate = 1200;
 StartTime = 3700; % saved in the database.
-
 
 color = [
     1 0 0         % red
@@ -109,18 +106,33 @@ for iAnimal = Animals
     if ~isempty(BehPhotoM(iAnimal).GrandSummaryR)
         ChanN = ChanN + 1;
     end
-    
-    if ~strcmpi(Hem2show,'both')
-        
+%     
+%     if ~strcmpi(Hem2show,'both')
+%         
+%         ChanN = 1;
+%     end
+%     
+% 
+    if strcmpi(Hem2show, 'L')
+        ChanN = 1
+    elseif strcmpi(Hem2show,'R')
+        ChanN = 2;
+    elseif strcmp(Hem2show, 'both') && isempty(BehPhotoM(iAnimal).GrandSummaryR)
         ChanN = 1;
+    elseif strcmp(Hem2show, 'both') && isempty(BehPhotoM(iAnimal).GrandSummaryL)
+        ChanN = 2;  
+    else
+        ChanN = [1 2];
     end
     
-    for iChan = 1:ChanN
+   
+    for iChan = ChanN % 1:ChanN
         
         BehPhotoM(iAnimal).GrandSummary=[]; 
         
         if ~isempty(BehPhotoM(iAnimal).GrandSummaryL) && strcmpi(Hem2show,'L')
             BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryL;
+            hem = 'L';
         elseif  ~isempty(BehPhotoM(iAnimal).GrandSummaryR) && strcmpi(Hem2show,'R')
             BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
        
