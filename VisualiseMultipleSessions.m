@@ -28,8 +28,8 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 69
-BrainStrucutre = 'VTA'
+animal_ID = 71
+BrainStrucutre = 'DMS'
 ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
@@ -83,8 +83,10 @@ RewardDataR = [];
         
         for iSession = sessionz % left hem
             
+            if ~isfield(BehPhotoM(animal_ID).Session, 'NeuronRewardR')
             TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
             BehData = [BehData; TempBehData];
+            end
             
             % left
             TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepL;
@@ -116,7 +118,7 @@ RewardDataR = [];
             
             TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
             BehData = [BehData; TempBehData];
-            
+
             % right
             TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
             
@@ -141,13 +143,14 @@ RewardDataR = [];
         
     end
    
-
+    
+    
     RT = BehData(:,10) - BehData(:,13);
-    toRemove = find ( RT > RTLimit);
+    toRemove1 = find ( RT > RTLimit);
     toRemove2= find(BehData(:,1) < 20);
-    toRemove = unique([toRemove; toRemove2]);
+    toRemove = unique([toRemove1; toRemove2]);
 
-
+    
 for HemIter = 1:iter
     
     if iter == 2 && HemIter ==1
@@ -156,6 +159,8 @@ for HemIter = 1:iter
         StimData = StimDataL;
         ActionData = ActionDataL;
         RewardData = RewardDataL;
+        
+            BehData(toRemove,:) = [];
         
     end
     
@@ -169,6 +174,8 @@ for HemIter = 1:iter
     end
     
     if iter == 1
+        
+            BehData(toRemove,:) = [];
         
         if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
             
@@ -188,7 +195,7 @@ for HemIter = 1:iter
         
     end
     
-    BehData(toRemove,:) = [];
+%     BehData(toRemove,:) = [];
     BeepData(toRemove,:) = [];
     StimData(toRemove,:) = [];
     ActionData(toRemove,:) = [];
@@ -395,7 +402,26 @@ RewardData = RewardData ./ StimTimeDenom;
     elseif animal_ID == 70
         
         NormBinStim = mean(StimData(:,4000:5000),2);
+    
+    elseif animal_ID == 53
         
+        NormBinStim = mean(StimData(:,4000:4500),2) - mean(StimData(:,3400:3800),2);
+        
+    elseif animal_ID == 62
+        
+        NormBinStim = mean(StimData(:, 4300:5000),2) - mean(StimData(:,3400:3700),2);
+        
+    elseif animal_ID == 63
+        
+        NormBinStim = mean(StimData(:, 4200:4800),2) - mean(StimData(:,3400:3700),2);
+        
+    elseif animal_ID == 71
+        
+        NormBinStim = mean(StimData(:, 4200:4500),2) - mean(StimData(:,3600:3700),2);
+        
+    elseif animal_ID == 72
+        
+        NormBinStim = mean(StimData(:,4100:4500),2) - mean(StimData(:,3650:3750),2);
        
     else
         

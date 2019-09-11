@@ -80,23 +80,14 @@ for iAnimal = Animals
         
         
         % ---- subtract then divide ------
-        SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
+         SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
         SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
         SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
-        
-        SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
+
+         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
         SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError ./ max(max(SingleAnimalNormTunningStimCorrError));
         
-   %     ---- divide then subsract ------
-%         SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
-%         SingleAnimalNormTunningStim = SingleAnimalTunningStim ./ max(max(SingleAnimalTunningStim));
-%         SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
-%         
-%         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
-%         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
-%         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
-%                
         
          
         if strcmp(hem, 'l')
