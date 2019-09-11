@@ -34,7 +34,8 @@ c = 1;
 for animal_name = animal_names(c);
     
     [animal_ID, chan_order] = Salvatore_Get_chan_order(animal_name);
-    path2data = ['D:\Raw data for striatal DA paper\',convertStringsToChars(animal_name)];
+%     path2data = ['D:\Raw data for striatal DA paper\',convertStringsToChars(animal_name)]; % morgane's oxford computer
+    path2data = ['D\\zubjects.cortexlab.net\Subjects\',convertStringsToChars(animal_name)]; % morgane's london computer 
     addpath(genpath(path2data))
     [SessionList] = getSessionList_photoM(animal_name, exp_ID);
         
