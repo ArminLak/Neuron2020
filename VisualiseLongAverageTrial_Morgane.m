@@ -6,20 +6,30 @@
 
 
 % close all
-clear all
+
 
 
 
 % ----- enter reqs --------------------------------------------------------
 % Animals = [53, 62, 63, 71,72]
+% if strcmp(brain_region, 'DMS') 
+%    clearvars -except BehPhotoM 
+% end
 % brain_region = 'DMS'
 
 % NAC
 % Animals = [56 57 59 66]
+% if strcmp(brain_region, 'NAc') 
+%    clearvars -except BehPhotoM 
+% end
 % brain_region = 'NAc'
 
 Animals = [48 50 51 64]
+if strcmp(brain_region, 'VTA') 
+   clearvars -except BehPhotoM 
+end
 brain_region = 'VTA'
+
 
 exp_ID = '23'
 plotRasters = 0;
@@ -85,7 +95,7 @@ for iSession = nSessions
         
     end
     
-    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,10) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
+    RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,14) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
     RTExcludeTrials = [(find(RTs < RT_min)) ; (find(RTs >RT_max))];
     leftStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot)),RTExcludeTrials);
     rightStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot), RTExcludeTrials);
@@ -279,10 +289,10 @@ plot(mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eve
 
 
 subplot(2, 2, 3) % action time distribution
-histfit(actionTimesContra, 20);
+hist(actionTimesContra, 20);
 
 subplot(2, 2, 4) % reward time distribution
-histfit(outcomeTimesContra, 20);
+hist(outcomeTimesContra, 20);
 
  linkaxes(get(gcf,'children'),'x')
             
