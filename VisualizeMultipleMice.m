@@ -1,5 +1,7 @@
-clear all
+% clear all
 % close all
+
+clearvars -except DMS_PerBlock1 DMS_PerBlock2 NAC_PerBlock1 NAC_PerBlock2
 
 Hem2show = 'both' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
 IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action) ONLY IF HEM = BOTH
@@ -19,10 +21,10 @@ IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action
 %          53, 55,62, 63,64, 68, 70, 71, 72 
 % 68 and 70 signals are not good, 64 the signal is ok but looks very
 % strange
-
-
 load('BehPhotoM_Exp23_DMS')
 
+
+smooth_factor = 100;
 
 TimingVisualise = [-0.2 0.8
                    -0.8, 0.2
@@ -750,7 +752,7 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 %%
-figure
+figure % figure 2
 
 colorGray = [ 0 0 0
               0.2 0.2 0.2
@@ -762,8 +764,8 @@ colorGray = [ 0 0 0
                ];
 for c = 1:7
         
-    subplot(1,3,1); hold on
-    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2) 
+    subplot(1,3,1); hold on 
+    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2) 
     
 end
 
@@ -786,7 +788,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,2); hold on
-    plot(smooth((GrandPopStimSmallCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopStimSmallCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -808,7 +810,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,3); hold on
-    plot(smooth((GrandPopStimLargeError(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopStimLargeError(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -827,14 +829,14 @@ xlabel('Time (s)')
 ylabel('Norm response')
 
 
-figure
+figure %figure 3
 
 TimingVisualise(2,:) = [-0.8 0.5]; 
 
 for c = 1:7
         
     subplot(1,3,1); hold on
-    plot(smooth((GrandPopActionLargeCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopActionLargeCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -855,7 +857,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,2); hold on
-    plot(smooth((GrandPopActionSmallCorrect(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopActionSmallCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -877,7 +879,7 @@ ylabel('Norm response')
 for c = 1:7
         
     subplot(1,3,3); hold on
-    plot(smooth((GrandPopActionLargeError(c,:) ./ length(Animals)),100),'color',colorGray(c,:),'LineWidth',2)
+    plot(smooth((GrandPopActionLargeError(c,:) ./ length(Animals)),200),'color',colorGray(c,:),'LineWidth',2)
     
 end
 
@@ -894,4 +896,31 @@ set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 
 xlabel('Time (s)')
 ylabel('Norm response')
+
+%% 
+
+
+figure; % stimulus-action associations. row 1 = stim , row 2 = action 
+% only using max stim level 
+
+
+
+for c = [1 7]
+        
+    subplot(2,4,1) % stim = contralateral, action = contraversive (correct)
+    hold on;
+    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2) 
+    
+end
+
+subplot(2,4,2) % stim = contralateral, action = ipsiversive (error)
+
+
+
+subplot(2,4,3) % stim = ipsilateral, action = contraversive (error)
+
+
+
+subplot(2,4,4) % stim = ipstilateral, action = ipsiversive (correct)
+
 

@@ -7,21 +7,22 @@
 % close all
 clear all
 
+LargeSmallErrorOnSinglePlot = 1; %show large correct, small correct, and error  on same axes 
 % VTA,
-% 
 %  region = 'VTA';
 %  Animals = [48 50 51 64]
 %  load('BehPhotoM_Exp23_VTA')
 
 % NAC
-%  region = 'NAC';
-%  Animals = [56 57 59 66]
-%  load('BehPhotoM_Exp23_NAc')
+%   region = 'NAC';
+%   Animals = [56 57 59 66]
+%   load('BehPhotoM_Exp23_NAc')
 
 %DMS
-region = 'DMS';
+  region = 'DMS';
 Animals = [53, 62, 63, 71,72]
 load('BehPhotoM_Exp23_DMS')
+
 
 %%
 
@@ -79,23 +80,23 @@ for iAnimal = Animals
         
         
         % ---- subtract then divide ------
-%         SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
-%         SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
-%         SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
-%         
-%         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
-%         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
-%         SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError ./ max(max(SingleAnimalNormTunningStimCorrError));
-        
-        % ---- divide then subsract ------
         SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
-        SingleAnimalNormTunningStim = SingleAnimalTunningStim ./ max(max(SingleAnimalTunningStim));
         SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
+        SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
         
         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
-        SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
-               
+        SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError ./ max(max(SingleAnimalNormTunningStimCorrError));
+        
+   %     ---- divide then subsract ------
+%         SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
+%         SingleAnimalNormTunningStim = SingleAnimalTunningStim ./ max(max(SingleAnimalTunningStim));
+%         SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
+%         
+%         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
+%         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ max(max(SingleAnimalTunningStimCorrError));
+%         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
+%                
         
          
         if strcmp(hem, 'l')
@@ -152,6 +153,11 @@ subplot(3, 2, 3) % ERROR VS CORRECT, IPSI ONLY (col 1:4)
      errorbar(fliplr(GrandPopNormBinStimErrCorrNoFold(1,1:4)), nanstd(GrandPopNormBinStimNoFoldCorrError1(:,1:4)) ./ sqrt(totalChannels), ...
          'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi error
      hold on;
+     if LargeSmallErrorOnSinglePlot
+         errorbar(fliplr(GrandPopNormBinStimNoFold(2,1:4)), nanstd(GrandPopNormBinStimNoFold2(:,1:4)) ./ sqrt(totalChannels), ...
+         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi small
+         hold on;
+     end
      errorbar(fliplr(GrandPopNormBinStimNoFold(1,1:4)),nanstd([GrandPopNormBinStimNoFold1(:,1:4);GrandPopNormBinStimNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
          'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
      title('Ipsi responses')
@@ -159,8 +165,13 @@ subplot(3, 2, 3) % ERROR VS CORRECT, IPSI ONLY (col 1:4)
      
 subplot(3, 2, 4) % ERROR VS CORRECT, CONTRA ONLY (col 4:7)
      errorbar(GrandPopNormBinStimErrCorrNoFold(1,4:7), nanstd(GrandPopNormBinStimNoFoldCorrError1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra small
+         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra error
      hold on;
+     if LargeSmallErrorOnSinglePlot
+     errorbar(GrandPopNormBinStimNoFold(1,4:7), nanstd(GrandPopNormBinStimNoFold1(:,4:7)) ./ sqrt(totalChannels), ...
+         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra small
+         hold on;
+     end
      errorbar(GrandPopNormBinStimNoFold(2,4:7), nanstd([GrandPopNormBinStimNoFold2(:,4:7);GrandPopNormBinStimNoFold1(:,4:7)])./sqrt(totalChannels), ...
          'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra large
      title('Contra responses')
