@@ -7,11 +7,12 @@
 % for information about normalisation, check end of this code. 
 
 % close all
-clear all
+
 
 
 
 % ----- enter reqs --------------------------------------------------------
+
 %DMS 
 %  if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
 %      clearvars -except BehPhotoM
@@ -36,6 +37,7 @@ clear all
 Animals = [48 50 51 64]
 brain_region = 'VTA'
 % ------ -----------------------------------
+
 
 
 exp_ID = '23'
@@ -106,11 +108,13 @@ for iSession = nSessions
         
     end
     
+
     % this is interval between outcome and stimulus 
     RTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,10) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
     OTs = BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,14) - BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,13);
     
     RTExcludeTrials = [(find(RTs < RT_min)) ; (find(RTs >RT_max)) ; (find(OTs < OT_min)) ; (find(OTs > OT_max))];
+
     leftStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)== -(stim_2_plot)),RTExcludeTrials);
     rightStimTrials = setdiff(find(BehPhotoM(animal_ID).Session(iSession).TrialTimingData(:,2)==stim_2_plot), RTExcludeTrials);
     
@@ -341,6 +345,7 @@ yyaxis right
 histogram(outcomeTimesContra, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
 %xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
 %xticklabels([sStart 0 1 2 sStop])
+
 
  linkaxes(get(gcf,'children'),'x')
  
