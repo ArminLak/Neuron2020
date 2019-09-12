@@ -1,5 +1,5 @@
  clear all
- close all
+%  close all
 
 clearvars -except DMS_PerBlock1 DMS_PerBlock2 NAC_PerBlock1 NAC_PerBlock2
 
@@ -186,7 +186,7 @@ for iAnimal = Animals
             
             % Stim-align rastersErr Large full stim
             SingleAnimalStimTraceLargeError      = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeError;
-            SingleAnimalNormStimTraceLargeError  = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeCorrect)); 
+            SingleAnimalNormStimTraceLargeError  = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeError)); 
             if strcmpi(Hem2show,'both') && IpsiContra
                 if iChan == 1
                     GrandPopStimLargeError               = SingleAnimalNormStimTraceLargeError + GrandPopStimLargeError ;
@@ -197,7 +197,7 @@ for iAnimal = Animals
             
             % Stim-align rastersCor Small full stim
             SingleAnimalStimTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.StimRasterSmallCorrect;
-            SingleAnimalNormStimTraceSmallCorrect = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));
+            SingleAnimalNormStimTraceSmallCorrect = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceSmallCorrect));
             if strcmpi(Hem2show,'both') && IpsiContra
                 if iChan == 1
                     GrandPopStimSmallCorrect              = SingleAnimalNormStimTraceSmallCorrect + GrandPopStimSmallCorrect ;
@@ -208,7 +208,7 @@ for iAnimal = Animals
                 
            
             
-            % Stim-align rastersCor Small full action
+            % Action-align rastersCor Small full action
             SingleAnimalActionTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterSmallCorrect;
             SingleAnimalNormActionTraceSmallCorrect = SingleAnimalActionTraceSmallCorrect ./ max(max(SingleAnimalActionTraceSmallCorrect));  
             if strcmpi(Hem2show, 'both') && IpsiContra
@@ -218,7 +218,7 @@ for iAnimal = Animals
             GrandPopActionSmallCorrect              = flipud(SingleAnimalNormActionTraceSmallCorrect) + GrandPopActionSmallCorrect ;
                 end
             end
-                        % Stim-align rastersCor Large full action
+                        % Action-align rastersCor Large full action
             SingleAnimalActionTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeCorrect;
             SingleAnimalNormActionTraceLargeCorrect = SingleAnimalActionTraceLargeCorrect ./ max(max(SingleAnimalActionTraceLargeCorrect));
             if strcmpi(Hem2show, 'both') && IpsiContra
@@ -229,9 +229,9 @@ for iAnimal = Animals
                 end
             end
             
-            % Stim-align rastersErr Large full action
+            % Action-align rastersErr Large full action
             SingleAnimalActionTraceLargeError      = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeError;
-            SingleAnimalNormActionTraceLargeError  = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeCorrect));   
+            SingleAnimalNormActionTraceLargeError  = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeError));   
             if strcmpi(Hem2show, 'both') && IpsiContra
                 if iChan == 1
             GrandPopActionLargeError               = SingleAnimalNormActionTraceLargeError + GrandPopActionLargeError ;
@@ -909,31 +909,5 @@ set(gca, 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off');
 
 xlabel('Time (s)')
 ylabel('Norm response')
-
-%% 
-
-
-figure; % stimulus-action associations. row 1 = stim , row 2 = action 
-% only using max stim level 
-
-
-
-for c = [1 7]
-        
-    subplot(2,4,1) % stim = contralateral, action = contraversive (correct)
-    hold on;
-    plot(smooth((GrandPopStimLargeCorrect(c,:) ./ length(Animals)),smooth_factor),'color',colorGray(c,:),'LineWidth',2) 
-    
-end
-
-subplot(2,4,2) % stim = contralateral, action = ipsiversive (error)
-
-
-
-subplot(2,4,3) % stim = ipsilateral, action = contraversive (error)
-
-
-
-subplot(2,4,4) % stim = ipstilateral, action = ipsiversive (correct)
 
 
