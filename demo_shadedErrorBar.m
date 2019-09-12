@@ -49,7 +49,7 @@ yP = sin( linspace(-2*pi,2*pi,length(x)) )*20;
 y = bsxfun(@plus,y,yP)+60;
 
 %Make red line non-transparent
-% shadedErrorBar(x, y, {@mean,@std}, 'lineprops', '-r','transparent',false,'patchSaturation',0.075)
+shadedErrorBar(x, y, {@mean,@std}, 'lineprops', '-r','transparent',false,'patchSaturation',0.075)
 hold off
 
 grid on

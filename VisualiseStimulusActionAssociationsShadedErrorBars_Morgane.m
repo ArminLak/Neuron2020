@@ -96,7 +96,7 @@ end
 % --- divide by total number of channels ----------------------------------
 
 
-AvgGrandPopStimLargeCorrect = sum(GrandPopStimLargeCorrect,3) ./ totalChannels;
+AvgGrandPopStimLargeCorrect    = sum(GrandPopStimLargeCorrect,3) ./ totalChannels;
 AvgGrandPopStimLargeError      = sum(GrandPopStimLargeError,3) ./ totalChannels;
 AvgGrandPopActionLargeCorrect  = sum(GrandPopActionLargeCorrect,3) ./ totalChannels;
 AvgGrandPopActionLargeError    = sum(GrandPopActionLargeError,3) ./ totalChannels;
@@ -109,7 +109,7 @@ figure;
 stimplots(1) = subplot(2, 2, 1); % correct
 for c = Stimz2plot
     hold on; 
-    plot(smooth(GrandPopStimLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
+    plot(smooth(AvgGrandPopStimLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
 title('Large reward trials')
 ylabel('Stimulus response')
@@ -118,7 +118,7 @@ ylabel('Stimulus response')
 stimplots(2) = subplot(2, 2, 2); % error 
 for c = Stimz2plot
     hold on; 
-    plot(smooth(GrandPopStimLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
+    plot(smooth(AvgGrandPopStimLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
 title('Error trials')
 
@@ -126,7 +126,7 @@ title('Error trials')
 actionplots(1) = subplot(2, 2, 3); % correct
 for c = Stimz2plot
     hold on;
-    plot(smooth(GrandPopActionLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
+    plot(smooth(AvgGrandPopActionLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end    
 ylabel('Action response')
 
@@ -134,32 +134,36 @@ ylabel('Action response')
 actionplots(2) = subplot(2, 2, 4); % correct
 for c = Stimz2plot
     hold on;
-    plot(smooth(GrandPopActionLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
+    plot(smooth(AvgGrandPopActionLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
 
-figure; % figure 2: average across all ipsi / contra 
+
+    
+figure; %figure 2: avg across all ipsi/contra 
 plotindex = [1:3; 5:7];
 % ROW 1: STIM RESPONSES 
 stimplots(3) = subplot(2, 2, 1); % correct
 for c = 1:2
     hold on; 
-    plot(smooth(mean(GrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), 'color', IpsiContraColor2(c,:), 'LineWidth', 2)
+    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
 end
 title('Large reward trials')
 ylabel('Stimulus response')
 
-stimplots(4) = subplot(2, 2, 2); % error 
+stimplots(4) = subplot(2, 2, 2); % error
 for c = 1:2
     hold on; 
-    plot(smooth(mean(GrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), 'color', IpsiContraColor2(c,:), 'LineWidth', 2)
+    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
 end
 title('Error trials')
-
 
 actionplots(3) = subplot(2, 2, 3); % correct
 for c = 1:2
     hold on;
-    plot(smooth(mean(GrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), 'color', IpsiContraColor2(c,:), 'LineWidth', 2)
+    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
 end    
 ylabel('Action response')
 
@@ -167,21 +171,15 @@ ylabel('Action response')
 actionplots(4) = subplot(2, 2, 4); % correct
 for c = 1:2
     hold on;
-    plot(smooth(mean(GrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), 'color', IpsiContraColor2(c,:), 'LineWidth', 2)
+    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
 end
-
-
 
     set(stimplots, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)], ...
         'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')
     set(actionplots, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
         'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
         'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
-%%
-figure; %figure 3: testing shaded error bars 
-
-shadedErrorBar(1:size(GrandPopStimLargeCorrect,2), AvgGrandPopStimLargeCorrect(7,:), std(squeeze(GrandPopStimLargeCorrect(1,:,:))')/sqrt(chan_count), ...
-    'lineprops', '-b', 'patchSaturation', 0.33)
 
 % --- script-specific functions -------------------------------------------
 
