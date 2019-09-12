@@ -7,9 +7,12 @@
 clear all
 
 %DMS
-region = 'DMS';
-Animals = [53, 62, 63, 71,72]
-load('BehPhotoM_Exp23_DMS')
+% Animals = [53, 62, 63, 71,72];
+% load('BehPhotoM_Exp23_DMS')
+
+%VTA
+Animals = [48 50 51 64]
+load('BehPhotoM_Exp23_VTA')
 
 AvgAcrossIpsiVsContra = 1; % make one line for ipsi and one line for contra, including all contrast levels? (ignores Stimz2plot)
 
@@ -29,7 +32,6 @@ StartTime = 3700; % saved in the database.
 
 % --- get and organise data -----------------------------------------------
 [IpsiContraColor, IpsiContraColor2, ErrorCorrectColor, SmallLargeColor] = getColors();
-totalChannels = getTotalChanN(region);
 
 GrandPopStimLargeError     = zeros(7,13100);
 GrandPopStimLargeCorrect   = zeros(7,13100);
@@ -96,10 +98,10 @@ end
 % --- divide by total number of channels ----------------------------------
 
 
-AvgGrandPopStimLargeCorrect    = sum(GrandPopStimLargeCorrect,3) ./ totalChannels;
-AvgGrandPopStimLargeError      = sum(GrandPopStimLargeError,3) ./ totalChannels;
-AvgGrandPopActionLargeCorrect  = sum(GrandPopActionLargeCorrect,3) ./ totalChannels;
-AvgGrandPopActionLargeError    = sum(GrandPopActionLargeError,3) ./ totalChannels;
+AvgGrandPopStimLargeCorrect    = sum(GrandPopStimLargeCorrect,3) ./ chan_count;
+AvgGrandPopStimLargeError      = sum(GrandPopStimLargeError,3) ./ chan_count;
+AvgGrandPopActionLargeCorrect  = sum(GrandPopActionLargeCorrect,3) ./ chan_count;
+AvgGrandPopActionLargeError    = sum(GrandPopActionLargeError,3) ./ chan_count;
 
 
 %%
@@ -138,7 +140,7 @@ for c = Stimz2plot
 end
 
 
-    
+    %%
 figure; %figure 2: avg across all ipsi/contra 
 plotindex = [1:3; 5:7];
 % ROW 1: STIM RESPONSES 
@@ -146,7 +148,7 @@ stimplots(3) = subplot(2, 2, 1); % correct
 for c = 1:2
     hold on; 
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
 end
 title('Large reward trials')
 ylabel('Stimulus response')
@@ -155,7 +157,7 @@ stimplots(4) = subplot(2, 2, 2); % error
 for c = 1:2
     hold on; 
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
 end
 title('Error trials')
 
@@ -163,17 +165,18 @@ actionplots(3) = subplot(2, 2, 3); % correct
 for c = 1:2
     hold on;
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
 end    
 ylabel('Action response')
-
+xlabel('Time(s)')
 
 actionplots(4) = subplot(2, 2, 4); % correct
 for c = 1:2
     hold on;
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.1)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
 end
+xlabel('Time (s)')
 
     set(stimplots, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)], ...
         'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')
