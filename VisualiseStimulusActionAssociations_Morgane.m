@@ -7,9 +7,13 @@
 clear all
 
 %DMS
-region = 'DMS';
+region = 'NAc';
 Animals = [53, 62, 63, 71,72]
 load('BehPhotoM_Exp23_DMS')
+
+% NAC
+% Animals = [56 57 59 66]
+% load('BehPhotoM_Exp23_NAc')
 
 AvgAcrossIpsiVsContra = 1; % make one line for ipsi and one line for contra, including all contrast levels? (ignores Stimz2plot)
 

@@ -181,7 +181,7 @@ plotindex = [1:3; 5:7];
 stimplots(4) = subplot(2, 3, 1); % large reward
 for c = 1:2
     hold on; 
-    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+    shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
         'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 title('Large reward trials')
@@ -190,7 +190,7 @@ ylabel('Stimulus response')
 stimplots(5) = subplot(2, 3, 2); % small reward
 for c = 1:2
     hold on; 
-    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+    shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopStimSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
         'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 title('Small reward trials')
@@ -198,7 +198,7 @@ title('Small reward trials')
 stimplots(6) = subplot(2, 3, 3); % error
 for c = 1:2
     hold on; 
-    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+    shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
         'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 title('Error trials')
@@ -206,7 +206,7 @@ title('Error trials')
 actionplots(4) = subplot(2, 3, 4); % large reward
 for c = 1:2
     hold on;
-    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+    shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
         'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end    
 ylabel('Action response')
@@ -215,7 +215,7 @@ xlabel('Time(s)')
 actionplots(5) = subplot(2, 3, 5); % small reward
 for c = 1:2
     hold on;
-    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+    shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopActionSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
         'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end    
 xlabel('Time(s)')
@@ -223,7 +223,7 @@ xlabel('Time(s)')
 actionplots(6) = subplot(2, 3, 6); % error
 for c = 1:2
     hold on;
-    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+    shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
         'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 xlabel('Time (s)')

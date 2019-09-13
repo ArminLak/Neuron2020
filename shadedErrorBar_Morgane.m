@@ -1,4 +1,4 @@
-function varargout=shadedErrorBar(x,y,errBar,varargin)
+function varargout=shadedErrorBar_Morgane(x,y,errBar,varargin)
 % generate continuous error bar area around a line plot
 %
 % function H=shadedErrorBar(x,y,errBar, ...)
