@@ -7,7 +7,7 @@
 % for information about normalisation, check end of this code. 
 
 % close all
-
+clear all
 
 
 
@@ -22,20 +22,20 @@
 %  brain_region = 'DMS'
 
 % NAC
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
-%      clearvars -except BehPhotoM
-%   else clear all
-%  end
-% Animals = [56 57 59 66]
-% brain_region = 'NAc'
+ if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
+     clearvars -except BehPhotoM
+  else clear all
+ end
+Animals = [56 57 59 66]
+brain_region = 'NAc'
 
 % VTA: 
- if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
-     clearvars -except BehPhotoM
- else clear all
- end
-Animals = [48 50 51 64]
-brain_region = 'VTA'
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
+%      clearvars -except BehPhotoM
+%  else clear all
+%  end
+% Animals = [48 50 51 64]
+% brain_region = 'VTA'
 % ------ -----------------------------------
 
 

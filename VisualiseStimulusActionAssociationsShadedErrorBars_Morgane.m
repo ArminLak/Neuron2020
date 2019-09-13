@@ -11,8 +11,9 @@ clear all
 % load('BehPhotoM_Exp23_DMS')
 
 %VTA
-Animals = [48 50 51 64]
-load('BehPhotoM_Exp23_VTA')
+% Animals = [48 50 51 64];
+% Animals = [51 64];
+% load('BehPhotoM_Exp23_VTA')
 
 AvgAcrossIpsiVsContra = 1; % make one line for ipsi and one line for contra, including all contrast levels? (ignores Stimz2plot)
 
@@ -35,7 +36,9 @@ StartTime = 3700; % saved in the database.
 
 GrandPopStimLargeError     = zeros(7,13100);
 GrandPopStimLargeCorrect   = zeros(7,13100);
+GrandPopStimSmallCorrect   = zeros(7,13100);
 GrandPopActionLargeCorrect = zeros(7,13100);
+GrandPopActionSmallCorrect = zeros(7,13100);
 GrandPopActionLargeError   = zeros(7,13100);
 
 c = 1;
@@ -57,8 +60,10 @@ for iAnimal = Animals
     chan_count = chan_count + 1;
         BehPhotoM(iAnimal).GrandSummary     = [];
         SingleAnimalStimTraceLargeCorrect   = [];
+        SingleAnimalStimTraceSmallCorrect   = [];
         SingleAnimalStimTraceLargeError     = [];
         SingleAnimalActionTraceLargeCorrect = [];
+        SingleAnimalActionTraceSmallCorrect = [];
         SingleAnimalActionTraceLargeError   = [];
 
         if iChan == 1
@@ -70,25 +75,35 @@ for iAnimal = Animals
         SingleAnimalStimTraceLargeCorrect       = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeCorrect;
         SingleAnimalStimTraceLargeCorrect       = SingleAnimalStimTraceLargeCorrect ./ max(max(SingleAnimalStimTraceLargeCorrect));
         
+        SingleAnimalStimTraceSmallCorrect       = BehPhotoM(iAnimal).GrandSummary.StimRasterSmallCorrect;
+        SingleAnimalStimTraceSmallCorrect       = SingleAnimalStimTraceSmallCorrect ./ max(max(SingleAnimalStimTraceSmallCorrect));
+        
         SingleAnimalStimTraceLargeError         = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeError;
         SingleAnimalStimTraceLargeError         = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeError));
 
         SingleAnimalActionTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeCorrect;
         SingleAnimalActionTraceLargeCorrect     = SingleAnimalActionTraceLargeCorrect ./ max(max(SingleAnimalActionTraceLargeCorrect));
+
+        SingleAnimalActionTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterSmallCorrect;
+        SingleAnimalActionTraceSmallCorrect     = SingleAnimalActionTraceSmallCorrect ./ max(max(SingleAnimalActionTraceSmallCorrect));
         
         SingleAnimalActionTraceLargeError       = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeError;
         SingleAnimalActionTraceLargeError       = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeError));
         
         if iChan == 1
             GrandPopStimLargeCorrect(:,:,chan_count)    = SingleAnimalStimTraceLargeCorrect;
+            GrandPopStimSmallCorrect(:,:,chan_count)    = SingleAnimalStimTraceSmallCorrect;
             GrandPopStimLargeError(:,:,chan_count)      = SingleAnimalStimTraceLargeError;
             GrandPopActionLargeCorrect(:,:,chan_count)  = SingleAnimalActionTraceLargeCorrect;
+            GrandPopActionSmallCorrect(:,:,chan_count)  = SingleAnimalActionTraceSmallCorrect;
             GrandPopActionLargeError(:,:,chan_count)    = SingleAnimalActionTraceLargeError;
 
         elseif iChan == 2
             GrandPopStimLargeCorrect(:,:,chan_count)    = flipud(SingleAnimalStimTraceLargeCorrect);
+            GrandPopStimSmallCorrect(:,:,chan_count)    = flipud(SingleAnimalStimTraceSmallCorrect);
             GrandPopStimLargeError(:,:,chan_count)      = flipud(SingleAnimalStimTraceLargeError);
             GrandPopActionLargeCorrect(:,:,chan_count)  = flipud(SingleAnimalActionTraceLargeCorrect);
+            GrandPopActionSmallCorrect(:,:,chan_count)  = flipud(SingleAnimalActionTraceSmallCorrect);
             GrandPopActionLargeError(:,:,chan_count)    = flipud(SingleAnimalActionTraceLargeError);            
                
         end
@@ -100,7 +115,9 @@ end
 
 AvgGrandPopStimLargeCorrect    = sum(GrandPopStimLargeCorrect,3) ./ chan_count;
 AvgGrandPopStimLargeError      = sum(GrandPopStimLargeError,3) ./ chan_count;
+AvgGrandPopStimSmallCorrect    = sum(GrandPopStimSmallCorrect,3) ./ chan_count;
 AvgGrandPopActionLargeCorrect  = sum(GrandPopActionLargeCorrect,3) ./ chan_count;
+AvgGrandPopActionSmallCorrect  = sum(GrandPopActionSmallCorrect,3) ./ chan_count;
 AvgGrandPopActionLargeError    = sum(GrandPopActionLargeError,3) ./ chan_count;
 
 
@@ -108,7 +125,7 @@ AvgGrandPopActionLargeError    = sum(GrandPopActionLargeError,3) ./ chan_count;
 % --- plotting ------------------------------------------------------------
 figure; 
 % ROW 1: STIM RESPONSES 
-stimplots(1) = subplot(2, 2, 1); % correct
+stimplots(1) = subplot(2, 3, 1); % large reward 
 for c = Stimz2plot
     hold on; 
     plot(smooth(AvgGrandPopStimLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
@@ -116,8 +133,14 @@ end
 title('Large reward trials')
 ylabel('Stimulus response')
 
+stimplots(2) = subplot(2, 3, 2); % small reward
+for c = Stimz2plot
+    hold on; 
+    plot(smooth(AvgGrandPopStimSmallCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
+end
+title('Small reward trials')
 
-stimplots(2) = subplot(2, 2, 2); % error 
+stimplots(3) = subplot(2, 3, 3); % error 
 for c = Stimz2plot
     hold on; 
     plot(smooth(AvgGrandPopStimLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
@@ -125,56 +148,79 @@ end
 title('Error trials')
 
 
-actionplots(1) = subplot(2, 2, 3); % correct
+actionplots(1) = subplot(2, 3, 4); % large reward
 for c = Stimz2plot
     hold on;
     plot(smooth(AvgGrandPopActionLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end    
 ylabel('Action response')
+xlabel('Time (s)')
 
+actionplots(2) = subplot(2, 3, 5); % small reward
+for c = Stimz2plot
+    hold on;
+    plot(smooth(AvgGrandPopActionSmallCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
+end  
+xlabel('Time (s)')
 
-actionplots(2) = subplot(2, 2, 4); % correct
+actionplots(3) = subplot(2, 3, 6); % error
 for c = Stimz2plot
     hold on;
     plot(smooth(AvgGrandPopActionLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
-
+xlabel('Time (s)')
 
     %%
 figure; %figure 2: avg across all ipsi/contra 
 plotindex = [1:3; 5:7];
 % ROW 1: STIM RESPONSES 
-stimplots(3) = subplot(2, 2, 1); % correct
+stimplots(4) = subplot(2, 3, 1); % large reward
 for c = 1:2
     hold on; 
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 title('Large reward trials')
 ylabel('Stimulus response')
 
-stimplots(4) = subplot(2, 2, 2); % error
+stimplots(5) = subplot(2, 3, 2); % small reward
+for c = 1:2
+    hold on; 
+    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
+end
+title('Small reward trials')
+
+stimplots(6) = subplot(2, 3, 3); % error
 for c = 1:2
     hold on; 
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 title('Error trials')
 
-actionplots(3) = subplot(2, 2, 3); % correct
+actionplots(4) = subplot(2, 3, 4); % large reward
 for c = 1:2
     hold on;
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end    
 ylabel('Action response')
 xlabel('Time(s)')
 
-actionplots(4) = subplot(2, 2, 4); % correct
+actionplots(5) = subplot(2, 3, 5); % small reward
+for c = 1:2
+    hold on;
+    shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
+end    
+xlabel('Time(s)')
+
+actionplots(6) = subplot(2, 3, 6); % error
 for c = 1:2
     hold on;
     shadedErrorBar(1:13100, smooth(mean(AvgGrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
-        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.06)
+        'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
 end
 xlabel('Time (s)')
 
@@ -183,6 +229,9 @@ xlabel('Time (s)')
     set(actionplots, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
         'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
         'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
+    set([stimplots([1 4]), actionplots([1 4])], 'YTickLabel', {'-0.4', '0', '0.6'});
+    set(actionplots(4:6), 'ylim', [-0.6 0.8])
+    set(stimplots(4:6), 'ylim', [-0.6 0.8])
 
 % --- script-specific functions -------------------------------------------
 
