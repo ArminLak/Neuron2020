@@ -28,7 +28,7 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 72
+animal_ID = 72;
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -408,27 +408,27 @@ RewardData = RewardData ./ StimTimeDenom;
     elseif animal_ID == 53
         
         NormBinStim = mean(StimData(:,4000:4500),2) - mean(StimData(:,3400:3800),2);
-         NormBinAction = mean(ActionData(:,3800:4300),2) - mean(ActionData(:,2900:3500),2);
+         NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
         
     elseif animal_ID == 62
         
         NormBinStim = mean(StimData(:, 4300:5000),2) - mean(StimData(:,3400:3700),2);
-        NormBinAction = mean(ActionData(:,3700:4500),2) - mean(ActionData(:,3100:3700),2);
+        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
         
     elseif animal_ID == 63
         
         NormBinStim = mean(StimData(:, 4200:4800),2) - mean(StimData(:,3400:3700),2);
-        NormBinAction = mean(ActionData(:,3700:4500),2) - mean(ActionData(:,3000:3600),2);
+        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
         
     elseif animal_ID == 71
         
         NormBinStim = mean(StimData(:, 4200:4500),2) - mean(StimData(:,3600:3700),2);
-        NormBinAction = mean(ActionData(:,3900:4500),2) - mean(ActionData(:,3000:3500),2);
+        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
         
     elseif animal_ID == 72
         
         NormBinStim = mean(StimData(:,4100:4500),2) - mean(StimData(:,3650:3750),2);
-        NormBinAction = mean(ActionData(:,3800:4300),2) - mean(ActionData(:,3000:3500),2);
+        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
         
     else
         

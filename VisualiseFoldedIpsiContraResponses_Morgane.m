@@ -21,6 +21,7 @@ LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  
 %DMS
   region = 'DMS';
 Animals = [53, 62, 63, 71,72]
+Animals = [63];
 load('BehPhotoM_Exp23_DMS')
 
 
@@ -250,6 +251,7 @@ subplot(3, 2, 1) % responses to absolute stim contrast, broken by ipsi and contr
         'color', IpsiContraColor(2,:),'LineWidth',2,'Marker','o','MarkerSize',5) % large contra 
     title('All action responses')
     legend('Ipsi', 'Contra')
+    ylim([0 .5])
 
 subplot(3, 2, 3) % ERROR VS CORRECT, IPSI ONLY (col 1:4)
      errorbar(fliplr(GrandPopNormBinActionErrCorrNoFold(1,1:4)), nanstd(GrandPopNormBinActionNoFoldCorrError1(:,1:4)) ./ sqrt(totalChannels), ...
@@ -264,6 +266,7 @@ subplot(3, 2, 3) % ERROR VS CORRECT, IPSI ONLY (col 1:4)
          'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
      title('Ipsi responses')
      xticks([])
+     ylim([0 0.5])
      
 subplot(3, 2, 4) % ERROR VS CORRECT, CONTRA ONLY (col 4:7)
      errorbar(GrandPopNormBinActionErrCorrNoFold(1,4:7), nanstd(GrandPopNormBinActionNoFoldCorrError1(:,4:7)) ./ sqrt(totalChannels), ...
@@ -278,6 +281,7 @@ subplot(3, 2, 4) % ERROR VS CORRECT, CONTRA ONLY (col 4:7)
          'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra large
      title('Contra responses')
      xticks([])
+     ylim([0 0.5])
 
 subplot(3, 2, 5) % LARGE VS SMALL, IPSI ONLY (col 1:4)
      errorbar(fliplr(GrandPopNormBinActionNoFold(2,1:4)), nanstd(GrandPopNormBinActionNoFold2(:,1:4)) ./ sqrt(totalChannels), ...
@@ -288,6 +292,7 @@ subplot(3, 2, 5) % LARGE VS SMALL, IPSI ONLY (col 1:4)
      xticks([1 2 3 4])
      xticklabels([0 0.12 0.25 0.5])
      xlabel('|Contrast|')
+     ylim([0 0.5])
      
 subplot(3, 2, 6) % LARGE VS SMALL, CONTRA ONLY (col 4:7)
      errorbar(GrandPopNormBinActionNoFold(1,4:7), nanstd(GrandPopNormBinActionNoFold1(:,4:7)) ./ sqrt(totalChannels), ...
@@ -298,7 +303,7 @@ subplot(3, 2, 6) % LARGE VS SMALL, CONTRA ONLY (col 4:7)
      xticks([1 2 3 4])
      xticklabels([0 0.12 0.25 0.5])
      xlabel('|Contrast|')
-     
+     ylim([0 0.5])
      
 
 % ------- colors and functions
