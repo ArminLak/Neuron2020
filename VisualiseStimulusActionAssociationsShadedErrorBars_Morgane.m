@@ -8,7 +8,6 @@ clear all
 
 %DMS
 Animals = [53, 62, 63, 71,72];
-% Animals = [63];
 load('BehPhotoM_Exp23_DMS')
 
 %NAC

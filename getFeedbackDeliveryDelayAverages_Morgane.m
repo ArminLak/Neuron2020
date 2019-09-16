@@ -1,4 +1,6 @@
 % get avg feedback delivery delay for each animal and brain region, Exp 23 
+% go to line ~35 to change computer =) 
+
 % Morgane September 2019 
 
 
@@ -10,25 +12,23 @@ close all
 exp_ID = '23';
 
 % VTA
-% Animals = [48 50 51 64]
-animal_names = ["ALK068"]; %place comma between animal names 
+animal_names = ["ALK068", "ALK070", "ALK071", "ALK084"]; %place comma between animal names 
 brain_region = 'VTA';
 
 % NAC
-% Animals = [56 57 59 66]
-% animal_name = ;
+% animal_names = ["ALK078", "MMM001", "MMM002", "MMM005"] ;
 % brain_region = 'NAc';
 
 % DMS
-%  Animals = [53, 62, 63, 71,72]
-% animal_name = ;
+% animal_names = ["ALK074", "MMM003", "ALK083", "MMM009", "MMM010"];
 %  brain_region = 'DMS';
 
 % -------------------------------------------------------------------------
 
 load('MiceExpInfoPhotoM')
 
-FeedbackDeliveryDelay = zeros(numel(animal_names));
+FeedbackDeliveryDelay = zeros(1, numel(animal_names));
+totalSessions = 0;
 
 c = 1;
 for animal_name = animal_names(c);
@@ -40,11 +40,13 @@ for animal_name = animal_names(c);
     [SessionList] = getSessionList_photoM(animal_name, exp_ID);
         
     for iSession = SessionList
+        
+        totalSessions = length(SessionList) + totalSessions;
     
         ParamFileName = MiceExpInfo.mice(animal_ID).session(iSession).Paramname;
         load(ParamFileName);
         
-        FeedbackDeliveryDelay(c) = parameters.feedbackDeliveryDelay + FeedbackDeliveryDelay;
+        FeedbackDeliveryDelay(c) = parameters.feedbackDeliveryDelay + FeedbackDeliveryDelay(c);
     
     end
     
