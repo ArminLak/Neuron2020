@@ -28,7 +28,7 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 62;
+animal_ID = 72;
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -579,7 +579,6 @@ RewardData = RewardData ./ StimTimeDenom;
         c=c+1;
     end
     
-    ActionRasterZeroContra
     if (iter == 2 && HemIter ==1) || (iter == 1 && isfield(BehPhotoM(animal_ID).Session, 'NeuronRewardL')) %left hem 
         contraTrials = intersect(find(BehData(:,2)==0), find(BehData(:,3)==1));
         ipsiTrials = intersect(find(BehData(:,2)==0), find(BehData(:,3)==-1));      
@@ -1251,9 +1250,8 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.ActionRasterLargeError = ActRasterLargeError;
         
         
-%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeCorrect = RewardRasterLargeCorrect;
-%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterSmallCorrect = RewardRasterSmallCorrect;
-%         BehPhotoM(animal_ID).GrandSummaryL.RewardRasterLargeError = RewardRasterLargeError;
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = ActionRasterZeroContra; % large, small, error
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
         
         
     end
@@ -1314,8 +1312,8 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterSmallCorrect = ActRasterSmallCorrect;
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterLargeError = ActRasterLargeError;
         
-        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = []; % large, small, error
-        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = []; % large, small, error 
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = ActionRasterZeroContra; % large, small, error
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
         
         
         
