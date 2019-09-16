@@ -28,8 +28,8 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 69
-BrainStrucutre = 'VTA'
+animal_ID = 72
+BrainStrucutre = 'DMS'
 ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
@@ -83,8 +83,10 @@ RewardDataR = [];
         
         for iSession = sessionz % left hem
             
+            if ~isfield(BehPhotoM(animal_ID).Session, 'NeuronRewardR')
             TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
             BehData = [BehData; TempBehData];
+            end
             
             % left
             TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepL;
@@ -116,7 +118,7 @@ RewardDataR = [];
             
             TempBehData = BehPhotoM(animal_ID).Session(iSession).TrialTimingData;
             BehData = [BehData; TempBehData];
-            
+
             % right
             TempBeepData= BehPhotoM(animal_ID).Session(iSession).NeuronBeepR;
             
@@ -141,13 +143,14 @@ RewardDataR = [];
         
     end
    
-
+    
+    
     RT = BehData(:,10) - BehData(:,13);
-    toRemove = find ( RT > RTLimit);
+    toRemove1 = find ( RT > RTLimit);
     toRemove2= find(BehData(:,1) < 20);
-    toRemove = unique([toRemove; toRemove2]);
+    toRemove = unique([toRemove1; toRemove2]);
 
-
+    
 for HemIter = 1:iter
     
     if iter == 2 && HemIter ==1
@@ -156,6 +159,8 @@ for HemIter = 1:iter
         StimData = StimDataL;
         ActionData = ActionDataL;
         RewardData = RewardDataL;
+        
+            BehData(toRemove,:) = [];
         
     end
     
@@ -169,6 +174,8 @@ for HemIter = 1:iter
     end
     
     if iter == 1
+        
+            BehData(toRemove,:) = [];
         
         if isfield(BehPhotoM(animal_ID).Session,'NeuronRewardL')
             
@@ -188,7 +195,7 @@ for HemIter = 1:iter
         
     end
     
-    BehData(toRemove,:) = [];
+%     BehData(toRemove,:) = [];
     BeepData(toRemove,:) = [];
     StimData(toRemove,:) = [];
     ActionData(toRemove,:) = [];
@@ -346,61 +353,87 @@ RewardData = RewardData ./ StimTimeDenom;
     %%
     if animal_ID == 48
         NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
-        
        % NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
         
     elseif animal_ID == 50
         NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3100:3400),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
         
     elseif animal_ID == 51
         
         %NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2);
         NormBinStim = mean(StimData(:,4500:5000),2) - mean(StimData(:,3400:3800),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
         
     elseif animal_ID == 56
         
         NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3100:3500),2);
         NormBinStim = mean(StimData(:,4600:5300),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
         
     elseif animal_ID == 57
         
         NormBinStim = mean(StimData(:,4300:5000),2)- mean(StimData(:,3400:3800),2);
-
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
         NormBinStim = mean(StimData(:,4600:5300),2)- mean(StimData(:,3400:3800),2);
 
     elseif animal_ID == 59
         
         NormBinStim = mean(StimData(:,4400:4800),2);
         NormBinStim = mean(StimData(:,4900:5400),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
     
         elseif animal_ID == 64 && strcmp(BrainStrucutre,'DMS')
         
         NormBinStim = mean(StimData(:,4500:5000),2);
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
         
     elseif animal_ID == 66
         
         NormBinStim = mean(StimData(:,5000:6000),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
                 
     elseif animal_ID == 69
         
         NormBinStim = mean(StimData(:,3900:5200),2)- mean(StimData(:,3400:3800),2);
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
              
         
     elseif animal_ID == 70
         
         NormBinStim = mean(StimData(:,4000:5000),2);
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
+    
+    elseif animal_ID == 53
         
-       
+        NormBinStim = mean(StimData(:,4000:4500),2) - mean(StimData(:,3400:3800),2);
+         NormBinAction = mean(ActionData(:,3800:4300),2) - mean(ActionData(:,2900:3500),2);
+        
+    elseif animal_ID == 62
+        
+        NormBinStim = mean(StimData(:, 4300:5000),2) - mean(StimData(:,3400:3700),2);
+        NormBinAction = mean(ActionData(:,3700:4500),2) - mean(ActionData(:,3100:3700),2);
+        
+    elseif animal_ID == 63
+        
+        NormBinStim = mean(StimData(:, 4200:4800),2) - mean(StimData(:,3400:3700),2);
+        NormBinAction = mean(ActionData(:,3700:4500),2) - mean(ActionData(:,3000:3600),2);
+        
+    elseif animal_ID == 71
+        
+        NormBinStim = mean(StimData(:, 4200:4500),2) - mean(StimData(:,3600:3700),2);
+        NormBinAction = mean(ActionData(:,3900:4500),2) - mean(ActionData(:,3000:3500),2);
+        
+    elseif animal_ID == 72
+        
+        NormBinStim = mean(StimData(:,4100:4500),2) - mean(StimData(:,3650:3750),2);
+        NormBinAction = mean(ActionData(:,3800:4300),2) - mean(ActionData(:,3000:3500),2);
+        
     else
         
         NormBinStim = mean(StimData(:,4200:5000),2)- mean(StimData(:,3400:3800),2);
-        
+        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
     end
     
     % for derivative
@@ -417,7 +450,7 @@ RewardData = RewardData ./ StimTimeDenom;
             
             % only correct trials
             PopNormBinStimBlocksNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & BehData(:,2)==iStimAbs & BehData(:,8)==iblock));
-            
+            PopNormBinActionBlocksNoFold (c,cStim ) = nanmean(NormBinAction(BehData(:,9)==1 & BehData(:,2) == iStimAbs & BehData(:,8)==iblock));
             cStim = cStim + 1;
         end
         
@@ -460,6 +493,7 @@ RewardData = RewardData ./ StimTimeDenom;
         for istim = unique(BehData(:,2))'
             
             PopNormBinStimCorrectErrorNoFold (c,cStim)= nanmean(NormBinStim (BehData(:,9)==CorrError & BehData(:,2)==istim ));
+            PopNormBinActionCorrectErrorNoFold(c,cStim)=nanmean(NormBinAction(BehData(:,9)==CorrError & BehData(:,2)==istim));
             
             cStim = cStim + 1;
         end
@@ -490,6 +524,9 @@ RewardData = RewardData ./ StimTimeDenom;
             
             PopNormBinStimCorrect (c,cStim)= nanmean(NormBinStim (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
             PopNormBinStimError (c,cStim)= nanmean(NormBinStim (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+            
+            PopNormBinActionCorrect(c,cStim) = nanmean(NormBinAction (BehData(:,9)==1 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
+            PopNormBinActionError (c,cStim)= nanmean(NormBinAction (BehData(:,9)==0 & abs(BehData(:,2))==iStimAbs & BehData(:,16)==RewardSize));
             
             cStim = cStim + 1;
         end
@@ -1134,14 +1171,22 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.RT = RTAv;
         BehPhotoM(animal_ID).GrandSummaryL.AbsStimRaster = AbsStimRaster;
         BehPhotoM(animal_ID).GrandSummaryL.AbsActionRaster = AbsActionRaster;
+        
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinStimCorrectErrorNoFold=PopNormBinStimCorrectErrorNoFold;
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinStimNoFold = PopNormBinStimBlocksNoFold;
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinStimCorrect=PopNormBinStimCorrect;
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinStimError=PopNormBinStimError;
+
+        BehPhotoM(animal_ID).GrandSummaryL.PopNormBinActionCorrectErrorNoFold=PopNormBinActionCorrectErrorNoFold;
+        BehPhotoM(animal_ID).GrandSummaryL.PopNormBinActionNoFold = PopNormBinActionBlocksNoFold;        
+        BehPhotoM(animal_ID).GrandSummaryL.PopNormBinActionCorrect = PopNormBinActionCorrect;
+        BehPhotoM(animal_ID).GrandSummaryL.PopNormBinActionError = PopNormBinActionError;
+        
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinRewardCorrectErrorNoFold=PopNormBinRewardCorrectErrorNoFold;
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinRewardNoFold = PopNormBinRewardBlocksNoFold;
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinRewardCorrect=PopNormBinRewardCorrect;
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinRewardError=PopNormBinRewardError;
+        
         BehPhotoM(animal_ID).GrandSummaryL.Beep2DACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==1,:));
         BehPhotoM(animal_ID).GrandSummaryL.BeepAwayDACorr = nanmean(BeepData(BehData(:,9)==1 & BehData(:,16)==-1,:));
         BehPhotoM(animal_ID).GrandSummaryL.Beep2DAErr = nanmean(BeepData(BehData(:,9)==0 & BehData(:,16)==1,:));
@@ -1193,10 +1238,17 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryR.RT = RTAv;
         BehPhotoM(animal_ID).GrandSummaryR.AbsStimRaster = AbsStimRaster;
         BehPhotoM(animal_ID).GrandSummaryR.AbsActionRaster = AbsActionRaster;
+        
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimCorrectErrorNoFold=PopNormBinStimCorrectErrorNoFold;
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimNoFold = PopNormBinStimBlocksNoFold;
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimCorrect=PopNormBinStimCorrect;
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinStimError=PopNormBinStimError;
+        
+        BehPhotoM(animal_ID).GrandSummaryR.PopNormBinActionCorrectErrorNoFold=PopNormBinActionCorrectErrorNoFold;
+        BehPhotoM(animal_ID).GrandSummaryR.PopNormBinActionNoFold = PopNormBinActionBlocksNoFold;        
+        BehPhotoM(animal_ID).GrandSummaryR.PopNormBinActionCorrect = PopNormBinActionCorrect;
+        BehPhotoM(animal_ID).GrandSummaryR.PopNormBinActionError = PopNormBinActionError;
+        
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardCorrectErrorNoFold=PopNormBinRewardCorrectErrorNoFold;
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardNoFold = PopNormBinRewardBlocksNoFold;
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinRewardCorrect=PopNormBinRewardCorrect;
@@ -1494,6 +1546,8 @@ if strcmpi(getComputerName,'zopamine2')
     cd ('C:\Users\Armin\Dropbox\Work\UCL\Science\Analysis Code\PhotoM')
 elseif strcmpi(getComputerName, 'zebrafish')
     cd ('C:\Users\morga\Documents\MATLAB')
+elseif strcmpi(getComputerName, 'win-al005')
+    cd('C:\Users\Morgane Moss\Documents\MATLAB')
 end
 
 save(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre], 'BehPhotoM', '-v7.3');

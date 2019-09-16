@@ -7,7 +7,7 @@
 % for information about normalisation, check end of this code. 
 
 % close all
-
+clear all
 
 
 
@@ -36,7 +36,7 @@ brain_region = 'NAc'
 %  end
 % Animals = [48 50 51 64]
 % brain_region = 'VTA'
-
+% ------ -----------------------------------
 
 
 
@@ -185,12 +185,14 @@ end
         if strcmp(exp_ID, '23')
             largeRewTrialsIpsi(:,1) = BehDataIpsi(largeRewTrialsIpsi(:,2), 10) - BehDataIpsi(largeRewTrialsIpsi(:,2), 13);
             largeRewTrialsIpsi = sortrows(largeRewTrialsIpsi);
-                        largeRewTrialsIpsiOutcome(:,1) = BehDataIpsi(largeRewTrialsIpsi(:,2), 14) - BehDataIpsi(largeRewTrialsIpsi(:,2), 13);
+            largeRewTrialsIpsiOutcome(:,1) = BehDataIpsi(largeRewTrialsIpsi(:,2), 14) - BehDataIpsi(largeRewTrialsIpsi(:,2), 13);
 
             
             largeRewTrialsContra(:,1) = BehDataContra(largeRewTrialsContra(:,2), 10) - BehDataContra(largeRewTrialsContra(:,2), 13);
             largeRewTrialsContra = sortrows(largeRewTrialsContra);
-                        largeRewTrialsContraOutcome(:,1) = BehDataContra(largeRewTrialsContra(:,2), 14) - BehDataContra(largeRewTrialsContra(:,2), 13);
+            largeRewTrialsContraOutcome(:,1) = BehDataContra(largeRewTrialsContra(:,2), 14) - BehDataContra(largeRewTrialsContra(:,2), 13);
+            
+            largeRewTrialsContraAction(:,1) = BehDataContra(largeRewTrialsContra(:,2), 10) - BehDataContra(largeRewTrialsContra(:,2), 13);
 
         end
         
@@ -220,10 +222,13 @@ end
 
         actionTimesIpsi = abs(sStart*downSample) + (RTIpsi*downSample);
         actionTimesContra = abs(sStart*downSample) + (RTContra*downSample);
+        actionTimesContra = abs(sStart*downSample) + (largeRewTrialsContraAction(:,1)*downSample);
         
         outcomeTimesIpsi = abs(sStart*downSample) + (TIpsiOutcome*downSample);
         outcomeTimesContra = abs(sStart*downSample) + (TContraOutcome*downSample);
         outcomeTimesContra = abs(sStart*downSample) + (largeRewTrialsContraOutcome(:,1)*downSample);
+        
+        
         
     % ------------------- plot  ----------------------------------
 %     if concatenate == 0 || iSession == max(nSessions)
@@ -290,19 +295,25 @@ end
     end
 
 
-%% average signal through trial aligned  at stimulus onset 
+%% average signal through trial aligned  at stimulus onset. large reward only
 
         actionTimesContra = [];
-        actionTimesContra = abs(sStart)*downSample + (largeRewTrialsContra(:,1))*downSample;
+        actionTimesContra = abs(sStart)*downSample + (largeRewTrialsContraAction(:,1))*downSample;
         outcomeTimesContra = [];
         outcomeTimesContra = abs(sStart)*downSample + (largeRewTrialsContraOutcome(:,1))*downSample;
+        
+        if strcmpi(brain_region, 'VTA')
+            outcomeTimesContra = outcomeTimesContra - (0.07*downSample); % to account for feedback delivery delay 
+        end
+        
         
         figure; 
 
 subplot(3,1,1)
 data = smooth2a(M{1},0,smooth_factor);
+
 yyaxis left
-tempdata = mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample))));
+tempdata = mean(data(largeRewTrialsContra(:,2),(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample))));
 tempdata = tempdata./max(tempdata);
 plot(tempdata, 'LineWidth', 1, 'Color', 'k');
 xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
