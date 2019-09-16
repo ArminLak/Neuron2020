@@ -28,7 +28,7 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 72;
+animal_ID = 62;
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -183,6 +183,8 @@ for HemIter = 1:iter
             StimData = StimDataL;
             ActionData = ActionDataL;
             RewardData = RewardDataL;
+            
+            
             
         elseif isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')
             
@@ -413,12 +415,12 @@ RewardData = RewardData ./ StimTimeDenom;
     elseif animal_ID == 62
         
         NormBinStim = mean(StimData(:, 4300:5000),2) - mean(StimData(:,3400:3700),2);
-        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
+        NormBinAction = mean(ActionData(:,4000:4300),2) - mean(ActionData(:,3300:3700),2);
         
     elseif animal_ID == 63
         
         NormBinStim = mean(StimData(:, 4200:4800),2) - mean(StimData(:,3400:3700),2);
-        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
+        NormBinAction = mean(ActionData(:,3900:4200),2) - mean(ActionData(:,2900:3300),2);
         
     elseif animal_ID == 71
         
@@ -577,7 +579,31 @@ RewardData = RewardData ./ StimTimeDenom;
         c=c+1;
     end
     
+    ActionRasterZeroContra
+    if (iter == 2 && HemIter ==1) || (iter == 1 && isfield(BehPhotoM(animal_ID).Session, 'NeuronRewardL')) %left hem 
+        contraTrials = intersect(find(BehData(:,2)==0), find(BehData(:,3)==1));
+        ipsiTrials = intersect(find(BehData(:,2)==0), find(BehData(:,3)==-1));      
+    elseif (iter == 2 && HemIter ==2) || (iter == 1 && isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')) % right hem 
+        contraTrials = intersect(find(BehData(:,2)==0), find(BehData(:,3)==-1));
+        ipsiTrials = intersect(find(BehData(:,2)==0), find(BehData(:,3)==1));
+    end
+    largeRewardTrials = [mintersect(find(BehData(:,9)==1), find(BehData(:,8)==1), find(BehData(:,3)==-1)); ...
+        mintersect(find(BehData(:,9)==1), find(BehData(:,8)==2), find(BehData(:,3)==1))];
+    smallRewardTrials = [mintersect(find(BehData(:,9)==1), find(BehData(:,8)==1), find(BehData(:,3)==2)); ...
+        mintersect(find(BehData(:,9)==1), find(BehData(:,2)==2), find(BehData(:,3)==1))];
+    errorTrials = find(BehData(:,9)==0);
     
+        ActionRasterZeroContra(1,:) = nanmean(ActionData(intersect(contraTrials, largeRewardTrials),:),1);
+        ActionRasterZeroContra(2,:) = nanmean(ActionData(intersect(contraTrials, smallRewardTrials),:),1);
+        ActionRasterZeroContra(3,:) = nanmean(ActionData(intersect(contraTrials, errorTrials),:),1);       
+        ActionRasterZeroIpsi(1,:) = nanmean(ActionData(intersect(ipsiTrials, largeRewardTrials),:),1);
+        ActionRasterZeroIpsi(2,:) = nanmean(ActionData(intersect(ipsiTrials, smallRewardTrials),:),1);
+        ActionRasterZeroIpsi(3,:) = nanmean(ActionData(intersect(ipsiTrials, errorTrials),:),1);
+        
+        
+        
+        
+        
     c=1;
     for iStim = unique((BehData(:,2)))'
         
@@ -1287,6 +1313,10 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterLargeCorrect = ActRasterLargeCorrect;
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterSmallCorrect = ActRasterSmallCorrect;
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterLargeError = ActRasterLargeError;
+        
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = []; % large, small, error
+        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = []; % large, small, error 
+        
         
         
     end

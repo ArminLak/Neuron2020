@@ -3,11 +3,12 @@
 
 % Morgane September 2019: only deals with large reward trials 
 
-close all 
+% close all 
 clear all
 
 %DMS
 Animals = [53, 62, 63, 71,72];
+% Animals = [62];
 load('BehPhotoM_Exp23_DMS')
 
 %NAC

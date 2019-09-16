@@ -4,7 +4,7 @@
 % reward. 
 
 
-% close all
+close all
 clear all
 
 LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  on same axes 
@@ -20,8 +20,7 @@ LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  
 
 %DMS
   region = 'DMS';
-Animals = [53, 62, 63, 71,72]
-Animals = [63];
+Animals = [53, 62, 63, 71,72];
 load('BehPhotoM_Exp23_DMS')
 
 
