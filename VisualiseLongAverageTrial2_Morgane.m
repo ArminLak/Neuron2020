@@ -197,7 +197,7 @@ end
         
         figure; 
 
-subplot(3,1,1)
+subplot(3,1,1) % contra: large reward
 data = smooth2a(M{1},0,smooth_factor);
 yyaxis left
 tempdata = mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample))));
@@ -223,7 +223,20 @@ histogram(outcomeTimesContra, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0], 'FaceA
 txt2 = '\nabla';
 text(nanmedian(outcomeTimesContra), tempdata(floor(nanmedian(outcomeTimesContra)))+0.2, txt2)
 
-subplot(3, 1, 2)
+subplot(3, 1, 2) % contra: large reward and error
+for i = [1 5]
+data = smooth2a(M{1},0,smooth_factor);
+yyaxis left
+tempdata = mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample))));
+tempdata = tempdata./max(tempdata);
+plot(tempdata, 'LineWidth', 1, 'Color', 'k');
+xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
+xticklabels([sStart 0 1 2 sStop])
+ylim([-0.2 1.1])
+ax = gca; 
+ax.TickDir = 'out';
+
+subplot(3,1,2) % contra: large reward, small reward, and error
 
 
  linkaxes(get(gcf,'children'),'x')
