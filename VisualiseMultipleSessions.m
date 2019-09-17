@@ -28,7 +28,7 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 72;
+animal_ID = 53;
 BrainStrucutre = 'DMS'
 ExpID = '23'
 
@@ -410,7 +410,7 @@ RewardData = RewardData ./ StimTimeDenom;
     elseif animal_ID == 53
         
         NormBinStim = mean(StimData(:,4000:4500),2) - mean(StimData(:,3400:3800),2);
-         NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
+         NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3600),2);
         
     elseif animal_ID == 62
         
@@ -420,17 +420,17 @@ RewardData = RewardData ./ StimTimeDenom;
     elseif animal_ID == 63
         
         NormBinStim = mean(StimData(:, 4200:4800),2) - mean(StimData(:,3400:3700),2);
-        NormBinAction = mean(ActionData(:,3900:4200),2) - mean(ActionData(:,2900:3300),2);
+        NormBinAction = mean(ActionData(:,3900:4200),2) - mean(ActionData(:,3500:3700),2);
         
     elseif animal_ID == 71
         
         NormBinStim = mean(StimData(:, 4200:4500),2) - mean(StimData(:,3600:3700),2);
-        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
+        NormBinAction = mean(ActionData(:,4000:4500),2) - mean(ActionData(:,3500:3700),2);
         
     elseif animal_ID == 72
         
         NormBinStim = mean(StimData(:,4100:4500),2) - mean(StimData(:,3650:3750),2);
-        NormBinAction = mean(ActionData(:,3700:4400),2) - mean(ActionData(:,2900:3500),2);
+        NormBinAction = mean(ActionData(:,3900:4300),2) - mean(ActionData(:,3500:3700),2);
         
     else
         
@@ -502,6 +502,9 @@ RewardData = RewardData ./ StimTimeDenom;
         
         c=c+1;
     end
+    
+
+    
     
     subplot(6,3,7); hold on
     plot(unique((BehData(:,2)))',PopNormBinStimCorrectErrorNoFold(1,:),'r','LineWidth',2)
@@ -588,8 +591,8 @@ RewardData = RewardData ./ StimTimeDenom;
     end
     largeRewardTrials = [mintersect(find(BehData(:,9)==1), find(BehData(:,8)==1), find(BehData(:,3)==-1)); ...
         mintersect(find(BehData(:,9)==1), find(BehData(:,8)==2), find(BehData(:,3)==1))];
-    smallRewardTrials = [mintersect(find(BehData(:,9)==1), find(BehData(:,8)==1), find(BehData(:,3)==2)); ...
-        mintersect(find(BehData(:,9)==1), find(BehData(:,2)==2), find(BehData(:,3)==1))];
+    smallRewardTrials = [mintersect(find(BehData(:,9)==1), find(BehData(:,8)==1), find(BehData(:,3)==1)); ...
+        mintersect(find(BehData(:,9)==1), find(BehData(:,8)==2), find(BehData(:,3)==-1))];
     errorTrials = find(BehData(:,9)==0);
     
         ActionRasterZeroContra(1,:) = nanmean(ActionData(intersect(contraTrials, largeRewardTrials),:),1);
@@ -600,7 +603,14 @@ RewardData = RewardData ./ StimTimeDenom;
         ActionRasterZeroIpsi(3,:) = nanmean(ActionData(intersect(ipsiTrials, errorTrials),:),1);
         
         
-        
+    PopNormBinActionZeroLargeSmallErrorNoFold(1,1)= nanmean(NormBinAction(intersect(ipsiTrials, largeRewardTrials),:)); % zero contrast, ipsi choices, large reward
+    PopNormBinActionZeroLargeSmallErrorNoFold(1,2)= nanmean(NormBinAction(intersect(ipsiTrials, smallRewardTrials),:)); % zero contrast, ipsi choices, small reward
+    PopNormBinActionZeroLargeSmallErrorNoFold(1,3)= nanmean(NormBinAction(intersect(ipsiTrials, errorTrials),:)); % 0 contrast, ipsi + error
+    PopNormBinActionZeroLargeSmallErrorNoFold(2,1)= nanmean(NormBinAction(intersect(contraTrials, largeRewardTrials),:)); % 0 contrast, contra + large 
+    PopNormBinActionZeroLargeSmallErrorNoFold(2,2)= nanmean(NormBinAction(intersect(contraTrials, smallRewardTrials),:)); % 0 contrast, contra + small
+    PopNormBinActionZeroLargeSmallErrorNoFold(2,3)= nanmean(NormBinAction(intersect(contraTrials, errorTrials),:)); % 0 contrast, contra + error
+    
+    
         
         
     c=1;
@@ -624,6 +634,12 @@ RewardData = RewardData ./ StimTimeDenom;
         c=c+1;
     end
     
+    if animal_ID == 72
+        
+        NormBinStim = mean(StimData(:,4100:4500),2) - mean(StimData(:,3650:3750),2);
+        NormBinAction = mean(ActionData(:,3900:4300),2) - mean(ActionData(:,3500:3700),2);
+        
+    end
     
     %plot((AbsStimRasterCorrect(2,:)),'g','LineWidth',2)
     %plot((AbsStimRasterError(2,:)),'r','LineWidth',2)
@@ -1250,8 +1266,9 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.ActionRasterLargeError = ActRasterLargeError;
         
         
-        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = ActionRasterZeroContra; % large, small, error
-        BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
+        BehPhotoM(animal_ID).GrandSummaryL.ActionRasterZeroContra = ActionRasterZeroContra; % large, small, error
+        BehPhotoM(animal_ID).GrandSummaryL.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
+        BehPhotoM(animal_ID).GrandSummaryL.PopNormBinActionZeroLargeSmallErrorNoFold = PopNormBinActionZeroLargeSmallErrorNoFold; %col = large, small, error. row = ipsi, contra.
         
         
     end
@@ -1314,6 +1331,7 @@ RewardData = RewardData ./ StimTimeDenom;
         
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = ActionRasterZeroContra; % large, small, error
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
+        BehPhotoM(animal_ID).GrandSummaryR.PopNormBinActionZeroLargeSmallErrorNoFold =     PopNormBinActionZeroLargeSmallErrorNoFold;
         
         
         

@@ -111,7 +111,9 @@ for iAnimal = Animals
         SingleAnimalNormTuningActionCorrError = SingleAnimalTuningActionCorrError - min(min(SingleAnimalTuningActionCorrError));
         SingleAnimalNormTuningActionCorrError = SingleAnimalNormTuningActionCorrError ./ max(max(SingleAnimalNormTuningActionCorrError));
         
-        
+        SingleAnimalTuningActionZero = BehPhotoM(iAnimal).GrandSummary.PopNormBinActionZeroLargeSmallErrorNoFold;
+        SingleAnimalNormTuningActionZero = SingleAnimalTuningActionZero - min(min(SingleAnimalTuningActionZero));
+        SingleAnimalNormTuningActionZero = SingleAnimalNormTuningActionZero ./ max(max(SingleAnimalNormTuningActionZero)); % row 1 = ipsi, row 2 = contra. columns are large, small, error
          
         if strcmp(hem, 'l')
             GrandPopNormBinStimNoFold_L = GrandPopNormBinStimNoFold_L + SingleAnimalNormTunningStim; %+ GrandPopNormBinStimNoFold ;
@@ -119,14 +121,14 @@ for iAnimal = Animals
             GrandPopNormBinStimNoFold2_L(c,:)=SingleAnimalNormTunningStim(2,:);
             GrandPopNormBinStimNoFoldCorrError_L = GrandPopNormBinStimNoFoldCorrError_L + SingleAnimalNormTunningStimCorrError; %+ GrandPopNormBinStimNoFoldCorrError ;
             GrandPopNormBinStimNoFoldCorrError1_L(c,:)=SingleAnimalNormTunningStimCorrError(1,:);
-            GrandPopNormBinStimNoFoldCorrError2_L(c,:)=SingleAnimalNormTunningStimCorrError(2,:);
+            GrandPopNormBinStimNoFoldCorrError2_L(c,:)=SingleAnimalNormTunningStimCorrError(2,:);  
             
             GrandPopNormBinActionNoFold_L = GrandPopNormBinActionNoFold_L + SingleAnimalNomTuningAction;
             GrandPopNormBinActionNoFold1_L(c,:) = SingleAnimalNomTuningAction(1,:);
             GrandPopNormBinActionNoFold2_L(c,:) = SingleAnimalNomTuningAction(2,:);
             GrandPopNormBinActionNoFoldCorrError_L = GrandPopNormBinActionNoFoldCorrError_L + SingleAnimalNormTuningActionCorrError; %+ GrandPopNormBinStimNoFoldCorrError ;
-            GrandPopNormBinActionNoFoldCorrError1_L(c,:) = SingleAnimalNormTuningActionCorrError(1,:);
-            GrandPopNormBinActionNoFoldCorrError2_L(c,:) = SingleAnimalNormTuningActionCorrError(2,:);
+            GrandPopNormBinActionNoFoldCorrError1_L(c,:) = SingleAnimalNormTuningActionCorrError(2,:);
+            GrandPopNormBinActionNoFoldCorrError2_L(c,:) = SingleAnimalNormTuningActionCorrError(1,:);
             
         elseif strcmp(hem, 'r')
             GrandPopNormBinStimNoFold_R = GrandPopNormBinStimNoFold_R + SingleAnimalNormTunningStim; %+ GrandPopNormBinStimNoFold ;
@@ -136,13 +138,17 @@ for iAnimal = Animals
             GrandPopNormBinStimNoFoldCorrError1_R(c,:)=SingleAnimalNormTunningStimCorrError(2,:);
             GrandPopNormBinStimNoFoldCorrError2_R(c,:)=SingleAnimalNormTunningStimCorrError(1,:);
             
-            GrandPopNormBinActionNoFold_R = GrandPopNormBinActionNoFold_L + SingleAnimalNomTuningAction;
+            GrandPopNormBinActionNoFold_R = GrandPopNormBinActionNoFold_R + SingleAnimalNomTuningAction;
             GrandPopNormBinActionNoFold1_R(c,:) = SingleAnimalNomTuningAction(2,:);
-            GrandPopNormBinActionNoFold2_R(c,:) = SingleAnimalNomTuningAction(2,:);
-            GrandPopNormBinActionNoFoldCorrError_R = GrandPopNormBinActionNoFoldCorrError_L + SingleAnimalNormTuningActionCorrError; %+ GrandPopNormBinStimNoFoldCorrError ;
+            GrandPopNormBinActionNoFold2_R(c,:) = SingleAnimalNomTuningAction(1,:);
+            GrandPopNormBinActionNoFoldCorrError_R = GrandPopNormBinActionNoFoldCorrError_R + SingleAnimalNormTuningActionCorrError; %+ GrandPopNormBinStimNoFoldCorrError ;
             GrandPopNormBinActionNoFoldCorrError1_R(c,:) = SingleAnimalNormTuningActionCorrError(2,:);
             GrandPopNormBinActionNoFoldCorrError2_R(c,:) = SingleAnimalNormTuningActionCorrError(1,:);
+            
+
         end
+            GrandPopNormActionZero_Ipsi(c,:) = SingleAnimalTuningActionZero(1,:);
+            GrandPopNormActionZero_Contra(c,:) = SingleAnimalTuningActionZero(2,:);
 
         c = c+1;
     end
@@ -237,72 +243,99 @@ subplot(3, 2, 6) % LARGE VS SMALL, CONTRA ONLY (col 4:7)
      xticklabels([0 0.12 0.25 0.5])
      xlabel('|Contrast|')
      
-
-     
-figure; % action- responses 
+                 GrandPopNormActionZero1_Ipsi(c,:) = SingleAnimalTuningActionZero(1,:);
+            GrandPopNormActionZero1_Contra(c,:) = SingleAnimalTuningActionZero(2,:);
+%%     
+figure; % action- responses ------------------------------------------------------------------------------------------------------------------
 
 subplot(3, 2, 1) % responses to absolute stim contrast, broken by ipsi and contra
 
-    errorbar(fliplr(GrandPopNormBinActionNoFold(1,1:4)),nanstd([GrandPopNormBinActionNoFold1(:,1:4);GrandPopNormBinActionNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-        'color', IpsiContraColor(1,:),'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi; large correct trials only. to average across all correct, average rows 1 and 2. 
+    errorbar([2 3 4], fliplr(GrandPopNormBinActionNoFold(1,1:3)),nanstd([GrandPopNormBinActionNoFold1(:,1:3);GrandPopNormBinActionNoFold2(:,1:3)]) ./ sqrt(totalChannels), ...
+        'o', 'color', IpsiContraColor(1,:),'MarkerSize',5, 'MarkerFaceColor', IpsiContraColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi; large correct trials only. to average across all correct, average rows 1 and 2. 
     hold on;
-    errorbar(GrandPopNormBinActionNoFold(2,4:7), nanstd([GrandPopNormBinActionNoFold2(:,4:7);GrandPopNormBinActionNoFold1(:,4:7)])./sqrt(totalChannels), ...
-        'color', IpsiContraColor(2,:),'LineWidth',2,'Marker','o','MarkerSize',5) % large contra 
+    errorbar([2 3 4], GrandPopNormBinActionNoFold(2,5:7), nanstd([GrandPopNormBinActionNoFold2(:,5:7);GrandPopNormBinActionNoFold1(:,5:7)])./sqrt(totalChannels), ...
+        'o', 'color', IpsiContraColor(2,:),'MarkerSize',5, 'MarkerFaceColor', IpsiContraColor(2,:), 'LineWidth',2, 'CapSize', 4) % large contra 
+    errorbar(1, nanmean(GrandPopNormActionZero_Ipsi(:,1)), nanstd(GrandPopNormActionZero_Ipsi(:,1))./sqrt(totalChannels), ...
+        'o', 'color', IpsiContraColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', IpsiContraColor(1,:), 'LineWidth',2, 'CapSize', 4) % ipsi + large + 0
+    errorbar(1, nanmean(GrandPopNormActionZero_Contra(:,1)), nanstd(GrandPopNormActionZero_Contra(:,1))./sqrt(totalChannels), ...
+        'o', 'color', IpsiContraColor(2,:),'MarkerSize',5, 'MarkerFaceColor', IpsiContraColor(2,:), 'LineWidth',2, 'CapSize', 4) % contra + large + 0
     title('All action responses')
     legend('Ipsi', 'Contra')
-    ylim([0 .5])
+    ylim([0 1])
 
 subplot(3, 2, 3) % ERROR VS CORRECT, IPSI ONLY (col 1:4)
-     errorbar(fliplr(GrandPopNormBinActionErrCorrNoFold(1,1:4)), nanstd(GrandPopNormBinActionNoFoldCorrError1(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi error
+     errorbar([2 3 4], fliplr(GrandPopNormBinActionErrCorrNoFold(1,1:3)), nanstd(GrandPopNormBinActionNoFoldCorrError1(:,1:3)) ./ sqrt(totalChannels), ...
+         'o', 'color', ErrorCorrectColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', ErrorCorrectColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi error
      hold on;
+     errorbar(1, nanmean(GrandPopNormActionZero_Ipsi(:,3)), nanstd(GrandPopNormActionZero_Ipsi(:,3))./sqrt(totalChannels), ...
+        'o', 'color', ErrorCorrectColor(1,:),'MarkerSize',5, 'MarkerFaceColor', ErrorCorrectColor(1,:), 'LineWidth',2, 'CapSize', 4) % ipsi + error + 0
      if LargeSmallErrorOnSinglePlot
-         errorbar(fliplr(GrandPopNormBinActionNoFold(2,1:4)), nanstd(GrandPopNormBinActionNoFold2(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi small
+         errorbar([2 3 4], fliplr(GrandPopNormBinActionNoFold(2,1:3)), nanstd(GrandPopNormBinActionNoFold2(:,1:3)) ./ sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi small
+         errorbar(1, nanmean(GrandPopNormActionZero_Ipsi(:,2)), nanstd(GrandPopNormActionZero_Ipsi(:,2))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) % ipsi + small + 0
          hold on;
      end
-     errorbar(fliplr(GrandPopNormBinActionNoFold(1,1:4)),nanstd([GrandPopNormBinActionNoFold1(:,1:4);GrandPopNormBinActionNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
+     errorbar([2 3 4], fliplr(GrandPopNormBinActionNoFold(1,1:3)),nanstd([GrandPopNormBinActionNoFold1(:,1:3);GrandPopNormBinActionNoFold2(:,1:3)]) ./ sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(2,:),'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %ipsi large
+     errorbar(1, nanmean(GrandPopNormActionZero_Ipsi(:,1)), nanstd(GrandPopNormActionZero_Ipsi(:,1))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(2,:),'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) % ipsi + large + 0
      title('Ipsi responses')
      xticks([])
-     ylim([0 0.5])
+     ylim([0 1])
      
 subplot(3, 2, 4) % ERROR VS CORRECT, CONTRA ONLY (col 4:7)
-     errorbar(GrandPopNormBinActionErrCorrNoFold(1,4:7), nanstd(GrandPopNormBinActionNoFoldCorrError1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra error
+     errorbar([2 3 4], GrandPopNormBinActionErrCorrNoFold(1,5:7), nanstd(GrandPopNormBinActionNoFoldCorrError1(:,5:7)) ./ sqrt(totalChannels), ...
+         'o', 'color', ErrorCorrectColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', ErrorCorrectColor(1,:), 'LineWidth',2, 'CapSize', 4) %contra error
      hold on;
+     errorbar(1, nanmean(GrandPopNormActionZero_Contra(:,3)), nanstd(GrandPopNormActionZero_Contra(:,3))./sqrt(totalChannels), ...
+        'o', 'color', ErrorCorrectColor(1,:),'MarkerSize',5, 'MarkerFaceColor', ErrorCorrectColor(1,:), 'LineWidth',2, 'CapSize', 4) % contra + error + 0
      if LargeSmallErrorOnSinglePlot
-     errorbar(GrandPopNormBinActionNoFold(1,4:7), nanstd(GrandPopNormBinActionNoFold1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra small
+        errorbar([2 3 4], GrandPopNormBinActionNoFold(1,5:7), nanstd(GrandPopNormBinActionNoFold1(:,5:7)) ./ sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %contra small
+         hold on;
+         errorbar(1, nanmean(GrandPopNormActionZero_Contra(:,2)), nanstd(GrandPopNormActionZero_Contra(:,2))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) % contra + small + 0
          hold on;
      end
-     errorbar(GrandPopNormBinActionNoFold(2,4:7), nanstd([GrandPopNormBinActionNoFold2(:,4:7);GrandPopNormBinActionNoFold1(:,4:7)])./sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra large
+     errorbar([2 3 4], GrandPopNormBinActionNoFold(2,5:7), nanstd([GrandPopNormBinActionNoFold2(:,5:7);GrandPopNormBinActionNoFold1(:,5:7)])./sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(2,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %contra large
+     errorbar(1, nanmean(GrandPopNormActionZero_Contra(:,1)), nanstd(GrandPopNormActionZero_Contra(:,1))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(2,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) % contra + large + 0
+    
      title('Contra responses')
      xticks([])
-     ylim([0 0.5])
+     ylim([0 1])
 
 subplot(3, 2, 5) % LARGE VS SMALL, IPSI ONLY (col 1:4)
-     errorbar(fliplr(GrandPopNormBinActionNoFold(2,1:4)), nanstd(GrandPopNormBinActionNoFold2(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi small
+     errorbar([2 3 4], fliplr(GrandPopNormBinActionNoFold(2,1:3)), nanstd(GrandPopNormBinActionNoFold2(:,1:3)) ./ sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi small
      hold on;
-     errorbar(fliplr(GrandPopNormBinActionNoFold(1,1:4)),nanstd([GrandPopNormBinActionNoFold1(:,1:4);GrandPopNormBinActionNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
+     errorbar(1, nanmean(GrandPopNormActionZero_Ipsi(:,2)), nanstd(GrandPopNormActionZero_Ipsi(:,2))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(1,:),'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) % ipsi + small + 0
+     errorbar([2 3 4], fliplr(GrandPopNormBinActionNoFold(1,1:3)),nanstd([GrandPopNormBinActionNoFold1(:,1:3);GrandPopNormBinActionNoFold2(:,1:3)]) ./ sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(2,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %ipsi large
+     errorbar(1, nanmean(GrandPopNormActionZero_Ipsi(:,1)), nanstd(GrandPopNormActionZero_Ipsi(:,1))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(2,:),'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) % ipsi + large + 0
      xticks([1 2 3 4])
      xticklabels([0 0.12 0.25 0.5])
      xlabel('|Contrast|')
-     ylim([0 0.5])
+     ylim([0 1])
      
 subplot(3, 2, 6) % LARGE VS SMALL, CONTRA ONLY (col 4:7)
-     errorbar(GrandPopNormBinActionNoFold(1,4:7), nanstd(GrandPopNormBinActionNoFold1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra small
+     errorbar([2 3 4], GrandPopNormBinActionNoFold(1,5:7), nanstd(GrandPopNormBinActionNoFold1(:,5:7)) ./ sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(1,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %contra small
      hold on;
-     errorbar(GrandPopNormBinActionNoFold(2,4:7), nanstd([GrandPopNormBinActionNoFold2(:,4:7);GrandPopNormBinActionNoFold1(:,4:7)])./sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra large
+     errorbar(1, nanmean(GrandPopNormActionZero_Contra(:,2)), nanstd(GrandPopNormActionZero_Contra(:,2))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(1,:),'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) % contra + small + 0
+     errorbar([2 3 4], GrandPopNormBinActionNoFold(2,5:7), nanstd([GrandPopNormBinActionNoFold2(:,5:7);GrandPopNormBinActionNoFold1(:,5:7)])./sqrt(totalChannels), ...
+         'o', 'color', SmallLargeColor(2,:), 'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %contra large
+     errorbar(1, nanmean(GrandPopNormActionZero_Contra(:,1)), nanstd(GrandPopNormActionZero_Contra(:,1))./sqrt(totalChannels), ...
+        'o', 'color', SmallLargeColor(2,:),'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) % contra + large + 0
      xticks([1 2 3 4])
      xticklabels([0 0.12 0.25 0.5])
      xlabel('|Contrast|')
-     ylim([0 0.5])
+     ylim([0 1])
      
 
 % ------- colors and functions
