@@ -1,6 +1,6 @@
 % This code is for visualisation of stimulus-aligned average raster, intended to cover the entire trial (~3s)
 
-% Morgane September 2019: only deals with large reward trials
+% Morgane September 2019
 
 % close all
 % clear all
