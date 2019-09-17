@@ -46,7 +46,7 @@ load(['BehPhotoM_Exp',exp_ID,'_',brain_region,'.mat'])
 
 fullStim = [-stim_2_plot stim_2_plot];
 
-for iAnimal = Animals
+for iAnimal = animal_ID
 nSessions = 1:length(BehPhotoM(animal_ID).Session);
 
 for iSession = nSessions
@@ -248,27 +248,6 @@ for iSession = nSessions
     end
 end
 
-%% average signal through trial aligned  at stimulus onset 
-
-        actionTimesContra = [];
-        actionTimesContra = abs(sStart) + (largeRewTrialsContra(:,1));
-        outcomeTimesContra = [];
-        outcomeTimesContra = abs(sStart) + (largeRewTrialsContraOutcome(:,1));
-        
-        figure; 
-
-subplot(2,1,1)
-data = M{1};
-plot(mean(data(length(errorTrialsContra)+length(smallRewTrialsContra)+1:end,(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)))));
-            xticks([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]) % 
-            xticklabels([sStart 0 1 2 sStop])
-
-
-subplot(2, 2, 3) % action time distribution
-histfit(actionTimesContra);
-
-subplot(2, 2, 4) % reward time distribution
-histfit(outcomeTimesContra);
             
 %%
 end
