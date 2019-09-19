@@ -28,8 +28,8 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 53;
-BrainStrucutre = 'DMS'
+animal_ID = 64;
+BrainStrucutre = 'VTA'
 ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
@@ -372,19 +372,19 @@ RewardData = RewardData ./ StimTimeDenom;
         
         NormBinStim = mean(StimData(:,4500:5000),2)- mean(StimData(:,3100:3500),2);
         NormBinStim = mean(StimData(:,4600:5300),2);
-        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
+        NormBinAction = mean(ActionData(:,3900:4300),2) - mean(ActionData(:,3500:3700),2);
         
     elseif animal_ID == 57
         
         NormBinStim = mean(StimData(:,4300:5000),2)- mean(StimData(:,3400:3800),2);
-        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
+        NormBinAction = mean(ActionData(:,3900:4300),2) - mean(ActionData(:,3500:3700),2);
         NormBinStim = mean(StimData(:,4600:5300),2)- mean(StimData(:,3400:3800),2);
 
     elseif animal_ID == 59
         
         NormBinStim = mean(StimData(:,4400:4800),2);
         NormBinStim = mean(StimData(:,4900:5400),2);
-        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
+        NormBinAction = mean(ActionData(:,3900:4300),2) - mean(ActionData(:,3500:3700),2);
     
         elseif animal_ID == 64 && strcmp(BrainStrucutre,'DMS')
         
@@ -394,7 +394,7 @@ RewardData = RewardData ./ StimTimeDenom;
     elseif animal_ID == 66
         
         NormBinStim = mean(StimData(:,5000:6000),2);
-        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
+        NormBinAction = mean(ActionData(:,3900:4300),2) - mean(ActionData(:,3500:3700),2);
                 
     elseif animal_ID == 69
         
