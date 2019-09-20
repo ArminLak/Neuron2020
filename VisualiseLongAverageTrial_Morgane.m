@@ -12,6 +12,7 @@
       load('BehPhotoM_Exp23_DMS.mat')
  end
  Animals = [53, 62, 63, 71,72]
+
  brain_region = 'DMS'
 
 % NAC

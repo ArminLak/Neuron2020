@@ -14,14 +14,14 @@ LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  
 %  load('BehPhotoM_Exp23_VTA')
 
 % NAC
-  region = 'NAC';
-  Animals = [56 57 59 66]
-  load('BehPhotoM_Exp23_NAc')
+ % region = 'NAC';
+ % Animals = [56 57 59 66]
+ % load('BehPhotoM_Exp23_NAc')
 
 %DMS
-%   region = 'DMS';
-% Animals = [53, 62, 63, 71,72];
-% load('BehPhotoM_Exp23_DMS')
+   region = 'DMS';
+ Animals = [53, 62, 63, 71,72];
+ load('BehPhotoM_Exp23_DMS')
 
 
 %%
