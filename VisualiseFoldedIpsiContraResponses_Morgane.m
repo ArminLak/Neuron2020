@@ -188,55 +188,55 @@ figure;
 plots(1) = subplot(3, 2, 1); % responses to absolute stim contrast, broken by ipsi and contra
 
     errorbar(fliplr(GrandPopNormBinStimNoFold(1,1:4)),nanstd([GrandPopNormBinStimNoFold1(:,1:4);GrandPopNormBinStimNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-        'color', IpsiContraColor(1,:),'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi; large correct trials only. to average across all correct, average rows 1 and 2. 
+        'o', 'color', IpsiContraColor(1,:),'LineWidth',2,'MarkerSize',5,'MarkerFaceColor', IpsiContraColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi; large correct trials only. to average across all correct, average rows 1 and 2. 
     hold on;
     errorbar(GrandPopNormBinStimNoFold(2,4:7), nanstd([GrandPopNormBinStimNoFold2(:,4:7);GrandPopNormBinStimNoFold1(:,4:7)])./sqrt(totalChannels), ...
-        'color', IpsiContraColor(2,:),'LineWidth',2,'Marker','o','MarkerSize',5) % large contra 
+        'o', 'color', IpsiContraColor(2,:),'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', IpsiContraColor(2,:), 'LineWidth',2, 'CapSize', 4) % large contra 
     title('All stim responses')
     legend('Ipsi', 'Contra')
 
 plots(2) = subplot(3, 2, 3); % ERROR VS CORRECT, IPSI ONLY (col 1:4)
      errorbar(fliplr(GrandPopNormBinStimErrCorrNoFold(1,1:4)), nanstd(GrandPopNormBinStimNoFoldCorrError1(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi error
+         'o', 'color', ErrorCorrectColor(1,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', ErrorCorrectColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi error
      hold on;
      if LargeSmallErrorOnSinglePlot
          errorbar(fliplr(GrandPopNormBinStimNoFold(2,1:4)), nanstd(GrandPopNormBinStimNoFold2(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi small
+         'o', 'color', SmallLargeColor(1,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi small
          hold on;
      end
      errorbar(fliplr(GrandPopNormBinStimNoFold(1,1:4)),nanstd([GrandPopNormBinStimNoFold1(:,1:4);GrandPopNormBinStimNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
+         'o', 'color', SmallLargeColor(2,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %ipsi large
      title('Ipsi responses')
      xticks([])
      
 plots(3) = subplot(3, 2, 4); % ERROR VS CORRECT, CONTRA ONLY (col 4:7)
      errorbar(GrandPopNormBinStimErrCorrNoFold(1,4:7), nanstd(GrandPopNormBinStimNoFoldCorrError1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', ErrorCorrectColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra error
+         'o', 'color', ErrorCorrectColor(1,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', ErrorCorrectColor(1,:), 'LineWidth',2, 'CapSize', 4) %contra error
      hold on;
      if LargeSmallErrorOnSinglePlot
      errorbar(GrandPopNormBinStimNoFold(1,4:7), nanstd(GrandPopNormBinStimNoFold1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra small
+         'o', 'color', SmallLargeColor(1,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %contra small
          hold on;
      end
      errorbar(GrandPopNormBinStimNoFold(2,4:7), nanstd([GrandPopNormBinStimNoFold2(:,4:7);GrandPopNormBinStimNoFold1(:,4:7)])./sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra large
+         'o', 'color', SmallLargeColor(2,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %contra large
      title('Contra responses')
      xticks([])
 
 plots(4) = subplot(3, 2, 5); % LARGE VS SMALL, IPSI ONLY (col 1:4)
      errorbar(fliplr(GrandPopNormBinStimNoFold(2,1:4)), nanstd(GrandPopNormBinStimNoFold2(:,1:4)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi small
+         'o', 'color', SmallLargeColor(1,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %ipsi small
      hold on;
      errorbar(fliplr(GrandPopNormBinStimNoFold(1,1:4)),nanstd([GrandPopNormBinStimNoFold1(:,1:4);GrandPopNormBinStimNoFold2(:,1:4)]) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %ipsi large
+         'o', 'color', SmallLargeColor(2,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %ipsi large
      xlabel('|Contrast|')
      
 plots(5) = subplot(3, 2, 6); % LARGE VS SMALL, CONTRA ONLY (col 4:7)
      errorbar(GrandPopNormBinStimNoFold(1,4:7), nanstd(GrandPopNormBinStimNoFold1(:,4:7)) ./ sqrt(totalChannels), ...
-         'color', SmallLargeColor(1,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra small
+         'o', 'color', SmallLargeColor(1,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(1,:), 'LineWidth',2, 'CapSize', 4) %contra small
      hold on;
      errorbar(GrandPopNormBinStimNoFold(2,4:7), nanstd([GrandPopNormBinStimNoFold2(:,4:7);GrandPopNormBinStimNoFold1(:,4:7)])./sqrt(totalChannels), ...
-         'color', SmallLargeColor(2,:), 'LineWidth',2,'Marker','o','MarkerSize',5) %contra large
+         'o', 'color', SmallLargeColor(2,:), 'LineWidth',2,'MarkerSize',5, 'MarkerFaceColor', SmallLargeColor(2,:), 'LineWidth',2, 'CapSize', 4) %contra large
      xlabel('|Contrast|')
      
 
