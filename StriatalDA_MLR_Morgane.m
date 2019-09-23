@@ -10,30 +10,25 @@
 %  brain_region = 'DMS'
  
 % NAC
- if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
-     clearvars -except BehPhotoM
-  else clear all
-     load('BehPhotoM_Exp23_NAc.mat')
- end
-Animals = [56 57 59 66]
-brain_region = 'NAc'
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
+%      clearvars -except BehPhotoM
+%   else clear all
+%      load('BehPhotoM_Exp23_NAc.mat')
+%  end
+% Animals = [56 57 59 66]
+% brain_region = 'NAc'
 
 % VTA: 
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
-%      clearvars -except BehPhotoM
-%  else clear all
-%       load('BehPhotoM_Exp23_VTA.mat')
-%  end
-% Animals = [48 50 51 64]
-% brain_region = 'VTA'
-%  
-
-
-
-
-
-
+ if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
+     clearvars -except BehPhotoM
+ else clear all
+      load('BehPhotoM_Exp23_VTA.mat')
+ end
+Animals = [48 50 51 64]
+brain_region = 'VTA'
  
+
+
  RTLimit = 6;
  
  c = 0;
@@ -131,18 +126,18 @@ for iChan = Chan
 
         contraTrials = find(BehData(:,9)==1 & BehData(:,8)==2 & BehData(:,3)==1);
         
-        for i = length(BehData)
+
             isContra = [isContra; double((BehData(:,9)==1 & BehData(:,3)==1) | (BehData(:,9)==0 & BehData(:,3)==-1))];
-        end
+
 
     elseif iChan == 2
         StimData = StimDataR;
         ActionData = ActionDataR;
         RewardData = RewardDataR;
 
-        for i = length(BehData)
+
             isContra = [isContra; double((BehData(:,9)==1 & BehData(:,3)==-1) | (BehData(:,9)==0 & BehData(:,3)==1))];
-        end
+
         
     end
     
@@ -164,8 +159,24 @@ for iChan = Chan
     
 end
 
-StimRegTbl = horzcat(isContra, Contrast, CorrErr, RewardSize);
-stimreg(:,c) = regress(NormBinStim, StimRegTbl);
+
+%isContra(isContra==0)=-1;
+%CorrErr(CorrErr==0)=-1;
+
+RewardSize(CorrErr == 0) = 0;
+RewardSize (RewardSize ==1) =0.5;
+RewardSize (RewardSize ==2) =1;
+
+Contrast = Contrast * 2;
+
+%  StimRegTbl = horzcat(isContra, Contrast, CorrErr, RewardSize);
+  StimRegTbl = horzcat(isContra, Contrast, RewardSize);
+  
+  stimreg(:,c) = regress(NormBinStim, StimRegTbl);
+
+
+
+
  end
 
 stimregmean = mean(stimreg,2);
