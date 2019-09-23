@@ -3,16 +3,16 @@
 
 % Morgane September 2019: only deals with large reward trials 
 
- close all 
+% close all 
 clear all
 
 %DMS
-Animals = [53, 62, 63, 71,72];
-load('BehPhotoM_Exp23_DMS')
+% Animals = [53, 62, 63, 71,72];
+% load('BehPhotoM_Exp23_DMS')
 
 %NAC
-% Animals = [56 57 59 66];
-% load('BehPhotoM_Exp23_NAc')
+Animals = [56 57 59 66];
+load('BehPhotoM_Exp23_NAc')
 
 %VTA
 % Animals = [48 50 51 64];
@@ -129,45 +129,45 @@ AvgGrandPopActionLargeError    = sum(GrandPopActionLargeError,3) ./ chan_count;
 % --- plotting ------------------------------------------------------------
 figure; 
 % ROW 1: STIM RESPONSES 
-stimplots(1) = subplot(2, 3, 1); % large reward 
+stimplots(1) = subplot(3,2, 1); % large reward 
 for c = Stimz2plot
     hold on; 
     plot(smooth(AvgGrandPopStimLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
-title('Large reward trials')
-ylabel('Stimulus response')
+title('Stimulus response')
+ylabel('Large reward trials')
 
-stimplots(2) = subplot(2, 3, 2); % small reward
+stimplots(2) = subplot(3,2, 3); % small reward
 for c = Stimz2plot
     hold on; 
     plot(smooth(AvgGrandPopStimSmallCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
-title('Small reward trials')
+ylabel('Small reward trials')
 
-stimplots(3) = subplot(2, 3, 3); % error 
+stimplots(3) = subplot(3,2, 5); % error 
 for c = Stimz2plot
     hold on; 
     plot(smooth(AvgGrandPopStimLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end
-title('Error trials')
+ylabel('Error trials')
 
 
-actionplots(1) = subplot(2, 3, 4); % large reward
+actionplots(1) = subplot(3,2, 2); % large reward
 for c = Stimz2plot
     hold on;
     plot(smooth(AvgGrandPopActionLargeCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end    
-ylabel('Action response')
-xlabel('Time (s)')
+title('Action response')
 
-actionplots(2) = subplot(2, 3, 5); % small reward
+
+actionplots(2) = subplot(3,2, 4); % small reward
 for c = Stimz2plot
     hold on;
     plot(smooth(AvgGrandPopActionSmallCorrect(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
 end  
-xlabel('Time (s)')
 
-actionplots(3) = subplot(2, 3, 6); % error
+
+actionplots(3) = subplot(3,2, 6); % error
 for c = Stimz2plot
     hold on;
     plot(smooth(AvgGrandPopActionLargeError(c,:), smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
@@ -181,49 +181,49 @@ if length(Animals) > 1
     figure; %figure 2: avg across all ipsi/contra
     plotindex = [1:3; 5:7];
     % ROW 1: STIM RESPONSES
-    stimplots(4) = subplot(2, 3, 1); % large reward
+    stimplots(4) = subplot(3,2, 1); % large reward
     for c = 1:2
         hold on;
         shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopStimLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
             'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
     end
-    title('Large reward trials')
-    ylabel('Stimulus response')
+    title('Stimulus response')
+    ylabel('Large reward trials')
 
-    stimplots(5) = subplot(2, 3, 2); % small reward
+    stimplots(5) = subplot(3,2, 3); % small reward
     for c = 1:2
         hold on;
         shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopStimSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
             'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
     end
-    title('Small reward trials')
-
-    stimplots(6) = subplot(2, 3, 3); % error
+    ylabel('Small reward trials')
+    
+    stimplots(6) = subplot(3, 2, 5); % error
     for c = 1:2
         hold on;
         shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopStimLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopStimLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
             'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
     end
-    title('Error trials')
+     xlabel('Time(s)')
+         ylabel('Error trials')
 
-    actionplots(4) = subplot(2, 3, 4); % large reward
+    actionplots(4) = subplot(3, 2, 2); % large reward
     for c = 1:2
         hold on;
         shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopActionLargeCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
             'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
     end
-    ylabel('Action response')
-    xlabel('Time(s)')
+    title('Action response')
 
-    actionplots(5) = subplot(2, 3, 5); % small reward
+    actionplots(5) = subplot(3, 2, 4); % small reward
     for c = 1:2
         hold on;
         shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopActionSmallCorrect(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionSmallCorrect(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
             'lineprops', {'color', IpsiContraColor2(c,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
     end
-    xlabel('Time(s)')
+   
 
-    actionplots(6) = subplot(2, 3, 6); % error
+    actionplots(6) = subplot(3, 2, 6); % error
     for c = 1:2
         hold on;
         shadedErrorBar_Morgane(1:13100, smooth(mean(AvgGrandPopActionLargeError(plotindex(c,:),:)), smooth_factor), smooth(std(squeeze(mean(GrandPopActionLargeError(plotindex(c,:),:,:)))')/sqrt(chan_count), smooth_factor), ...
@@ -235,14 +235,14 @@ end
 
 
     set(stimplots, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(1,1)*sampleRate) StartTime + (TimingVisualise(1,2)*sampleRate)], ...
-        'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')
+        'YTick', [0 0.5 1], 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')
     set(actionplots, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
-        'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+        'YTick', [0 0.5 1], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
         'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
     if length(Animals)>1
-    set([stimplots([1 4]), actionplots([1 4])], 'YTickLabel', {'-0.4', '0', '0.6'});
-    set(actionplots(4:6), 'ylim', [-0.6 0.8])
-    set(stimplots(4:6), 'ylim', [-0.6 0.8])
+%     set([stimplots([1 4]), actionplots([1 4])], 'YTickLabel', {'-0.4', '0', '0.6'});
+%     set(actionplots(4:6), 'ylim', [-0.6 0.8])
+%     set(stimplots(4:6), 'ylim', [-0.6 0.8])
     else
     set([stimplots(1), actionplots(1)], 'YTickLabel', {'-0.4', '0', '0.6'});
     end
