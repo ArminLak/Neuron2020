@@ -48,7 +48,7 @@ RT_max = 3; % reaction time range to include
 OT_min = 0.2;
 OT_max = 3; % outcome time range to include
 
-sStart = -0.1; %stimulus
+sStart = -2; %stimulus
 sStop = 3;
 
 downSample = 1200; % sampling rate AFTER DOWNSAMPLING in makeDataSummaryMatrix
@@ -95,15 +95,15 @@ for iAnimal = Animals
             if iChan == 1
                 contraTrials = setdiff(find(BehData(:,2)==-stim2plot), RTExcludeTrials);
                 
-                LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
-                SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
-                ErrorStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(intersect(contraTrials, errorTrials),:),1);
+                LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionL(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
+                SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionL(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
+                ErrorStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionL(intersect(contraTrials, errorTrials),:),1);
             elseif iChan == 2
                 contraTrials = setdiff(find(BehData(:,2)==stim2plot), RTExcludeTrials);
                 
-                LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
-                SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
-                ErrorStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(intersect(contraTrials, errorTrials),:),1);
+                LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionR(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
+                SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionR(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
+                ErrorStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionR(intersect(contraTrials, errorTrials),:),1);
             end
             
             
