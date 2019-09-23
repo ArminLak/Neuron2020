@@ -39,17 +39,23 @@ sampleRate = 1200;
 StartTime = 3700;
 smooth_factor = 150;
 
-
-
 StartTime = 3700; % saved in the database.
 RT_min = 0.2;
-RT_max = 3; % reaction time range to include
+RT_max = 1.7; % reaction time range to include
 
-OT_min = 0.2;
-OT_max = 3; % outcome time range to include
+FT_min = 0.1;
+FT_max = 0.7; % outcome time range to include (action -> outcome)
+
+OT_max = -2.1;
 
 sStart = -0.1; %stimulus
 sStop = 3;
+
+aStart = -2; 
+aStop = 1.1;
+
+oStart = -2.6;
+oStop = 0.5;
 
 downSample = 1200; % sampling rate AFTER DOWNSAMPLING in makeDataSummaryMatrix
 eventOnset = 3700;  % in the saved matrix, the event occurs in this column
@@ -60,13 +66,29 @@ eventOnset = 3700;  % in the saved matrix, the event occurs in this column
 LargeStimDataContra = [];
 SmallStimDataContra = [];
 ErrorStimDataContra = [];
+LargeActionDataContra = [];
+SmallActionDataContra = [];
+ErrorActionDataContra = [];
+LargeOutcomeDataContra = [];
+SmallOutcomeDataContra = [];
+ErrorOutcomeDataContra = [];
 
 PopLargeStimDataContra = zeros(1,13100);
 PopSmallStimDataContra = zeros(1,13100);
 PopErrorStimDataContra = zeros(1,13100);
+PopLargeActionDataContra = zeros(1,13100);
+PopSmallActionDataContra = zeros(1,13100);
+PopErrorActionDataContra = zeros(1,13100);
+PopLargeOutcomeDataContra = zeros(1,13100);
+PopSmallOutcomeDataContra = zeros(1,13100);
+PopErrorOutcomeDataContra = zeros(1,13100);
 
-ActionTimes_Contra = {NaN, NaN, NaN}; 
-OutcomeTimes_Contra = {NaN, NaN, NaN};
+SActionTimes_Contra = {NaN, NaN, NaN}; 
+SOutcomeTimes_Contra = {NaN, NaN, NaN};
+AStimulusTimes_Contra = {NaN, NaN, NaN}; 
+AOutcomeTimes_Contra = {NaN, NaN, NaN};
+OStimulusTimes_Contra = {NaN, NaN, NaN}; 
+OActionTimes_Contra = {NaN, NaN, NaN};
 
 chan_count = 0;
 for iAnimal = Animals
@@ -82,9 +104,10 @@ for iAnimal = Animals
     for iSession = 1:length(BehPhotoM(iAnimal).Session)
         BehData = BehPhotoM(iAnimal).Session(iSession).TrialTimingData;
         RTs = BehData(:,10) - BehData(:,13);
+        FTs = BehData(:,14) - BehData(:,10);
         OTs = BehData(:,14) - BehData(:,13);
         
-        RTExcludeTrials = unique([(find(RTs < RT_min)) ; (find(RTs >RT_max)) ; (find(OTs < OT_min)) ; (find(OTs > OT_max))]);
+        RTExcludeTrials = unique([(find(RTs < RT_min)) ; (find(RTs >RT_max)) ; (find(FTs < FT_min)) ; (find(FTs > FT_max))]);
         
         correctTrials = find(BehData(:,9)==1);
         errorTrials = find(BehData(:,9)==0);
@@ -98,42 +121,94 @@ for iAnimal = Animals
                 LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
                 SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
                 ErrorStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(intersect(contraTrials, errorTrials),:),1);
+                
+                LargeActionDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionL(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
+                SmallActionDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionL(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
+                ErrorActionDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionL(intersect(contraTrials, errorTrials),:),1);
+
+                LargeOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardL(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
+                SmallOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardL(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
+                ErrorOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardL(intersect(contraTrials, errorTrials),:),1);            
+            
             elseif iChan == 2
                 contraTrials = setdiff(find(BehData(:,2)==stim2plot), RTExcludeTrials);
                 
                 LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
                 SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
                 ErrorStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(intersect(contraTrials, errorTrials),:),1);
+                
+                LargeActionDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionR(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
+                SmallActionDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionR(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
+                ErrorActionDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronActionR(intersect(contraTrials, errorTrials),:),1);
+                
+                LargeOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardR(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
+                SmallOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardR(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
+                ErrorOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardR(intersect(contraTrials, errorTrials),:),1);                
             end
             
             
-            ActionTimes_Contra{1} = [ActionTimes_Contra{1}; BehData(mintersect(contraTrials, correctTrials, toLargeRewardTrials),14) - BehData(mintersect(contraTrials, correctTrials, toLargeRewardTrials),13)]; % large rwd column
-            ActionTimes_Contra{2} = [ActionTimes_Contra{2}; BehData(mintersect(contraTrials, correctTrials, toSmallRewardTrials),14) - BehData(mintersect(contraTrials, correctTrials, toSmallRewardTrials),13)]; % small rwd column
-            ActionTimes_Contra{3} = [ActionTimes_Contra{3}; BehData(intersect(contraTrials, errorTrials),14) - BehData(mintersect(contraTrials, errorTrials),13)]; % error column
-            OutcomeTimes_Contra{1} = [OutcomeTimes_Contra{1}; BehData(mintersect(contraTrials, correctTrials, toLargeRewardTrials),10) - BehData(mintersect(contraTrials, correctTrials, toLargeRewardTrials),13)]; % large rwd column
-            OutcomeTimes_Contra{2} = [OutcomeTimes_Contra{2}; BehData(mintersect(contraTrials, correctTrials, toSmallRewardTrials),10) - BehData(mintersect(contraTrials, correctTrials, toSmallRewardTrials),13)]; % small rwd column
-            OutcomeTimes_Contra{3} = [OutcomeTimes_Contra{3}; BehData(intersect(contraTrials, errorTrials),10) - BehData(mintersect(contraTrials, errorTrials),13)]; % error column
+            largesmallerrorindex = {mintersect(contraTrials, correctTrials, toLargeRewardTrials), mintersect(contraTrials, correctTrials, toSmallRewardTrials), intersect(contraTrials, errorTrials)};
+            
+            for i = 1:3
+                
+            SActionTimes_Contra{i} = [SActionTimes_Contra{i}; BehData(largesmallerrorindex{i},10) - BehData(largesmallerrorindex{i},13)]; % action times relative to stimulus
+            SOutcomeTimes_Contra{i} = [SOutcomeTimes_Contra{i}; BehData(largesmallerrorindex{i},14) - BehData(largesmallerrorindex{i},13)]; % outcome times relative to stimulus
+            
+            AStimulusTimes_Contra{i} = [AStimulusTimes_Contra{i}; BehData(largesmallerrorindex{i},13) - BehData(largesmallerrorindex{i},10)];
+            AOutcomeTimes_Contra{i} = [AOutcomeTimes_Contra{i}; BehData(largesmallerrorindex{i},14) - BehData(largesmallerrorindex{i},10)];
+            
+            OStimulusTimes_Contra{i} = [OStimulusTimes_Contra{i}; BehData(largesmallerrorindex{i},13) - BehData(largesmallerrorindex{i},14)];
+            OActionTimes_Contra{i} = [OActionTimes_Contra{i}; BehData(largesmallerrorindex{i},10) - BehData(largesmallerrorindex{i},14)];
+            
+            end
             
             
             PopLargeStimDataContra = nansum([PopLargeStimDataContra ;LargeStimDataContra]);
             PopSmallStimDataContra = nansum([PopSmallStimDataContra ;SmallStimDataContra]);
             PopErrorStimDataContra = nansum([PopErrorStimDataContra ; ErrorStimDataContra]);
             
+            PopLargeActionDataContra = nansum([PopLargeActionDataContra ; LargeActionDataContra]);
+            PopSmallActionDataContra = nansum([PopSmallActionDataContra ; SmallActionDataContra]);
+            PopErrorActionDataContra = nansum([PopErrorActionDataContra ; ErrorActionDataContra]);
+
+            PopLargeOutcomeDataContra = nansum([PopLargeOutcomeDataContra ; LargeOutcomeDataContra]);
+            PopSmallOutcomeDataContra = nansum([PopSmallOutcomeDataContra ; SmallOutcomeDataContra]);
+            PopErrorOutcomeDataContra = nansum([PopErrorOutcomeDataContra ; ErrorOutcomeDataContra]);
+        
+        
+        
         end
         
     end
     
 end
 
-maxDenom = max(max([PopLargeStimDataContra; PopLargeStimDataContra; PopErrorStimDataContra]));
-PopLargeStimDataContra = PopLargeStimDataContra ./ maxDenom; 
-PopSmallStimDataContra = PopSmallStimDataContra ./ maxDenom;
-PopErrorStimDataContra = PopErrorStimDataContra ./ maxDenom; 
+maxDenomStim = max(max([PopLargeStimDataContra; PopSmallStimDataContra; PopErrorStimDataContra]));
+PopLargeStimDataContra = PopLargeStimDataContra ./ maxDenomStim; 
+PopSmallStimDataContra = PopSmallStimDataContra ./ maxDenomStim;
+PopErrorStimDataContra = PopErrorStimDataContra ./ maxDenomStim; 
+
+maxDenomAction = max(max([PopLargeActionDataContra; PopSmallActionDataContra; PopErrorActionDataContra]));
+PopLargeActionDataContra = PopLargeActionDataContra ./ maxDenomAction; 
+PopSmallActionDataContra = PopSmallActionDataContra ./ maxDenomAction;
+PopErrorActionDataContra = PopErrorActionDataContra ./ maxDenomAction; 
+
+maxDenomOutcome = max(max([PopLargeOutcomeDataContra; PopSmallOutcomeDataContra; PopErrorOutcomeDataContra]));
+PopLargeOutcomeDataContra = PopLargeOutcomeDataContra ./ maxDenomOutcome; 
+PopSmallOutcomeDataContra = PopSmallOutcomeDataContra ./ maxDenomOutcome;
+PopErrorOutcomeDataContra = PopErrorOutcomeDataContra ./ maxDenomOutcome; 
+
+
 
 for i = 1:3
 
-    ActionTimes_Contra{i} = downSample*(abs(sStart)+ActionTimes_Contra{i});
-    OutcomeTimes_Contra{i} = downSample*(abs(sStart)+OutcomeTimes_Contra{i}-0.07);
+    SActionTimes_Contra{i} = downSample*(abs(sStart)+SActionTimes_Contra{i});
+    SOutcomeTimes_Contra{i} = downSample*(abs(sStart)+SOutcomeTimes_Contra{i}-0.07);
+    AStimulusTimes_Contra{i} = downSample*(abs(aStart)+AStimulusTimes_Contra{i});
+    AOutcomeTimes_Contra{i} = downSample*(abs(aStart)+AOutcomeTimes_Contra{i}-0.07);
+    OActionTimes_Contra{i} = downSample*(abs(oStart)+OActionTimes_Contra{i});
+    OStimulusTimes_Contra{i} = downSample*(abs(oStart)+OStimulusTimes_Contra{i}+0.07);
+    
     
 end
 
@@ -141,68 +216,59 @@ end
 %%
 figure; 
 
-plots(1) = subplot(3,1,1); % large correct only 
+
+plots(1) = subplot(3,1,1); % stimulus-aligned 
 plot(smooth(PopLargeStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
-hold on; 
-
-yyaxis right
-histogram(ActionTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-histogram(OutcomeTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-ylim([0 600])
-hold on; 
-yyaxis left
-txt = '\nabla';
-text(nanmedian(ActionTimes_Contra{1}), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(ActionTimes_Contra{1})))+0.2, txt)
-txt2 = '\nabla';
-text(nanmedian(OutcomeTimes_Contra{1}), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(OutcomeTimes_Contra{1})))+0.2, txt2)
-
-
-plots(2) = subplot(3,1,2); % large and error
-plot(smooth(PopErrorStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(3,:))
-hold on;
-plot(smooth(PopLargeStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
-ylabel('\Delta F / F')
-
-yyaxis right
-histogram([ActionTimes_Contra{1}; ActionTimes_Contra{3}], 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-histogram([OutcomeTimes_Contra{1}; OutcomeTimes_Contra{3}], 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-ylim([0 600])
-hold on; 
-yyaxis left
-txt = '\nabla';
-text(nanmedian([ActionTimes_Contra{1}; ActionTimes_Contra{3}]), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian([ActionTimes_Contra{1};ActionTimes_Contra{3}])))+0.2, txt)
-txt2 = '\nabla';
-text(nanmedian([OutcomeTimes_Contra{1}; OutcomeTimes_Contra{3}]), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian([OutcomeTimes_Contra{1}; OutcomeTimes_Contra{3}])))+0.2, txt2)
-
-
-
-plots(3) = subplot(3,1,3); %large, small, and error
-plot(smooth(PopErrorStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(3,:))
-hold on;
-plot(smooth(PopSmallStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(2,:))
-plot(smooth(PopLargeStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
-
-yyaxis right
-histogram([ActionTimes_Contra{1}; ActionTimes_Contra{2}; ActionTimes_Contra{3}], 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-histogram([OutcomeTimes_Contra{1}; OutcomeTimes_Contra{2}; OutcomeTimes_Contra{3}], 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-ylim([0 600])
-legend('Error', 'Small reward', 'Large reward')
 xlabel('Time from stimulus(s)')
+hold on;
+yyaxis right
+histogram(SActionTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram(SOutcomeTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+ylim([0 600])
 hold on; 
 yyaxis left
 txt = '\nabla';
-text(nanmedian([ActionTimes_Contra{1}; ActionTimes_Contra{2}; ActionTimes_Contra{3}]), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian([ActionTimes_Contra{1}; ActionTimes_Contra{2}; ActionTimes_Contra{3}])))+0.2, txt)
+text(nanmedian(SActionTimes_Contra{1}), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(SActionTimes_Contra{1})))+0.2, txt)
 txt2 = '\nabla';
-text(nanmedian([OutcomeTimes_Contra{1}; OutcomeTimes_Contra{2}; OutcomeTimes_Contra{3}]), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian([OutcomeTimes_Contra{1}; OutcomeTimes_Contra{2}; OutcomeTimes_Contra{3}])))+0.2, txt2)
+text(nanmedian(SOutcomeTimes_Contra{1}), PopLargeStimDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(SOutcomeTimes_Contra{1})))+0.2, txt2)
 
 
+
+plots(2) = subplot(3,1,2); % action-aligned 
+plot(smooth(PopLargeActionDataContra(eventOnset+(aStart*downSample):eventOnset+(aStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
+hold on;
+xlabel('Time from Action(s)')
+yyaxis right
+histogram([AStimulusTimes_Contra{1}], 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram([AOutcomeTimes_Contra{1}], 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+ylim([0 600])
+hold on; 
+yyaxis left
+txt = '\nabla';
+text(nanmedian([AStimulusTimes_Contra{1}]), PopLargeActionDataContra(eventOnset+(aStart*downSample)+floor(nanmedian([AStimulusTimes_Contra{1}])))+0.2, txt)
+txt2 = '\nabla';
+text(nanmedian([AOutcomeTimes_Contra{1}]), PopLargeActionDataContra(eventOnset+(aStart*downSample)+floor(nanmedian([AOutcomeTimes_Contra{1}])))+0.2, txt2)
+
+
+plots(3) = subplot(3,1,3); %outcome-aligned 
+plot(smooth(PopLargeOutcomeDataContra(eventOnset+(oStart*downSample):eventOnset+(oStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
+xlabel('Time from Outcome(s)')
+hold on;
+yyaxis right
+histogram(OStimulusTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram(OActionTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+ylim([0 600])
+hold on; 
+yyaxis left
+txt = '\nabla';
+text(nanmedian(OStimulusTimes_Contra{1}), PopLargeOutcomeDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(OStimulusTimes_Contra{1})))+0.2, txt)
+txt2 = '\nabla';
+text(nanmedian(OActionTimes_Contra{1}), PopLargeOutcomeDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(OActionTimes_Contra{1})))+0.2, txt2)
 
 
 set(plots, 'XTick', ([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]), ...
            'XTickLabel', ([sStart 0 1 2 sStop]))
-
-
-
+       
 
 function [LargeSmallErrorColor] = getColors()
 
