@@ -41,12 +41,12 @@ smooth_factor = 150;
 
 StartTime = 3700; % saved in the database.
 RT_min = 0.2;
-RT_max = 1.7; % reaction time range to include
+RT_max = 2.2; % reaction time range to include
 
 FT_min = 0.1;
-FT_max = 0.7; % outcome time range to include (action -> outcome)
+FT_max = 0.5; % outcome time range to include (action -> outcome)
 
-OT_max = -2.1;
+
 
 sStart = -2; %stimulus
 sStop = 3;
@@ -107,7 +107,7 @@ for iAnimal = Animals
         FTs = BehData(:,14) - BehData(:,10);
         OTs = BehData(:,14) - BehData(:,13);
         
-        RTExcludeTrials = unique([(find(RTs < RT_min)) ; (find(RTs >RT_max)) ; (find(FTs < FT_min)) ; (find(FTs > FT_max))]);
+        RTExcludeTrials = unique([find(isnan(RTs));(find(RTs < RT_min)) ; (find(RTs >RT_max)) ; (find(FTs < FT_min)) ; (find(FTs > FT_max))]);
         
         correctTrials = find(BehData(:,9)==1);
         errorTrials = find(BehData(:,9)==0);
@@ -116,7 +116,7 @@ for iAnimal = Animals
         
         for iChan = Chan
             if iChan == 1
-                contraTrials = setdiff(find(BehData(:,2)==-stim2plot), RTExcludeTrials);
+                contraTrials = setdiff(find(BehData(:,2)==stim2plot), RTExcludeTrials);
                 
 
                 LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimL(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
@@ -132,7 +132,7 @@ for iAnimal = Animals
                 ErrorOutcomeDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronRewardL(intersect(contraTrials, errorTrials),:),1);            
             
             elseif iChan == 2
-                contraTrials = setdiff(find(BehData(:,2)==stim2plot), RTExcludeTrials);
+                contraTrials = setdiff(find(BehData(:,2)==-stim2plot), RTExcludeTrials);
                 
                 LargeStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(mintersect(contraTrials, correctTrials, toLargeRewardTrials),:),1);
                 SmallStimDataContra = mean(BehPhotoM(iAnimal).Session(iSession).NeuronStimR(mintersect(contraTrials, correctTrials, toSmallRewardTrials),:),1);
