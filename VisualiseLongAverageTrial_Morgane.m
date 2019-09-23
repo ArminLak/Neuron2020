@@ -6,14 +6,14 @@
 % clear all
 
 %DMS 
- if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
-     clearvars -except BehPhotoM
- else clear all
-      load('BehPhotoM_Exp23_DMS.mat')
- end
- Animals = [53, 62, 63, 71,72]
-
- brain_region = 'DMS'
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
+%      clearvars -except BehPhotoM
+%  else clear all
+%       load('BehPhotoM_Exp23_DMS.mat')
+%  end
+%  Animals = [53, 62, 63, 71,72]
+% 
+%  brain_region = 'DMS'
 
 % NAC
 %  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
@@ -25,13 +25,13 @@
 % brain_region = 'NAc'
 
 % VTA: 
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
-%      clearvars -except BehPhotoM
-%  else clear all
-%       load('BehPhotoM_Exp23_VTA.mat')
-%  end
-% Animals = [48 50 51 64]
-% brain_region = 'VTA'
+ if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
+     clearvars -except BehPhotoM
+ else clear all
+      load('BehPhotoM_Exp23_VTA.mat')
+ end
+Animals = [48 50 51 64]
+brain_region = 'VTA'
 
 stim2plot = 0.5;
 
@@ -41,18 +41,18 @@ smooth_factor = 150;
 
 StartTime = 3700; % saved in the database.
 RT_min = 0.2;
-RT_max = 2.2; % reaction time range to include
+RT_max = 2.1; % reaction time range to include
 
 FT_min = 0.1;
 FT_max = 0.5; % outcome time range to include (action -> outcome)
 
 
 
-sStart = -2; %stimulus
+sStart = -0.1; %stimulus
 sStop = 3;
 
-aStart = -2; 
-aStop = 1.1;
+aStart = -2.3; 
+aStop = 0.8;
 
 oStart = -2.6;
 oStop = 0.5;
@@ -100,6 +100,9 @@ for iAnimal = Animals
     else
         Chan = [1 2];
     end
+    
+    
+    
     
     for iSession = 1:length(BehPhotoM(iAnimal).Session)
         BehData = BehPhotoM(iAnimal).Session(iSession).TrialTimingData;
@@ -220,13 +223,16 @@ figure;
 
 
 plots(1) = subplot(3,1,1); % stimulus-aligned 
-plot(smooth(PopLargeStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
+plot(smooth(PopLargeStimDataContra(eventOnset+(sStart*downSample):eventOnset+(sStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', 'k')
 xlabel('Time from stimulus(s)')
+xticks([0 abs(sStart*downSample) abs(sStart-sStop)*downSample])
+xticklabels([sStart 0 sStop])
+line([abs(sStart*downSample) abs(sStart*downSample)], [0 1], 'Color', [0.5 0.5 0.5] ,'LineStyle','--', 'LineWidth', 2)
 hold on;
 yyaxis right
-histogram(SActionTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-histogram(SOutcomeTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-ylim([0 600])
+histogram(SActionTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram(SOutcomeTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+ylim([0 400])
 hold on; 
 yyaxis left
 txt = '\nabla';
@@ -237,13 +243,16 @@ text(nanmedian(SOutcomeTimes_Contra{1}), PopLargeStimDataContra(eventOnset+(sSta
 
 
 plots(2) = subplot(3,1,2); % action-aligned 
-plot(smooth(PopLargeActionDataContra(eventOnset+(aStart*downSample):eventOnset+(aStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
+plot(smooth(PopLargeActionDataContra(eventOnset+(aStart*downSample):eventOnset+(aStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', 'k')
+xticks([0 abs(aStart*downSample) abs(aStart-aStop)*downSample])
+xticklabels([aStart 0 aStop])
+line([abs(aStart*downSample) abs(aStart*downSample)], [0 1], 'Color', [0 0.58 0.77] ,'LineStyle','--', 'LineWidth', 2)
 hold on;
 xlabel('Time from Action(s)')
 yyaxis right
-histogram([AStimulusTimes_Contra{1}], 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-histogram([AOutcomeTimes_Contra{1}], 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-ylim([0 600])
+histogram([AStimulusTimes_Contra{1}], 'BinWidth', 90, 'FaceColor', [0.5 0.5 0.5] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram([AOutcomeTimes_Contra{1}], 'BinWidth', 90, 'FaceColor', [0.27 0.74 0], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+ylim([0 400])
 hold on; 
 yyaxis left
 txt = '\nabla';
@@ -253,13 +262,16 @@ text(nanmedian([AOutcomeTimes_Contra{1}]), PopLargeActionDataContra(eventOnset+(
 
 
 plots(3) = subplot(3,1,3); %outcome-aligned 
-plot(smooth(PopLargeOutcomeDataContra(eventOnset+(oStart*downSample):eventOnset+(oStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', LargeSmallErrorColor(1,:))
+plot(smooth(PopLargeOutcomeDataContra(eventOnset+(oStart*downSample):eventOnset+(oStop*downSample)), smooth_factor), 'LineWidth', 2, 'Color', 'k')
+xticks([0 abs(oStart*downSample) abs(oStart-oStop)*downSample])
+xticklabels([oStart 0 oStop])
+line([abs(oStart*downSample) abs(oStart*downSample)], [0 1], 'Color', [0.27 0.74 0] ,'LineStyle','--', 'LineWidth', 2)
 xlabel('Time from Outcome(s)')
 hold on;
 yyaxis right
-histogram(OStimulusTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.27 0.74 0] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
+histogram(OStimulusTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0.5 0.5 0.5] , 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
 histogram(OActionTimes_Contra{1}, 'BinWidth', 90, 'FaceColor', [0 0.58 0.77], 'FaceAlpha', 0.3 , 'EdgeAlpha', 0);
-ylim([0 600])
+ylim([0 400])
 hold on; 
 yyaxis left
 txt = '\nabla';
@@ -268,9 +280,6 @@ txt2 = '\nabla';
 text(nanmedian(OActionTimes_Contra{1}), PopLargeOutcomeDataContra(eventOnset+(sStart*downSample)+floor(nanmedian(OActionTimes_Contra{1})))+0.2, txt2)
 
 
-set(plots, 'XTick', ([1 abs(sStart*downSample) (abs(sStart)+1)*downSample (abs(sStart)+2)*downSample (sStop-sStart)*downSample-1]), ...
-           'XTickLabel', ([sStart 0 1 2 sStop]))
-       
 
 function [LargeSmallErrorColor] = getColors()
 
