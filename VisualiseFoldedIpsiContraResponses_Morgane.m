@@ -9,19 +9,19 @@ clear all
 
 LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  on same axes 
 % VTA,
-%  region = 'VTA';
-%  Animals = [48 50 51 64]
-%  load('BehPhotoM_Exp23_VTA')
+ region = 'VTA';
+ Animals = [48 50 51 64]
+ load('BehPhotoM_Exp23_VTA')
 
 % NAC
- % region = 'NAC';
- % Animals = [56 57 59 66]
- % load('BehPhotoM_Exp23_NAc')
+%  region = 'NAC';
+%  Animals = [56 57 59 66]
+%  load('BehPhotoM_Exp23_NAc')
 
-%DMS
-   region = 'DMS';
- Animals = [53, 62, 63, 71,72];
- load('BehPhotoM_Exp23_DMS')
+% %DMS
+%    region = 'DMS';
+%  Animals = [53, 62, 63, 71,72];
+%  load('BehPhotoM_Exp23_DMS')
 
 
 %%
