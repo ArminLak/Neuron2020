@@ -31,18 +31,7 @@ Animals = [53, 62, 63, 71,72]
 
  RTLimit = 6;
  
- BehData = [];
-StimData = [];
-ActionData = [];
-RewardData = [];
 
-StimDataL   = [];
-ActionDataL = [];
-RewardDataL = [];
-
-StimDataR   = [];
-ActionDataR = [];
-RewardDataR = [];
 
 
 isContra = [];
@@ -52,12 +41,17 @@ Contrast = [];
 CorrErr = [];
 RewardSize = [];
 Stimz = [];
-
+BehData = [];
  
  c = 0;
  
  for animal = Animals
- 
+     
+TempBehData = [];
+TempStimData = [];
+TempActionData = [];
+TempRewardData = [];
+
      c = c + 1;
 
 if isempty(BehPhotoM(animal).GrandSummaryR)
@@ -67,174 +61,101 @@ elseif isempty(BehPhotoM(animal).GrandSummaryL)
 else
     Chan = [1 2];
 end
-    
-% BehData = [];
-% StimData = [];
-% ActionData = [];
-% RewardData = [];
-% 
-% StimDataL   = [];
-% ActionDataL = [];
-% RewardDataL = [];
-% 
-% StimDataR   = [];
-% ActionDataR = [];
-% RewardDataR = [];
-% 
-% 
-% isContra = [];
-% NormBinStim = [];
-% NormBinAction = [];
-% Contrast = [];
-% CorrErr = [];
-% RewardSize = [];
-% Stimz = [];
-    
-    sessionz = 1:length(BehPhotoM(animal).Session);
-    
-    iter = 0;
-    if isfield(BehPhotoM(animal).Session,'NeuronRewardL')
-        
-        for iSession = sessionz % left hem
-            
-%             if ~isfield(BehPhotoM(animal).Session, 'NeuronRewardR')
-            TempBehData = BehPhotoM(animal).Session(iSession).TrialTimingData;
-            
-             RT = TempBehData(:,10) - TempBehData(:,13);
-    toRemove1 = find ( RT > RTLimit);
-    toRemove2= find(TempBehData(:,1) < 20);
-    toRemove = unique([toRemove1; toRemove2]);
-    TempBehData(toRemove,:) = [];
 
-    
-    
-    
-            BehData = [BehData; TempBehData];
-%             end
-                    
-            TempStimData= BehPhotoM(animal).Session(iSession).NeuronStimL;            
-            TempActionData= BehPhotoM(animal).Session(iSession).NeuronActionL;            
-            TempRewardData= BehPhotoM(animal).Session(iSession).NeuronRewardL;  
-            
-            TempStimData(toRemove,:) = [];
-            TempActionData(toRemove,:) = [];
-            TempRewardData(toRemove,:) = [];
-      
-            StimDataL = [StimDataL;TempStimData];            
-            ActionDataL = [ActionDataL;TempActionData];            
-            RewardDataL = [RewardDataL;TempRewardData];           
-        end
-    end
-    
-    
-    if isfield(BehPhotoM(animal).Session,'NeuronRewardR')
-        for iSession = sessionz
-            
-            TempBehData = BehPhotoM(animal).Session(iSession).TrialTimingData;
-                         RT = TempBehData(:,10) -TempBehData(:,13);
-                            toRemove1 = find ( RT > RTLimit);
-                        toRemove2= find(TempBehData(:,1) < 20);
-                        toRemove = unique([toRemove1; toRemove2]);
-                         TempBehData(toRemove,:) = [];
-    
-            BehData = [BehData; TempBehData];
 
-            % right           
-            TempStimData= BehPhotoM(animal).Session(iSession).NeuronStimR;
-            TempActionData= BehPhotoM(animal).Session(iSession).NeuronActionR;           
-            TempRewardData= BehPhotoM(animal).Session(iSession).NeuronRewardR; 
-            
-                        TempStimData(toRemove,:) = [];
-            TempActionData(toRemove,:) = [];
-            TempRewardData(toRemove,:) = [];
-            
+sessionz = 1:length(BehPhotoM(animal).Session);
+
+iter = 0;
+if isfield(BehPhotoM(animal).Session,'NeuronRewardL')
+    
+    for iSession = sessionz % left hem
         
-            StimDataR = [StimDataR;TempStimData];           
-            ActionDataR = [ActionDataR;TempActionData];            
-            RewardDataR = [RewardDataR;TempRewardData];
-                        
-        end
+        TempBehData = BehPhotoM(animal).Session(iSession).TrialTimingData;
+        
+        RT = TempBehData(:,10) - TempBehData(:,13);
+        toRemove1 = find ( RT > RTLimit);
+        toRemove2= find(TempBehData(:,1) < 20);
+        toRemove = unique([toRemove1; toRemove2]);
+        TempBehData(toRemove,:) = [];
+        
+        
+        
+        
+        BehData = [BehData; TempBehData];
+        
+        TempStimData= BehPhotoM(animal).Session(iSession).NeuronStimL;
+        TempActionData= BehPhotoM(animal).Session(iSession).NeuronActionL;
+        TempRewardData= BehPhotoM(animal).Session(iSession).NeuronRewardL;
+        
+        TempStimData(toRemove,:) = [];
+        TempActionData(toRemove,:) = [];
+        TempRewardData(toRemove,:) = [];
+        
+        contraTrials = find(TempBehData(:,9)==1 & TempBehData(:,8)==2 & TempBehData(:,3)==1);
+        
+        
+        isContra = [isContra; double((TempBehData(:,9)==1 & TempBehData(:,3)==1) | (TempBehData(:,9)==0 & TempBehData(:,3)==-1))];
+        [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, TempStimData, TempActionData); % see function at bottom
+        
         
     end
-   
-
-for iChan = Chan
-
-    if iChan == 1
-        StimData = StimDataL;
-        ActionData = ActionDataL;
-        RewardData = RewardDataL;
-
-        contraTrials = find(TempBehData(:,9)==1 & TempBehData(:,8)==2 & TempBehData(:,3)==1); 
-        
-
-            isContra = [isContra; double((TempBehData(:,9)==1 & TempBehData(:,3)==1) | (TempBehData(:,9)==0 & TempBehData(:,3)==-1))];
-
-
-    elseif iChan == 2
-        StimData = StimDataR;
-        ActionData = ActionDataR;
-        RewardData = RewardDataR;
-
-
-            isContra = [isContra; double((BehData(:,9)==1 & BehData(:,3)==-1) | (BehData(:,9)==0 & BehData(:,3)==1))];
-
-        
-    end
-    
-%     StimData(toRemove,:) = [];
-%     ActionData(toRemove,:) = [];
-%     RewardData(toRemove,:) = [];
-    
-    
-%         [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, StimData, ActionData); % see function at bottom
-
-    [TempNormBinStim, TempNormBinAction] = getResponses(animal, NormBinStim, NormBinAction, StimData, ActionData); % see function at bottom
-    NormBinStim = [NormBinStim; TempNormBinStim];
-    NormBinAction = [NormBinAction; TempNormBinAction];
-    
-    
-    Contrast = [Contrast; abs(TempBehData(:,2))];
-    CorrErr = [CorrErr; TempBehData(:,9)];
-    RewardSize = [RewardSize; double((TempBehData(:,8)==2 & ((TempBehData(:,9)==1 & TempBehData(:,3)==1) | (TempBehData(:,9)==0 & TempBehData(:,3)==-1))) | ...
-                                     (TempBehData(:,8)==1 & ((TempBehData(:,9)==1 & TempBehData(:,3)==-1) | (TempBehData(:,9)==0 & TempBehData(:,3)==1))))+1]; 
-    
-    
 end
 
 
-%isContra(isContra==0)=-1;
-%CorrErr(CorrErr==0)=-1;
-
+if isfield(BehPhotoM(animal).Session,'NeuronRewardR')
+    for iSession = sessionz
+        
+        
+        TempBehData = BehPhotoM(animal).Session(iSession).TrialTimingData;
+        RT = TempBehData(:,10) -TempBehData(:,13);
+        toRemove1 = find ( RT > RTLimit);
+        toRemove2= find(TempBehData(:,1) < 20);
+        toRemove = unique([toRemove1; toRemove2]);
+        TempBehData(toRemove,:) = [];
+        
+        BehData = [BehData; TempBehData];
+        
+        % right
+        TempStimData= BehPhotoM(animal).Session(iSession).NeuronStimR;
+        TempActionData= BehPhotoM(animal).Session(iSession).NeuronActionR;
+        TempRewardData= BehPhotoM(animal).Session(iSession).NeuronRewardR;
+        
+        TempStimData(toRemove,:) = [];
+        TempActionData(toRemove,:) = [];
+        TempRewardData(toRemove,:) = [];
+        
+        
+        isContra = [isContra; double((TempBehData(:,9)==1 & TempBehData(:,3)==-1) | (TempBehData(:,9)==0 & TempBehData(:,3)==1))];
+        
+        [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, TempStimData, TempActionData); % see function at bottom
+        
+    end
+    
+end
+   
+ end
+ 
+ Contrast = abs(BehData(:,2));
+ CorrErr = BehData(:,9);
+ RewardSize = double((BehData(:,8)==2 & ((BehData(:,9)==1 & BehData(:,3)==1) | (BehData(:,9)==0 & BehData(:,3)==-1))) | ...
+                                     (BehData(:,8)==1 & ((BehData(:,9)==1 & BehData(:,3)==-1) | (BehData(:,9)==0 & BehData(:,3)==1))))+1;
+ 
 RewardSize(CorrErr == 0) = 0;
 RewardSize (RewardSize ==1) =0.5;
 RewardSize (RewardSize ==2) =1;
 
 Contrast = Contrast * 2;
-
-%  StimRegTbl = horzcat(isContra, Contrast, CorrErr, RewardSize);
-%   StimRegTbl = horzcat(isContra, Contrast, RewardSize);
-  
-%   stimreg(:,c) = regress(NormBinStim, StimRegTbl);
-
-
-
-
- end
  
-     RT = BehData(:,10) - BehData(:,13);
-    toRemove1 = find ( RT > RTLimit);
-    toRemove2= find(BehData(:,1) < 20);
-    toRemove = unique([toRemove1; toRemove2]);
-    BehData(toRemove,:) = [];
-        StimData(toRemove,:) = [];
-    ActionData(toRemove,:) = [];
-    RewardData(toRemove,:) = [];
+ 
 
  StimRegTbl = horzcat(isContra, Contrast, RewardSize);
-% stimregmean = mean(stimreg,2);
 figure; barh(regress(NormBinStim, StimRegTbl))
 yticklabels({'Contralateral', 'Contrast', 'Reward size'})
+
+
+ [b,bint,r,rint,stats] = regress(NormBinStim, StimRegTbl);
+ 
+
 
 
 
