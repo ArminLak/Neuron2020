@@ -1,13 +1,13 @@
 
-
- if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
-     clearvars -except BehPhotoM
- else clear all
-      load('BehPhotoM_Exp23_DMS.mat')
- end
-Animals = [53, 62, 63, 71,72]
-
- brain_region = 'DMS'
+% 
+%  if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
+%      clearvars -except BehPhotoM
+%  else clear all
+%       load('BehPhotoM_Exp23_DMS.mat')
+%  end
+% Animals = [53, 62, 63, 71,72]
+% 
+%  brain_region = 'DMS'
  
 % NAC
 %  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
@@ -19,13 +19,13 @@ Animals = [53, 62, 63, 71,72]
 % brain_region = 'NAc'
 
 % VTA: 
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
-%      clearvars -except BehPhotoM
-%  else clear all
-%       load('BehPhotoM_Exp23_VTA.mat')
-%  end
-% Animals = [48 50 51 64]
-% brain_region = 'VTA'
+ if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
+     clearvars -except BehPhotoM
+ else clear all
+      load('BehPhotoM_Exp23_VTA.mat')
+ end
+Animals = [48 50 51 64]
+brain_region = 'VTA'
  
 
 
@@ -153,7 +153,7 @@ figure; barh(regress(NormBinStim, StimRegTbl))
 yticklabels({'Contralateral', 'Contrast', 'Reward size'})
 
 
- [b,bint,r,rint,stats] = regress(NormBinStim, StimRegTbl);
+ [b,bint,r,rint,stats] = regress(NormBinStim, StimRegTbl,0.01);  % last number refers to alpha
  
 
 
