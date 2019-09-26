@@ -1,31 +1,36 @@
 
-% 
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'DMS')
+
+
+
+
+
+% DMS
+%  if exist('BehPhotoM', 'var') && strcmp(brain_region, 'DMS')
 %      clearvars -except BehPhotoM
 %  else clear all
-%       load('BehPhotoM_Exp23_DMS.mat')
+      load('BehPhotoM_Exp23_DMS.mat')
 %  end
-% Animals = [53, 62, 63, 71,72]
-% 
-%  brain_region = 'DMS'
- 
+Animals = [53, 62, 63, 71,72]
+
 % NAC
-%  if exist('brain_region', 'var') && strcmp(brain_region, 'NAc')
+%  if exist('BehPhotoM', 'var') && strcmp(brain_region, 'NAc')
 %      clearvars -except BehPhotoM
 %   else clear all
 %      load('BehPhotoM_Exp23_NAc.mat')
 %  end
 % Animals = [56 57 59 66]
-% brain_region = 'NAc'
+% 
 
-% VTA: 
- if exist('brain_region', 'var') && strcmp(brain_region, 'VTA')
-     clearvars -except BehPhotoM
- else clear all
-      load('BehPhotoM_Exp23_VTA.mat')
- end
-Animals = [48 50 51 64]
-brain_region = 'VTA'
+% VTA 
+%  if exist('BehPhotoM', 'var') && strcmp(brain_region, 'VTA')
+%      clearvars -except BehPhotoM
+%  else clear all
+%       load('BehPhotoM_Exp23_VTA.mat')
+%  end
+% Animals = [48 50 51 64]
+
+
+
  
 
 
@@ -155,9 +160,56 @@ yticklabels({'Contralateral', 'Contrast', 'Reward size'})
 
  [b,bint,r,rint,stats] = regress(NormBinStim, StimRegTbl,0.01);  % last number refers to alpha
  
+%% Cross-Validation 5 fold 
+
+cvEvalFunc = @(pred, actual)1-mean(mean((pred-actual).^2))/mean(mean(actual.^2));
+c = cvpartition(NormBinStim, 'KFold', 5);
+
+for i = 1:5
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),:), 0.01);
+    pred = cvb(1)*StimRegTbl(test(c,i),1) + cvb(2)*StimRegTbl(test(c,i),2) + cvb(3)*StimRegTbl(test(c,i),3);
+    actual = NormBinStim(test(c,i));
+    
+    cvEval(i) = cvEvalFunc(pred,actual);
+    
+end
 
 
+% testing w/o each beta
 
+for i = 1:5
+    actual = NormBinStim(test(c,i));
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),[2 3]), 0.01);
+    pred = cvb(1)*StimRegTbl(test(c,i),2) + cvb(2)*StimRegTbl(test(c,i),3);
+    cvEval_noIpsiContra(i) = cvEvalFunc(pred,actual);
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),[1 3]), 0.01);
+    pred = cvb(1)*StimRegTbl(test(c,i),1) + cvb(2)*StimRegTbl(test(c,i),3);
+    cvEval_noContrast(i) = cvEvalFunc(pred,actual);
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),[1 2]), 0.01);
+    pred = cvb(1)*StimRegTbl(test(c,i),1) + cvb(2)*StimRegTbl(test(c,i),2);
+    cvEval_noRewardSize(i) = cvEvalFunc(pred,actual);
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),1), 0.01);
+    pred = cvb*StimRegTbl(test(c,i),1);
+    cvEval_onlyIpsiContra(i) = cvEvalFunc(pred,actual);
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),2), 0.01);
+    pred = cvb*StimRegTbl(test(c,i),2);
+    cvEval_onlyContrast(i) = cvEvalFunc(pred,actual);
+    
+    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),3), 0.01);
+    pred = cvb*StimRegTbl(test(c,i),3);
+    cvEval_onlyRewardSize(i) = cvEvalFunc(pred,actual);
+    
+    
+end
+
+
+%%
 
 function [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, StimData, ActionData)
 
@@ -230,4 +282,3 @@ if animal == 48
 end
     
 end
-
