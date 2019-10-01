@@ -3,7 +3,7 @@
 
 clearvars -except DMS_PerBlock1 DMS_PerBlock2 NAC_PerBlock1 NAC_PerBlock2
 
-Hem2show = 'both' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
+Hem2show = 'R' % 'L' 'R' or 'both' % L: one fig for L, R: one fig for R, both: one fig for all
 IpsiContra = 1; %in PSTHs visualise according to ipsi/contra stimulus (or action) ONLY IF HEM = BOTH
 
 % list of animals
