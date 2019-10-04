@@ -8,17 +8,17 @@
 %  if exist('BehPhotoM', 'var') && strcmp(brain_region, 'DMS')
 %      clearvars -except BehPhotoM
 %  else clear all
-      load('BehPhotoM_Exp23_DMS.mat')
-%  end
-Animals = [53, 62, 63, 71,72]
+%       load('BehPhotoM_Exp23_DMS.mat')
+% %  end
+% Animals = [53, 62, 63, 71,72]
 
 % NAC
-%  if exist('BehPhotoM', 'var') && strcmp(brain_region, 'NAc')
-%      clearvars -except BehPhotoM
-%   else clear all
-%      load('BehPhotoM_Exp23_NAc.mat')
-%  end
-% Animals = [56 57 59 66]
+%   if exist('BehPhotoM', 'var') && strcmp(brain_region, 'NAc')
+%       clearvars -except BehPhotoM
+%    else clear all
+      load('BehPhotoM_Exp23_NAc.mat')
+
+ Animals = [56 57 59 66]
 % 
 
 % VTA 
