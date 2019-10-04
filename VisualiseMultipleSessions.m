@@ -25,11 +25,11 @@ close all
 
 % 23: double reward size 
 
-save2file = 1; % decide if you want to overwrite GrandSummary or not
+save2file = 0; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 64;
-BrainStrucutre = 'VTA'
+animal_ID = 53;
+BrainStrucutre = 'DMS'
 ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
@@ -435,7 +435,7 @@ RewardData = RewardData ./ StimTimeDenom;
     else
         
         NormBinStim = mean(StimData(:,4200:5000),2)- mean(StimData(:,3400:3800),2);
-        NormBinAction = mean(ActionData(:,3000:3700),2) - mean(ActionData(:,3700:4300),2);
+        NormBinAction = mean(ActionData(:,3700:4300),2) - mean(ActionData(:,3000:3700),2);
     end
     
     % for derivative

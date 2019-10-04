@@ -1,10 +1,12 @@
 
 
 
-
+% close all 
+clear all
 
 
 % DMS
+
 %  if exist('BehPhotoM', 'var') && strcmp(brain_region, 'DMS')
 %      clearvars -except BehPhotoM
 %  else clear all
@@ -19,6 +21,16 @@
       load('BehPhotoM_Exp23_NAc.mat')
 
  Animals = [56 57 59 66]
+
+
+% brain_region = 'DMS';
+% load('BehPhotoM_Exp23_DMS.mat')
+% Animals = [53, 62, 63, 71,72]
+
+% NAC
+brain_region = 'NAC'
+load('BehPhotoM_Exp23_NAc.mat')
+Animals = [56 57 59 66]
 % 
 
 % VTA 
@@ -30,8 +42,6 @@
 % Animals = [48 50 51 64]
 
 
-
- 
 
 
  RTLimit = 6;
@@ -48,7 +58,7 @@ RewardSize = [];
 Stimz = [];
 BehData = [];
  
- c = 0;
+ cstim = 0;
  
  for animal = Animals
      
@@ -57,7 +67,7 @@ TempStimData = [];
 TempActionData = [];
 TempRewardData = [];
 
-     c = c + 1;
+     cstim = cstim + 1;
 
 if isempty(BehPhotoM(animal).GrandSummaryR)
     Chan = 1;
@@ -153,60 +163,137 @@ Contrast = Contrast * 2;
  
  
 
- StimRegTbl = horzcat(isContra, Contrast, RewardSize);
-figure; barh(regress(NormBinStim, StimRegTbl))
+ RegTbl = horzcat(isContra, Contrast, RewardSize);
+figure; barh(regress(NormBinStim, RegTbl))
 yticklabels({'Contralateral', 'Contrast', 'Reward size'})
 
 
- [b,bint,r,rint,stats] = regress(NormBinStim, StimRegTbl,0.01);  % last number refers to alpha
+ [b,bint,r,rint,stats] = regress(NormBinStim, RegTbl,0.01);  % last number refers to alpha
  
 %% Cross-Validation 5 fold 
 
 cvEvalFunc = @(pred, actual)1-mean(mean((pred-actual).^2))/mean(mean(actual.^2));
-c = cvpartition(NormBinStim, 'KFold', 5);
+cstim = cvpartition(NormBinStim, 'KFold', 5);
+cact = cvpartition(NormBinAction, 'Kfold', 5);
 
 for i = 1:5
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),:), 0.01);
-    pred = cvb(1)*StimRegTbl(test(c,i),1) + cvb(2)*StimRegTbl(test(c,i),2) + cvb(3)*StimRegTbl(test(c,i),3);
-    actual = NormBinStim(test(c,i));
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),:), 0.01);
+    pred = cvbstim(1)*RegTbl(test(cstim,i),1) + cvbstim(2)*RegTbl(test(cstim,i),2) + cvbstim(3)*RegTbl(test(cstim,i),3);
+    actual = NormBinStim(test(cstim,i));
     
-    cvEval(i) = cvEvalFunc(pred,actual);
+    cvEvalStim(i) = cvEvalFunc(pred,actual);
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),:), 0.01);
+    pred = cvbact(1)*RegTbl(test(cact,i),1) + cvbact(2)*RegTbl(test(cact,i),2) + cvbact(3)*RegTbl(test(cact,i),3);
+    actual = NormBinAction(test(cact,i));
+    
+    cvEvalAct(i) = cvEvalFunc(pred,actual);
+    
     
 end
 
 
-% testing w/o each beta
 
-for i = 1:5
-    actual = NormBinStim(test(c,i));
+
+for i = 1:5     % testing w/o each beta for stim regression  
+    actual = NormBinStim(test(cstim,i));
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),[2 3]), 0.01);
-    pred = cvb(1)*StimRegTbl(test(c,i),2) + cvb(2)*StimRegTbl(test(c,i),3);
-    cvEval_noIpsiContra(i) = cvEvalFunc(pred,actual);
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),[2 3]), 0.01);
+    pred = cvbstim(1)*RegTbl(test(cstim,i),2) + cvbstim(2)*RegTbl(test(cstim,i),3);
+    cvEvalStim_noIpsiContra(i) = cvEvalFunc(pred,actual);
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),[1 3]), 0.01);
-    pred = cvb(1)*StimRegTbl(test(c,i),1) + cvb(2)*StimRegTbl(test(c,i),3);
-    cvEval_noContrast(i) = cvEvalFunc(pred,actual);
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),[1 3]), 0.01);
+    pred = cvbstim(1)*RegTbl(test(cstim,i),1) + cvbstim(2)*RegTbl(test(cstim,i),3);
+    cvEvalStim_noContrast(i) = cvEvalFunc(pred,actual);
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),[1 2]), 0.01);
-    pred = cvb(1)*StimRegTbl(test(c,i),1) + cvb(2)*StimRegTbl(test(c,i),2);
-    cvEval_noRewardSize(i) = cvEvalFunc(pred,actual);
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),[1 2]), 0.01);
+    pred = cvbstim(1)*RegTbl(test(cstim,i),1) + cvbstim(2)*RegTbl(test(cstim,i),2);
+    cvEvalStim_noRewardSize(i) = cvEvalFunc(pred,actual);
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),1), 0.01);
-    pred = cvb*StimRegTbl(test(c,i),1);
-    cvEval_onlyIpsiContra(i) = cvEvalFunc(pred,actual);
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),1), 0.01);
+    pred = cvbstim*RegTbl(test(cstim,i),1);
+    cvEvalStim_onlyIpsiContra(i) = cvEvalFunc(pred,actual);
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),2), 0.01);
-    pred = cvb*StimRegTbl(test(c,i),2);
-    cvEval_onlyContrast(i) = cvEvalFunc(pred,actual);
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),2), 0.01);
+    pred = cvbstim*RegTbl(test(cstim,i),2);
+    cvEvalStim_onlyContrast(i) = cvEvalFunc(pred,actual);
     
-    [cvb, cvbint]= regress(NormBinStim(test(c,i)), StimRegTbl(test(c,i),3), 0.01);
-    pred = cvb*StimRegTbl(test(c,i),3);
-    cvEval_onlyRewardSize(i) = cvEvalFunc(pred,actual);
+    [cvbstim, cvbintstim]= regress(NormBinStim(test(cstim,i)), RegTbl(test(cstim,i),3), 0.01);
+    pred = cvbstim*RegTbl(test(cstim,i),3);
+    cvEvalStim_onlyRewardSize(i) = cvEvalFunc(pred,actual);
     
     
 end
+
+
+for i = 1:5      % testing reduced models for action 
+    actual = NormBinAction(test(cact,i));
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),[2 3]), 0.01);
+    pred = cvbact(1)*RegTbl(test(cact,i),2) + cvbact(2)*RegTbl(test(cact,i),3);
+    cvEvalAct_noIpsiContra(i) = cvEvalFunc(pred,actual);
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),[1 3]), 0.01);
+    pred = cvbact(1)*RegTbl(test(cact,i),1) + cvbact(2)*RegTbl(test(cact,i),3);
+    cvEvalAct_noContrast(i) = cvEvalFunc(pred,actual);
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),[1 2]), 0.01);
+    pred = cvbact(1)*RegTbl(test(cact,i),1) + cvbact(2)*RegTbl(test(cact,i),2);
+    cvEvalAct_noRewardSize(i) = cvEvalFunc(pred,actual);
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),1), 0.01);
+    pred = cvbact*RegTbl(test(cact,i),1);
+    cvEvalAct_onlyIpsiContra(i) = cvEvalFunc(pred,actual);
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),2), 0.01);
+    pred = cvbact*RegTbl(test(cact,i),2);
+    cvEvalAct_onlyContrast(i) = cvEvalFunc(pred,actual);
+    
+    [cvbact, cvbintact]= regress(NormBinAction(test(cact,i)), RegTbl(test(cact,i),3), 0.01);
+    pred = cvbact*RegTbl(test(cact,i),3);
+    cvEvalAct_onlyRewardSize(i) = cvEvalFunc(pred,actual);
+    
+    
+end
+
+
+figure; 
+subplot(1,2,1)
+title('Stimulus regrssions')
+barh([mean(cvEvalStim_noContrast), mean(cvEvalStim_noIpsiContra), mean(cvEvalStim_noRewardSize); mean(cvEvalStim_onlyContrast), mean(cvEvalStim_onlyIpsiContra), mean(cvEvalStim_onlyRewardSize)]); 
+hold on
+% barh([mean(cvEval_onlyContrast), mean(cvEval_onlyIpsiContra), mean(cvEval_onlyRewardSize)]); 
+if strcmpi(brain_region, 'DMS')
+    xlim([0.1 round(mean(cvEvalStim), 1)])
+elseif strcmpi(brain_region, 'NAC')
+    xlim([0.03 round(mean(cvEvalStim), 1)])
+else 
+    xlim([0 round(mean(cvEvalStim), 1)])
+end
+yticklabels({'without', 'only'})
+line([mean(cvEvalStim) mean(cvEvalStim)], ylim, 'LineWidth', 2, 'LineStyle', '--', 'color', [0.5 0.5 0.5])
+legend({'Contrast', 'Ipsi/Contra', 'Reward size', 'Full model'})
+
+
+subplot(1,2,2)
+title('Action regressions')
+barh([mean(cvEvalAct_noContrast), mean(cvEvalAct_noIpsiContra), mean(cvEvalAct_noRewardSize); mean(cvEvalAct_onlyContrast), mean(cvEvalAct_onlyIpsiContra), mean(cvEvalAct_onlyRewardSize)]); 
+hold on
+if strcmpi(brain_region, 'DMS')
+    xlim([0.04 0.07])
+elseif strcmpi(brain_region, 'NAC')
+    xlim([0 round(mean(cvEvalAct), 1)])
+else 
+    xlim([0 round(mean(cvEvalAct), 1)])
+end
+yticklabels({'without', 'only'})
+line([mean(cvEvalAct) mean(cvEvalAct)], ylim, 'LineWidth', 2, 'LineStyle', '--', 'color', [0.5 0.5 0.5])
+legend({'Contrast', 'Ipsi/Contra', 'Reward size', 'Full model'})
+
+
+
+
 
 
 %%
