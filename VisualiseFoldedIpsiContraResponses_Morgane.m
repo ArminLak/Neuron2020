@@ -9,9 +9,9 @@ clear all
 
 LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  on same axes 
 % VTA,
- region = 'VTA';
- Animals = [48 50 51 64]
- load('BehPhotoM_Exp23_VTA')
+%  region = 'VTA';
+%  Animals = [48 50 51 64]
+%  load('BehPhotoM_Exp23_VTA')
 
 % NAC
 %  region = 'NAC';
@@ -19,15 +19,17 @@ LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  
 %  load('BehPhotoM_Exp23_NAc')
 
 % %DMS
-%    region = 'DMS';
-%  Animals = [53, 62, 63, 71,72];
-%  load('BehPhotoM_Exp23_DMS')
+   region = 'DMS';
+ Animals = [53, 62, 63, 71,72];
+ Animals = [63];
+ load('BehPhotoM_Exp23_DMS')
 
 
 %%
 
 [IpsiContraColor, ErrorCorrectColor, SmallLargeColor] = getColors();
 totalChannels = getTotalChanN(region);
+totalChannels = 1;
 [yaxes] = getAxes(region);
 
 StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
