@@ -14,22 +14,22 @@ LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  
 %  load('BehPhotoM_Exp23_VTA')
 
 % NAC
-%  region = 'NAC';
-%  Animals = [56 57 59 66]
-%  load('BehPhotoM_Exp23_NAc')
+  region = 'NAC';
+  Animals = [56 57 59 66]
+  load('BehPhotoM_Exp23_NAc')
 
 % %DMS
-   region = 'DMS';
- Animals = [53, 62, 63, 71,72];
- Animals = [63];
- load('BehPhotoM_Exp23_DMS')
+%   region = 'DMS';
+% Animals = [53, 62, 63, 71,72];
+ %Animals = [63];
+% load('BehPhotoM_Exp23_DMS')
 
 
 %%
 
 [IpsiContraColor, ErrorCorrectColor, SmallLargeColor] = getColors();
 totalChannels = getTotalChanN(region);
-totalChannels = 1;
+% totalChannels = 1;
 [yaxes] = getAxes(region);
 
 StimAllowed = [-0.5 -0.25 -0.12 0 0.12 0.25 0.5];
@@ -98,20 +98,29 @@ for iAnimal = Animals
         
         % ---- subtract then divide ------
          SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
-        SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
-        SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
+       % SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
+       SingleAnimalNormTunningStim =  SingleAnimalTunningStim;
+       SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
 
         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
-        SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
+        
+        %SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
+        SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError;
         SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError ./ max(max(SingleAnimalNormTunningStimCorrError));
         
         SingleAnimalTuningAction = BehPhotoM(iAnimal).GrandSummary.PopNormBinActionNoFold;
-        SingleAnimalNomTuningAction = SingleAnimalTuningAction - min(min(SingleAnimalTuningAction));
+        %SingleAnimalNomTuningAction = SingleAnimalTuningAction - min(min(SingleAnimalTuningAction));
+         SingleAnimalNomTuningAction = SingleAnimalTuningAction ; 
+
         SingleAnimalNomTuningAction = SingleAnimalNomTuningAction ./ max(max(SingleAnimalNomTuningAction));
         
+        
         SingleAnimalTuningActionCorrError = BehPhotoM(iAnimal).GrandSummary.PopNormBinActionCorrectErrorNoFold; 
-        SingleAnimalNormTuningActionCorrError = SingleAnimalTuningActionCorrError - min(min(SingleAnimalTuningActionCorrError));
-        SingleAnimalNormTuningActionCorrError = SingleAnimalNormTuningActionCorrError ./ max(max(SingleAnimalNormTuningActionCorrError));
+%         SingleAnimalNormTuningActionCorrError = SingleAnimalTuningActionCorrError - min(min(SingleAnimalTuningActionCorrError));
+         SingleAnimalNormTuningActionCorrError = SingleAnimalTuningActionCorrError;
+
+SingleAnimalNormTuningActionCorrError = SingleAnimalNormTuningActionCorrError ./ max(max(SingleAnimalNormTuningActionCorrError));
+%         
         
         SingleAnimalTuningActionZero = BehPhotoM(iAnimal).GrandSummary.PopNormBinActionZeroLargeSmallErrorNoFold;
         SingleAnimalNormTuningActionZero = SingleAnimalTuningActionZero - min(min(SingleAnimalTuningActionZero));
