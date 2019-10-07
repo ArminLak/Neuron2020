@@ -134,8 +134,6 @@ for iSession =  SessionList
         
         %------------------------define event time for event-alinged responses--------------------------
         
-        
-        
         event_times = TrialTimingData(:,12); % initial beep onset
         
         [Raster_MatrixBeep]=Salvatore_Return_Raster_AlignedPhotoM(TimeStamps,event_times,DeltaFoverF,start,stop,downsampleScale);

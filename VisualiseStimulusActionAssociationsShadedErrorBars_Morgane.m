@@ -1,14 +1,13 @@
 % This code is for visualisation of stimulus- and action-aligned responses,
 % separated by error and correct. 
 
-% Morgane September 2019: only deals with large reward trials 
+% Morgane September 2019
 
 % close all 
 clear all
 
 %DMS
 Animals = [53, 62, 63, 71,72];
-Animals = [71];
 load('BehPhotoM_Exp23_DMS')
 
 %NAC
