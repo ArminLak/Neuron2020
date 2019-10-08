@@ -5,7 +5,7 @@ clear all
 
 %DMS
 % Animals = [53, 62, 63, 71,72];
-Animals = [72];
+Animals = [53];
 load('BehPhotoM_Exp23_DMS')
 load('MiceExpInfoPhotoM.mat')
 
@@ -18,7 +18,7 @@ load('MiceExpInfoPhotoM.mat')
 
 Stimz2plot = 1:7; % or e.g. [1 7] (max level ipsi and contra)
 
-min_RT = 0.8;
+min_RT = 0.9;
 max_RT = 2;
 
 sampleRate = 1200;
@@ -120,11 +120,11 @@ lateActionRasterIpsi = [];
 lateActionRasterContra = [];
 lateActionRasterZero = [];
 
-if ismember(ChanN, 1)
+if contains(num2str(ChanN),'1')
     earlyBehDataIpsi = [earlyBehDataIpsi; earlyBehDataLeft(earlyBehDataLeft(:,2)<0,:)];
     earlyBehDataContra = [earlyBehDataContra; earlyBehDataLeft(earlyBehDataLeft(:,2)>0,:)];
     lateBehDataIpsi = [lateBehDataIpsi; lateBehDataLeft(lateBehDataLeft(:,2)<0,:)];
-    lateBehDataContra = [lateBehDataContra; lateBehDataLeft(earlyBehDataLeft(:,2)>0,:)];
+    lateBehDataContra = [lateBehDataContra; lateBehDataLeft(lateBehDataLeft(:,2)>0,:)];
     
     earlyActionRasterIpsi = [earlyActionRasterIpsi; earlyActionRasterLeft(earlyBehDataLeft(:,2)<0,:)];
     earlyActionRasterContra = [earlyActionRasterContra; earlyActionRasterLeft(earlyBehDataLeft(:,2)>0,:)];
@@ -134,7 +134,7 @@ if ismember(ChanN, 1)
     lateActionRasterZero = [lateActionRasterZero; lateActionRasterLeft(lateBehDataLeft(:,2)==0,:)];
 end
 
-if ismember(ChanN, 2)
+if contains(num2str(ChanN),'2')
     earlyBehDataIpsi = [earlyBehDataIpsi; earlyBehDataRight(earlyBehDataRight(:,2)>0, :)];
     earlyBehDataContra = [earlyBehDataContra; earlyBehDataRight(earlyBehDataRight(:,2)<0, :)];
     lateBehDataIpsi = [lateBehDataIpsi; lateBehDataRight(lateBehDataRight(:,2)>0, :)];
@@ -224,7 +224,7 @@ set(gca, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate
 
     figure; 
     
-    stimz = [0.12 0.25 0.5]
+    stimz = [0.12 0.25 0.5];
     for i = 1:length(stimz)
 byContraStimActionResponses(i,:) = mean(earlyActionRasterContra(abs(earlyBehDataContra(:,2))==stimz(i),:), 1);
 byIpsiStimActionResponses(i,:) = mean(earlyActionRasterIpsi(abs(earlyBehDataIpsi(:,2))==stimz(i),:), 1);
