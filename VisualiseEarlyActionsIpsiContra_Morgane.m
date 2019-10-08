@@ -82,35 +82,47 @@ for iAnimal = Animals
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionL(and(earlyActionTrials,largeCorrectTrials),:);
-                %tempActionData = tempActionData ./ max(max(tempActionData));
+                tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionL;
+%                 tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = tempActionData(and(earlyActionTrials,largeCorrectTrials),:);
                 earlyActionRasterLeft = [earlyActionRasterLeft; tempActionData];
                 earlyBehDataLeft = [earlyBehDataLeft; tempBehData(and(earlyActionTrials,largeCorrectTrials), :)];
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionL(and(lateActionTrials,largeCorrectTrials),:);
-                %tempActionData = tempActionData ./ max(max(tempActionData));
+                tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionL;
+%                 tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = tempActionData(and(lateActionTrials,largeCorrectTrials),:);
                 lateActionRasterLeft = [lateActionRasterLeft; tempActionData];
-                lateBehDataLeft = [lateBehDataLeft; tempBehData(and(lateActionTrials,largeCorrectTrials), :)];                
+                lateBehDataLeft = [lateBehDataLeft; tempBehData(and(lateActionTrials,largeCorrectTrials), :)];
                 
                 
             elseif iChan == 2
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionR(and(earlyActionTrials,largeCorrectTrials),:);
-                %tempActionData = tempActionData ./ max(max(tempActionData));
+                tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionR;
+%                 tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = tempActionData(and(earlyActionTrials,largeCorrectTrials),:);
                 earlyActionRasterRight = [earlyActionRasterRight; tempActionData];
                 earlyBehDataRight = [earlyBehDataRight; tempBehData(and(earlyActionTrials,largeCorrectTrials), :)];
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionR(and(lateActionTrials,largeCorrectTrials),:);
-                %tempActionData = tempActionData ./ max(max(tempActionData));
+                tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionR;
+%                 tempActionData = tempActionData ./ max(max(tempActionData));
+%                 tempActionData = tempActionData(and(lateActionTrials,largeCorrectTrials),:);
                 lateActionRasterRight = [lateActionRasterRight; tempActionData];
                 lateBehDataRight = [lateBehDataRight; tempBehData(and(lateActionTrials,largeCorrectTrials), :)];
                 
             end
             
         end
-            
+        
     end
     
 end
@@ -210,6 +222,7 @@ set(figs, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRat
 
 figure;
 
+figs2(1) = subplot(1,2,1);
 stimz = [0.12 0.25 0.5];
 for i = 1:length(stimz)
     byContraStimActionResponses(i,:) = nanmean(earlyActionRasterContra(abs(earlyBehDataContra(:,2))==stimz(i),:),1);
@@ -221,8 +234,15 @@ hold on;
 plot( smooth(nanmean(byIpsiStimActionResponses),smooth_factor), 'color', IpsiContraColor2(1,:), 'LineWidth', 2)
 
 
-set(gca, 'ylim', [0 0.5], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
-    'YTick', [0 0.5 1], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+figs2(2) = subplot(1, 2, 2);
+shadedErrorBar_Morgane(1:13100, smooth(nanmean(byContraStimActionResponses),smooth_factor), smooth(std(byContraStimActionResponses), smooth_factor)/sqrt(3), ...
+    'lineprops', {'color', IpsiContraColor2(2,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
+hold on;
+shadedErrorBar_Morgane(1:13100, smooth(nanmean(byIpsiStimActionResponses),smooth_factor), smooth(std(byIpsiStimActionResponses), smooth_factor)/sqrt(3), ...
+    'lineprops', {'color', IpsiContraColor2(1,:), 'LineWidth', 2}, 'patchSaturation', 0.12)
+
+set(figs2, 'ylim', [-0.2 0.4], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+    'YTick', [0 0.4], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
     'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
 
 
