@@ -5,7 +5,7 @@ clear all
 
 %DMS
 Animals = [53, 62, 63, 71,72];
-% Animals = [53];
+ %Animals = [63];
 load('BehPhotoM_Exp23_DMS')
 load('MiceExpInfoPhotoM.mat')
 
@@ -19,7 +19,7 @@ load('MiceExpInfoPhotoM.mat')
 Stimz2plot = 1:7; % or e.g. [1 7] (max level ipsi and contra)
 
 min_RT = 0.7;
-max_RT = 2;
+max_RT = 4;
 
 sampleRate = 1200;
 StartTime = 3700;
@@ -44,6 +44,9 @@ lateBehDataRight = [];
 lateActionRasterLeft = [];
 lateActionRasterRight = [];
 
+totalLchan = 0;
+totalRchan = 0;
+
 c = 1;
 animal_count = 0;
 chan_count = 0;
@@ -55,18 +58,22 @@ for iAnimal = Animals
     
     if isempty(BehPhotoM(iAnimal).GrandSummaryR)        % uni hem animals L
         ChanN = 1;
+        totalLchan = totalLchan + 1;
     elseif isempty(BehPhotoM(iAnimal).GrandSummaryL)    % uni hem animals R
         ChanN = 2;
+        totalRchan = totalRchan + 1;
     else                                                % bi hem animals
         ChanN = [1 2];
+        totalRchan = totalRchan + 1;
+        totalLchan = totalLchan + 1;
     end
     
     for iSession = 1:length(BehPhotoM(iAnimal).Session)
         
         tempBehData = [];
-        tempBehData = MiceExpInfo.mice(iAnimal).session(SessionList(iSession)).TrialTimingData;
-        earlyActionTrials = (tempBehData(:,15)>tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)>min_RT) & (tempBehData(:,10)-tempBehData(:,13)<max_RT);
-        lateActionTrials = (tempBehData(:,15)<tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)<max_RT);
+        tempBehData        =  MiceExpInfo.mice(iAnimal).session(SessionList(iSession)).TrialTimingData;
+        earlyActionTrials  = (tempBehData(:,15)>tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)>min_RT) & (tempBehData(:,10)-tempBehData(:,13)<max_RT);
+        lateActionTrials   = (tempBehData(:,15)<tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)<max_RT);
         largeCorrectTrials = (tempBehData(:,9)==1 & ( (tempBehData(:,8)==1 & tempBehData(:,3)==-1 ) | ( tempBehData(:,8)==2 & tempBehData(:,3)==1 )));
         
         for iChan = ChanN
@@ -75,13 +82,13 @@ for iAnimal = Animals
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionL(and(earlyActionTrials,largeCorrectTrials),:);
-                tempActionData = tempActionData ./ max(max(tempActionData));
+                %tempActionData = tempActionData ./ max(max(tempActionData));
                 earlyActionRasterLeft = [earlyActionRasterLeft; tempActionData];
                 earlyBehDataLeft = [earlyBehDataLeft; tempBehData(and(earlyActionTrials,largeCorrectTrials), :)];
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionL(and(lateActionTrials,largeCorrectTrials),:);
-                tempActionData = tempActionData ./ max(max(tempActionData));
+                %tempActionData = tempActionData ./ max(max(tempActionData));
                 lateActionRasterLeft = [lateActionRasterLeft; tempActionData];
                 lateBehDataLeft = [lateBehDataLeft; tempBehData(and(lateActionTrials,largeCorrectTrials), :)];                
                 
@@ -90,13 +97,13 @@ for iAnimal = Animals
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionR(and(earlyActionTrials,largeCorrectTrials),:);
-                tempActionData = tempActionData ./ max(max(tempActionData));
+                %tempActionData = tempActionData ./ max(max(tempActionData));
                 earlyActionRasterRight = [earlyActionRasterRight; tempActionData];
                 earlyBehDataRight = [earlyBehDataRight; tempBehData(and(earlyActionTrials,largeCorrectTrials), :)];
                 
                 tempActionData = [];
                 tempActionData = BehPhotoM(iAnimal).Session(iSession).NeuronActionR(and(lateActionTrials,largeCorrectTrials),:);
-                tempActionData = tempActionData ./ max(max(tempActionData));
+                %tempActionData = tempActionData ./ max(max(tempActionData));
                 lateActionRasterRight = [lateActionRasterRight; tempActionData];
                 lateBehDataRight = [lateBehDataRight; tempBehData(and(lateActionTrials,largeCorrectTrials), :)];
                 
@@ -120,35 +127,35 @@ lateActionRasterIpsi = [];
 lateActionRasterContra = [];
 lateActionRasterZero = [];
 
-if contains(num2str(ChanN),'1')
-    earlyBehDataIpsi = [earlyBehDataIpsi; earlyBehDataLeft(earlyBehDataLeft(:,2)<0,:)];
-    earlyBehDataContra = [earlyBehDataContra; earlyBehDataLeft(earlyBehDataLeft(:,2)>0,:)];
-    lateBehDataIpsi = [lateBehDataIpsi; lateBehDataLeft(lateBehDataLeft(:,2)<0,:)];
-    lateBehDataContra = [lateBehDataContra; lateBehDataLeft(lateBehDataLeft(:,2)>0,:)];
+if totalLchan > 0
+    earlyBehDataIpsi        = [earlyBehDataIpsi; earlyBehDataLeft(earlyBehDataLeft(:,2)<0,:)];
+    earlyBehDataContra      = [earlyBehDataContra; earlyBehDataLeft(earlyBehDataLeft(:,2)>0,:)];
+    lateBehDataIpsi         = [lateBehDataIpsi; lateBehDataLeft(lateBehDataLeft(:,2)<0,:)];
+    lateBehDataContra       = [lateBehDataContra; lateBehDataLeft(lateBehDataLeft(:,2)>0,:)];
     
-    earlyActionRasterIpsi = [earlyActionRasterIpsi; earlyActionRasterLeft(earlyBehDataLeft(:,2)<0,:)];
-    earlyActionRasterContra = [earlyActionRasterContra; earlyActionRasterLeft(earlyBehDataLeft(:,2)>0,:)];
-    earlyActionRasterZero = [earlyActionRasterZero; earlyActionRasterLeft(earlyBehDataLeft(:,2)==0,:)];
-    lateActionRasterIpsi = [lateActionRasterIpsi; lateActionRasterLeft(lateBehDataLeft(:,2)<0,:)];
-    lateActionRasterContra = [lateActionRasterContra; lateActionRasterLeft(lateBehDataLeft(:,2)>0,:)];
-    lateActionRasterZero = [lateActionRasterZero; lateActionRasterLeft(lateBehDataLeft(:,2)==0,:)];
+    earlyActionRasterIpsi   = [earlyActionRasterIpsi; earlyActionRasterLeft(earlyBehDataLeft(:,2)<0,:)];
+    earlyActionRasterContra = [earlyActionRasterContra; earlyActionRasterLeft(earlyBehDataLeft(:,2)>0 ,:)];
+    earlyActionRasterZero   = [earlyActionRasterZero; earlyActionRasterLeft(earlyBehDataLeft(:,2)==0,:)];
+    lateActionRasterIpsi    = [lateActionRasterIpsi; lateActionRasterLeft(lateBehDataLeft(:,2)<0,:)];
+    lateActionRasterContra  = [lateActionRasterContra; lateActionRasterLeft(lateBehDataLeft(:,2)> 0,:)];
+    lateActionRasterZero    = [lateActionRasterZero; lateActionRasterLeft(lateBehDataLeft(:,2)==0,:)];
 end
 
-if contains(num2str(ChanN),'2')
+if totalRchan > 0
     earlyBehDataIpsi = [earlyBehDataIpsi; earlyBehDataRight(earlyBehDataRight(:,2)>0, :)];
     earlyBehDataContra = [earlyBehDataContra; earlyBehDataRight(earlyBehDataRight(:,2)<0, :)];
     lateBehDataIpsi = [lateBehDataIpsi; lateBehDataRight(lateBehDataRight(:,2)>0, :)];
     lateBehDataContra = [lateBehDataContra; lateBehDataRight(lateBehDataRight(:,2)<0, :)];
     
-    earlyActionRasterIpsi = [earlyActionRasterIpsi; earlyActionRasterRight(earlyBehDataRight(:,2) >0,:)];
-    earlyActionRasterContra = [earlyActionRasterContra; earlyActionRasterRight(earlyBehDataRight(:,2) <0,:)];
+    earlyActionRasterIpsi = [earlyActionRasterIpsi; earlyActionRasterRight(earlyBehDataRight(:,2) > 0,:)];
+    earlyActionRasterContra = [earlyActionRasterContra; earlyActionRasterRight(earlyBehDataRight(:,2) < 0,:)];
     earlyActionRasterZero = [earlyActionRasterZero; earlyActionRasterRight(earlyBehDataRight(:,2)==0,:)];
-    lateActionRasterIpsi = [lateActionRasterIpsi; lateActionRasterRight(lateBehDataRight(:,2) >0,:)];
+    lateActionRasterIpsi = [lateActionRasterIpsi; lateActionRasterRight(lateBehDataRight(:,2) > 0,:)];
     lateActionRasterContra = [lateActionRasterContra; lateActionRasterRight(lateBehDataRight(:,2) <0,:)];
     lateActionRasterZero = [lateActionRasterZero; lateActionRasterRight(lateBehDataRight(:,2)==0,:)];
 end
 
-
+%%
 figure;
 
 figs(1) = subplot(2,2,1);
