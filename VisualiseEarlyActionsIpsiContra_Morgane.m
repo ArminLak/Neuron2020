@@ -18,7 +18,7 @@ load('MiceExpInfoPhotoM.mat')
 Stimz2plot = 1:7; % or e.g. [1 7] (max level ipsi and contra)
 
 min_RT = 0.8;
-max_RT = 4;
+max_RT = 2;
 
 sampleRate = 1200;
 StartTime = 3700;
@@ -64,7 +64,7 @@ for iAnimal = Animals
         
         tempBehData = [];
         tempBehData = MiceExpInfo.mice(iAnimal).session(SessionList(iSession)).TrialTimingData;
-        earlyActionTrials = (tempBehData(:,15)>tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)>min_RT);
+        earlyActionTrials = (tempBehData(:,15)>tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)>min_RT) & (tempBehData(:,10)-tempBehData(:,13)<max_RT);
         lateActionTrials = (tempBehData(:,15)<tempBehData(:,10)) & (tempBehData(:,10)-tempBehData(:,13)<max_RT);
         largeCorrectTrials = (tempBehData(:,9)==1 & ( (tempBehData(:,8)==1 & tempBehData(:,3)==-1 ) | ( tempBehData(:,8)==2 & tempBehData(:,3)==1 )));
         
@@ -110,7 +110,7 @@ end
 earlyBehDataIpsi = [earlyBehDataLeft(earlyBehDataLeft(:,2)<0,:) ; earlyBehDataRight(earlyBehDataRight(:,2)>0, :)];
 earlyBehDataContra = [earlyBehDataLeft(earlyBehDataLeft(:,2)>0,:) ; earlyBehDataRight(earlyBehDataRight(:,2)<0, :)];
 lateBehDataIpsi = [lateBehDataLeft(lateBehDataLeft(:,2)<0,:) ; lateBehDataRight(lateBehDataRight(:,2)>0, :)];
-lateBehDataContra = [lateBehDataLeft(earlyBehDataLeft(:,2)>0,:) ; lateBehDataRight(earlyBehDataRight(:,2)<0, :)];
+lateBehDataContra = [lateBehDataLeft(earlyBehDataLeft(:,2)>0,:) ; lateBehDataRight(lateBehDataRight(:,2)<0, :)];
 
 earlyActionRasterIpsi = [earlyActionRasterLeft(earlyBehDataLeft(:,2)<0,:) ; earlyActionRasterRight(earlyBehDataRight(:,2) >0,:)];
 earlyActionRasterContra = [earlyActionRasterLeft(earlyBehDataLeft(:,2)>0,:) ; earlyActionRasterRight(earlyBehDataRight(:,2) <0,:)];
@@ -122,7 +122,7 @@ lateActionRasterZero = [lateActionRasterLeft(lateBehDataLeft(:,2)==0,:) ; lateAc
 
 figure; 
 
-subplot(1,2,1)
+subplot(2,2,1)
 c = 1;
 for iStim = [0.5 0.25 0.12]
 plot( smooth(mean(earlyActionRasterIpsi(abs(earlyBehDataIpsi(:,2))==iStim,:)),smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
@@ -145,7 +145,7 @@ set(gca, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate
     
     
     
-subplot(1,2,2)
+subplot(2,2,2)
 c = 1;
 for iStim = [0.5 0.25 0.12]
 plot( smooth(mean(lateActionRasterIpsi(abs(lateBehDataIpsi(:,2))==iStim,:)),smooth_factor), 'color', IpsiContraColor(c,:), 'LineWidth', 2)
@@ -160,6 +160,32 @@ for iStim = [0.12 0.25 0.5];
 plot( smooth ( mean ( lateActionRasterContra(abs(lateBehDataContra(:,2))==iStim,:)), smooth_factor), 'color', IpsiContraColor(5,:), 'LineWidth', 2)
 c = c+1;
 end
+
+set(gca, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+        'YTick', [0 0.5 1], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+        'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
+    
+    subplot(2,2,3)
+
+plot( smooth(mean(earlyActionRasterIpsi),smooth_factor), 'color', IpsiContraColor2(1,:), 'LineWidth', 2)
+hold on; 
+% plot( smooth( mean(earlyActionRasterZero), smooth_factor), 'color', IpsiContraColor(4,:), 'LineWidth', 2)
+plot( smooth ( mean ( earlyActionRasterContra), smooth_factor), 'color', IpsiContraColor2(2,:), 'LineWidth', 2)
+
+
+set(gca, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+        'YTick', [0 0.5 1], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
+        'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
+    
+    
+        subplot(2,2,4)
+
+plot( smooth(mean(lateActionRasterIpsi),smooth_factor), 'color', IpsiContraColor2(1,:), 'LineWidth', 2)
+hold on; 
+% plot( smooth( mean(earlyActionRasterZero), smooth_factor), 'color', IpsiContraColor(4,:), 'LineWidth', 2)
+plot( smooth ( mean ( lateActionRasterContra), smooth_factor), 'color', IpsiContraColor2(2,:), 'LineWidth', 2)
+plot( smooth ( mean ( earlyActionRasterContra), smooth_factor), 'color', IpsiContraColor(5,:), 'LineWidth', 2)
+
 
 set(gca, 'ylim', [-0.4 1], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
         'YTick', [0 0.5 1], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
