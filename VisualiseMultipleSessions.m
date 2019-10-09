@@ -25,12 +25,12 @@ close all
 
 % 23: double reward size 
 
-save2file = 0; % decide if you want to overwrite GrandSummary or not
+save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 53;
+animal_ID = 63;
 BrainStrucutre = 'DMS'
-ExpID = '23'
+ExpID = '38'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -204,9 +204,10 @@ for HemIter = 1:iter
     RewardData(toRemove,:) = [];
     
      
-    
+    if ExpID == '23'
     ToLargeR = find((BehData(:,3)==-1 & BehData(:,8)==1)  | ...
         (BehData(:,3)==1 & BehData(:,8)==2));
+    
     
     BehData(ToLargeR,16)=1;
     
@@ -215,10 +216,19 @@ for HemIter = 1:iter
     BehData(ToSmallR, 16)=-1;
     
     abzStim = unique(abs(BehData(:,2)))';
+
     
     % normalisation
    StimTimeDenom=max([ mean(StimData(mintersect(ToLargeR,find(BehData(:,9)),find(BehData(:,2)==max(BehData(:,2)))),:)),...
 mean(StimData(mintersect(ToLargeR,find(BehData(:,9)),find(BehData(:,2)==min(BehData(:,2)))),:))]);
+
+    elseif ExpID == '38'
+            abzStim = unique(abs(BehData(:,2)))';
+            BehData(:,16)=1;
+    StimTimeDenom =max([ mean(StimData(intersect(find(BehData(:,9)),find(BehData(:,2)==max(BehData(:,2)))),:)),...
+mean(StimData(intersect(find(BehData(:,9)),find(BehData(:,2)==min(BehData(:,2)))),:))]);    
+    end
+    
 
     StimData = StimData ./ StimTimeDenom;
 ActionData = ActionData ./ StimTimeDenom;
@@ -469,6 +479,8 @@ RewardData = RewardData ./ StimTimeDenom;
     
     % this figure plots rasters at the stimulus time separated based on the
     % pendding outcome
+    
+    
     subplot(6,3,14); hold on
     
     plot(nanmean(StimData(BehData(:,9)==1 & BehData(:,16)==1,:)),'g','LineWidth',2)
@@ -1448,6 +1460,9 @@ for istim = 1:length(unique(BehData(:,2)))
     
 end
 
+if ExpID == '38'
+    continue
+else 
    figure %figure 4
     
    subplot(3,3,1)
@@ -1567,11 +1582,12 @@ end
     set(gca, 'XTickLabel', {'0','0.6','1.2'},'TickDir','out','Box','off');
     xlabel('Time (s)')
     ylabel('Norm response')
-    
+end
+
 end
 %%
 
-
+if ExpID == '23'
 
 figure
 
@@ -1582,6 +1598,7 @@ hold on
 scatter(NormBinStim(intersect(ToSmallR,find(BehData(:,9)==1))),NormBinReward(intersect(ToSmallR,find(BehData(:,9)==1))))
 
 scatter(NormBinStim(find(BehData(:,9)==0)),NormBinReward(find(BehData(:,9)==0)))
+end
 
 
 

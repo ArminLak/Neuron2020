@@ -122,6 +122,8 @@ elseif strcmp(animal_name, 'MMM009')
         SessionList = [1:4, 6:9]; % could not align 5
     elseif exp_ID == '23'
         SessionList = [10:19]; 
+    elseif exp_ID =='38'
+        SessionList = [30 34 35 36];
     end
     
 elseif strcmp(animal_name, 'MMM010')
@@ -129,6 +131,8 @@ elseif strcmp(animal_name, 'MMM010')
         SessionList = [1:5];
     elseif exp_ID == '23'
         SessionList = [6:14]; 
+    elseif exp_ID == '38'
+        SessionList = [20 21];
     end
     
 end

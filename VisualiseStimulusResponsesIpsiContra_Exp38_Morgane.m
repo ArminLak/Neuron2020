@@ -40,12 +40,12 @@ StartTime = 3700; % saved in the database.
 % --- get and organise data -----------------------------------------------
 [IpsiContraColor, IpsiContraColor2, ErrorCorrectColor, SmallLargeColor] = getColors();
 
-GrandPopStimLargeError     = zeros(7,13100);
-GrandPopStimLargeCorrect   = zeros(7,13100);
-GrandPopStimSmallCorrect   = zeros(7,13100);
-GrandPopActionLargeCorrect = zeros(7,13100);
-GrandPopActionSmallCorrect = zeros(7,13100);
-GrandPopActionLargeError   = zeros(7,13100);
+GrandPopStimLargeError     = zeros(length(Stimz2plot),13100);
+GrandPopStimLargeCorrect   = zeros(length(Stimz2plot),13100);
+GrandPopStimSmallCorrect   = zeros(length(Stimz2plot),13100);
+GrandPopActionLargeCorrect = zeros(length(Stimz2plot),13100);
+GrandPopActionSmallCorrect = zeros(length(Stimz2plot),13100);
+GrandPopActionLargeError   = zeros(length(Stimz2plot),13100);
 
 c = 1;
 animal_count = 0;
