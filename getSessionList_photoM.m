@@ -47,6 +47,8 @@ elseif strcmp(animal_name, 'ALK083')
         SessionList = [1:3]; %check this
     elseif exp_ID == '23'
         SessionList = [13:21];
+    elseif exp_ID == '38'
+        SessionList = [23 24];
     end
     
 elseif strcmp(animal_name, 'ALK084')
