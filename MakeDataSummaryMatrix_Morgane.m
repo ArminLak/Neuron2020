@@ -15,10 +15,10 @@ clear all
 close all
 
 
-animal_name = 'MMM009'
+animal_name = 'ALK068'
 Implant = 'Un' %Unilatral or bilateral ('Un' or 'Bi')
 
-exp_ID = '38';
+exp_ID = '23';
 
 
 % ---------- 
@@ -70,11 +70,8 @@ elseif Implant == 'Bi'
     r1 = char(animal_chanz{1}); r1 = r1(end-2:end); r2 = char(animal_chanz{2}); r2 = r2(end-2:end);
     h1 = char(animal_chanz{1}); h1 = h1(1);         h2 = char(animal_chanz{2});         h2 = h2(1);
 
-%         SessionList_a = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
-%         SessionList_b = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan4}==string(animal_chanz(2))));
-                SessionList_a = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz{(1)})));
-        SessionList_b = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz{(2)})));
-        
+        SessionList_a = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan2}==string(animal_chanz(1))));
+        SessionList_b = SessionList(find({MiceExpInfo.mice(animal_ID).session(SessionList).Chan4}==string(animal_chanz(2))));
     SessionList1 = unique([SessionList_a; SessionList_b]); % sessions where animal_chanz(1) is chan2
     SessionList2 = setdiff(SessionList, SessionList1); % sessions where animal_chanz(1) is chan4
 
@@ -136,8 +133,6 @@ for iSession =  SessionList
     
         
         %------------------------define event time for event-alinged responses--------------------------
-        
-        
         
         event_times = TrialTimingData(:,12); % initial beep onset
         

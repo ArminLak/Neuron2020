@@ -24,16 +24,38 @@ end
 
 
 
-figure; 
+figure; % no fitted curve 
 errorbar(StimAllowed,nanmean(PerBlock1), std(PerBlock1)./sqrt(length(PerBlock1)), '-o', 'Color', Block1Color, 'LineWidth', 2, 'MarkerFaceColor', Block1Color, 'CapSize', 4 )
 hold on;
-errorbar(StimAllowed,nanmean(PerBlock2), std(PerBlock1)./sqrt(length(PerBlock2)), '-o', 'Color', Block2Color, 'LineWidth', 2, 'MarkerFaceColor', Block2Color, 'CapSize', 4 )
+errorbar(StimAllowed,nanmean(PerBlock2), std(PerBlock2)./sqrt(length(PerBlock2)), '-o', 'Color', Block2Color, 'LineWidth', 2, 'MarkerFaceColor', Block2Color, 'CapSize', 4 )
 xticks(StimAllowed)
-yticks([-1 0 1])
-yticklabels([0 0.5 1])
+% yticks([-1 0 1])
+% yticklabels([0 0.5 1])
 ylabel('P(R)')
 xlabel('Stimulus contrast')
 title('Psychometric')
+
+
+
+
+
+figure; % with fitted curve
+PerBlock1 = PerBlock1 + 1;
+PerBlock2 = PerBlock2 +1;
+[paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(scaledPerBlock1), [2 2 2 2 2 2 2],[1 1 1 1],1,Block1Color, 2)
+hold on;
+[paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(scaledPerBlock2), [2 2 2 2 2 2 2],[1 1 1 1],1,Block2Color, 2)
+yticks([0 0.5 1])
+yticklabels([0 0.5 1])
+xticks([-0.5 0 0.5])
+xticklabels([-0.5 0 0.5])
+ylabel('P(R)')
+xlabel('Stimulus contrast')
+title('Psychometric')
+yyaxis right
+errorbar(StimAllowed,nanmean(PerBlock1), std(PerBlock1)./sqrt(length(PerBlock1)), 'o', 'Color', Block1Color, 'LineWidth', 2, 'MarkerFaceColor', Block1Color, 'CapSize', 4 )
+errorbar(StimAllowed,nanmean(PerBlock2), std(PerBlock2)./sqrt(length(PerBlock2)), 'o', 'Color', Block2Color, 'LineWidth', 2, 'MarkerFaceColor', Block2Color, 'CapSize', 4 )
+yticks([])
 
 function [Block1Color, Block2Color] = getColors()
 Block1Color = [0.5 0.2 0.1];
