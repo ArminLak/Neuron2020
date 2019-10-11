@@ -5,8 +5,8 @@ clear all
 
 computer_name = 'WIN-AL003';
 subject = 'exampleSubject';
-date = '2019-10-10';
-session = '2';
+date = '2019-10-11';
+session = '1';
 
 
 path2beh = ['\\', computer_name, '\b_server\Data\subjects\', subject, '\', date, '\', session];
