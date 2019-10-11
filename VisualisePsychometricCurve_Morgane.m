@@ -42,9 +42,9 @@ title('Psychometric')
 figure; % with fitted curve
 PerBlock1 = PerBlock1 + 1;
 PerBlock2 = PerBlock2 +1;
-[paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(scaledPerBlock1), [2 2 2 2 2 2 2],[1 1 1 1],1,Block1Color, 2)
+[paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(PerBlock1), [2 2 2 2 2 2 2],[1 1 1 1],1,Block1Color, 2)
 hold on;
-[paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(scaledPerBlock2), [2 2 2 2 2 2 2],[1 1 1 1],1,Block2Color, 2)
+[paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(PerBlock2), [2 2 2 2 2 2 2],[1 1 1 1],1,Block2Color, 2)
 yticks([0 0.5 1])
 yticklabels([0 0.5 1])
 xticks([-0.5 0 0.5])
