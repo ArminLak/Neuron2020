@@ -4,7 +4,6 @@
 close all
 clear all
 
-
 computer_name = 'WIN-AL003';
 subject = 'exampleSubject';
 date = '2019-10-10';
@@ -16,7 +15,6 @@ path2beh = ['\\', computer_name, '\b_server\Data\subjects\', subject, '\', date,
 addpath(genpath(path2beh));
 
 load([date, '_', session, '_', subject, '_Block.mat']);
-load([date, '_', session, '_', subject, '_parameters.mat']);
 
 TrialStartToStimulus = block.events.stimulusOnTimes - block.events.newTrialTimes;
 StimulusToGoCue = block.events.interactiveOnTimes - block.events.stimulusOnTimes;
