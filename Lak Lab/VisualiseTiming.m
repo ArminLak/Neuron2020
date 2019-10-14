@@ -21,23 +21,32 @@ StimulusToGoCue = block.events.interactiveOnTimes - block.events.stimulusOnTimes
 ResponseToReward = block.events.feedbackTimes - block.events.responseMadeTimes;
 
 
+TrialStartTimes = block.events.newTrialTimes;
+
+for i = 1:length(TrialStartTimes)
+    
+WheelNewTrials(i) = find(block.inputs.wheelMMTimes==TrialStartTimes(i));
+end
+
 figure; 
-plots(1) = subplot(1,3,1)
+plots(1) = subplot(1,3,1);
 histogram(TrialStartToStimulus)
 title('Time from Trial Start to Stimulus onset')
 ylabel('Frequency')
 xlabel('Time(s)')
 
-plots(2) = subplot(1,3,2)
+plots(2) = subplot(1,3,2);
 histogram(StimulusToGoCue)
 title('Time from stimulus onset to go cue')
 xlabel('Time(s)')
 
 
-plots(3) = subplot(1,3,3)
+plots(3) = subplot(1,3,3);
 histogram(ResponseToReward)
 title('Time from response made to reward delivered')
 xlabel('Time(s)')
 
-set(gcf, 'Position', [100 300 1000 400])
+% wheel traces
+
+set(gcf, 'Position', [100 300 1000 400]);
 

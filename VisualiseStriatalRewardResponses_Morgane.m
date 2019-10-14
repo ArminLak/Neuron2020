@@ -7,8 +7,8 @@ clear all
 
 
 %DMS
-Animals = [53, 62, 63, 71,72];
-load('BehPhotoM_Exp23_DMS')
+% Animals = [53, 62, 63, 71,72];
+% load('BehPhotoM_Exp23_DMS')
 
 %NAC
 % Animals = [56 57 59 66];
@@ -29,9 +29,7 @@ StartTime = 3700; % saved in the database.
 % --- get and organise data -----------------------------------------------
 [IpsiContraColor, IpsiContraColor2, ErrorCorrectColor, SmallLargeColor] = getColors();
 
-GrandPopRewardLargeCorrect = zeros(7,13100);
-GrandPopRewardSmallCorrect = zeros(7,13100);
-GrandPopRewardError   = zeros(7,13100);
+
 
 
 figure; 
@@ -39,6 +37,11 @@ figure;
 
 for brain_region = 1:2
     
+    GrandPopRewardLargeCorrect = zeros(7,13100);
+GrandPopRewardSmallCorrect = zeros(7,13100);
+GrandPopRewardError   = zeros(7,13100);
+
+
     if brain_region == 1
         
         Animals = [53, 62, 63, 71,72];
