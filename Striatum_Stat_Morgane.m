@@ -170,7 +170,7 @@ actionResponsesContrast = [GrandPopNormBinIpsiActionContrast; GrandPopNormBinCon
 
 %% section 3.3 : 2-way ANOVA to test reward size 
 
-actionResponsesRewardSize = [GrandPopNormBinContraAction_LargeReward(:,1:3); GrandPopNormBinContraAction_SmallReward(:,1:3)];
+actionResponsesRewardSize = [GrandPopNormBinContraAction_LargeReward(:,2:4); GrandPopNormBinContraAction_SmallReward(:,2:4)];
 [~,~,actionRewardSizeStats] = anova2(actionResponsesRewardSize,7);
 
 
