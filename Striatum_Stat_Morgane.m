@@ -6,9 +6,9 @@
 
 
 % CONTENTS:
-% Section 2: STIM responses. ANOVAs on ipsi vs conta, and large vs correct, and correct vs error
-% Section 3: ACTION responses. 
-
+% Section 2: STIM signals. ANOVAs on ipsi vs conta, and large vs correct, and correct vs error
+% Section 3: ACTION signals. 
+% Section 4: REWARD signals.
 
 
 %% section 1: load and organise data 
@@ -78,16 +78,11 @@ for iAnimal = Animals
         SingleAnimalTuningRewardCorrError      = BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrectErrorNoFold;
         
         SingleAnimalNormTuningRewardDenom      = max( [ max(SingleAnimalTuningReward), max(SingleAnimalTuningRewardCorrError)]);
-        SingleAnimalNormTunningRewardCorrError = SingleAnimalTuningRewardCorrError ./ SingleAnimalNormTuningRewardDenom;
-        SingleAnimalNormTunningReward          = SingleAnimalTuningReward ./ SingleAnimalNormTuningRewardDenom;
+        SingleAnimalNormTuningRewardCorrError = SingleAnimalTuningRewardCorrError ./ SingleAnimalNormTuningRewardDenom;
+        SingleAnimalNormTuningReward          = SingleAnimalTuningReward ./ SingleAnimalNormTuningRewardDenom;
         
         
         if iChan == 1 % left hem
-            
-            GrandPopNormBinStimNoFold = GrandPopNormBinStimNoFold + SingleAnimalNormTuningStim;
-            GrandPopNormBinStimErrCorrNoFold = GrandPopNormBinStimErrCorrNoFold + SingleAnimalNormTuningStimCorrError;
-            GrandPopNormBinActionNoFold = GrandPopNormBinActionNoFold + SingleAnimalNormTuningAction;
-            GrandPopNormBinActionErrCorrNoFold = GrandPopNormBinActionErrCorrNoFold + SingleAnimalNormTuningActionCorrError;
             
             GrandPopNormBinIpsiStim_Contrast(chan_count, :)   =  fliplr(SingleAnimalNormTuningStim(1,1:4));
             GrandPopNormBinContraStim_Contrast(chan_count, :) =  SingleAnimalNormTuningStim(2,4:7);
@@ -107,11 +102,7 @@ for iAnimal = Animals
             
         elseif iChan == 2 % right hem
             
-            GrandPopNormBinStimNoFold        = GrandPopNormBinStimNoFold + rot90(SingleAnimalNormTuningStim,2);
-            GrandPopNormBinStimErrCorrNoFold = GrandPopNormBinStimErrCorrNoFold + fliplr(SingleAnimalNormTuningStimCorrError);
-            GrandPopNormBinActionNoFold = GrandPopNormBinActionNoFold + rot90(SingleAnimalNormTuningAction, 2);
-            GrandPopNormBinActionErrCorrNoFold = GrandPopNormBinActionErrCorrNoFold + fliplr(SingleAnimalNormTuningActionCorrError);
-            
+            % stim 
             GrandPopNormBinIpsiStim_Contrast(chan_count,: )  =  SingleAnimalNormTuningStim(2,4:7);
             GrandPopNormBinContraStim_Contrast(chan_count, :) =  fliplr(SingleAnimalNormTuningStim(1,1:4));
             
@@ -119,13 +110,21 @@ for iAnimal = Animals
             GrandPopNormBinContraStim_LargeReward(chan_count, :) = fliplr(SingleAnimalNormTuningStim(1,1:4));
             GrandPopNormBinContraStim_Error(chan_count, :) = fliplr(SingleAnimalNormTuningStimCorrError(1, 1:4));
             
-            
+            % action 
             GrandPopNormBinIpsiAction_Contrast(chan_count, :)   =  SingleAnimalNormTuningAction(2,4:7); % ipsi stimulus
             GrandPopNormBinContraAction_Contrast(chan_count, :) =  fliplr(SingleAnimalNormTuningAction(1,1:4)); % contra stimulus 
             
             GrandPopNormBinContraAction_SmallReward(chan_count, : ) = fliplr(SingleAnimalNormTuningAction(2,1:4));
             GrandPopNormBinContraAction_LargeReward(chan_count, :) = fliplr(SingleAnimalNormTuningAction(1,1:4));
             GrandPopNormBinContraAction_Error(chan_count, :) = fliplr(SingleAnimalNormTuningActionCorrError(1, 1:4));
+            
+            % reward 
+            GrandPopNormBinIpsiReward_Contrast(chan_count, :)   =  SingleAnimalNormTuningReward(2,4:7); % ipsi stimulus
+            GrandPopNormBinContraReward_Contrast(chan_count, :) =  fliplr(SingleAnimalNormTuningReward(1,1:4)); % contra stimulus 
+            
+            GrandPopNormBinContraReward_SmallReward(chan_count, : ) = fliplr(SingleAnimalNormTuningReward(2,1:4));
+            GrandPopNormBinContraReward_LargeReward(chan_count, :) = fliplr(SingleAnimalNormTuningReward(1,1:4));
+            GrandPopNormBinContraReward_Error(chan_count, :) = fliplr(SingleAnimalNormTuningRewardCorrError(1, 1:4));
             
         end
         
@@ -168,10 +167,17 @@ stimResponsesChoiceAccuracy = [GrandPopNormBinContraStim_LargeReward; GrandPopNo
 actionResponsesContrast = [GrandPopNormBinIpsiAction_Contrast; GrandPopNormBinContraAction_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
 [~,~,actionContrastStats] = anova2(actionResponsesContrast,7);
 
-%% section 3.3 : 2-way ANOVA to test reward size 
+%% section 3.3 : 2-way ANOVA to test action wrt reward size 
 
 actionResponsesRewardSize = [GrandPopNormBinContraAction_LargeReward(:,2:4); GrandPopNormBinContraAction_SmallReward(:,2:4)];
 [~,~,actionRewardSizeStats] = anova2(actionResponsesRewardSize,7);
+
+
+%% section 4.1 : 2-way ANOVA to test reward response wrt contrast and  ipsi vs contra 
+
+rewardResponsesContrast = [GrandPopNormBinIpsiReward_Contrast; GrandPopNormBinContraReward_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
+[~,~,stimContrastStats] = anova2(rewardResponsesContrast,7);
+
 
 
 
