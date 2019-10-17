@@ -90,7 +90,7 @@ for iAnimal = Animals
             GrandPopNormBinActionErrCorrNoFold = GrandPopNormBinActionErrCorrNoFold + SingleAnimalNormTuningActionCorrError;
             
             GrandPopNormBinIpsiStim_Contrast(chan_count, :)   =  fliplr(SingleAnimalNormTuningStim(1,1:4));
-            GrandPopNormBinContraStimContrast(chan_count, :) =  SingleAnimalNormTuningStim(2,4:7);
+            GrandPopNormBinContraStim_Contrast(chan_count, :) =  SingleAnimalNormTuningStim(2,4:7);
             
             GrandPopNormBinContraStim_SmallReward(chan_count, : ) = SingleAnimalNormTuningStim(1,4:7);
             GrandPopNormBinContraStim_LargeReward(chan_count, :) = SingleAnimalNormTuningStim(2,4:7);
@@ -98,7 +98,7 @@ for iAnimal = Animals
             
             
             GrandPopNormBinIpsiAction_Contrast(chan_count, :)   =  fliplr(SingleAnimalNormTuningAction(1,1:4)); % ipsi stimulus
-            GrandPopNormBinContraActionContrast(chan_count, :) =  SingleAnimalNormTuningAction(2,4:7); % contra stimulus 
+            GrandPopNormBinContraAction_Contrast(chan_count, :) =  SingleAnimalNormTuningAction(2,4:7); % contra stimulus 
             
             GrandPopNormBinContraAction_SmallReward(chan_count, : ) = SingleAnimalNormTuningAction(1,4:7);
             GrandPopNormBinContraAction_LargeReward(chan_count, :) = SingleAnimalNormTuningAction(2,4:7);
@@ -112,8 +112,8 @@ for iAnimal = Animals
             GrandPopNormBinActionNoFold = GrandPopNormBinActionNoFold + rot90(SingleAnimalNormTuningAction, 2);
             GrandPopNormBinActionErrCorrNoFold = GrandPopNormBinActionErrCorrNoFold + fliplr(SingleAnimalNormTuningActionCorrError);
             
-            GrandPopNormBinIpsiStimContrast(chan_count, :)   =  SingleAnimalNormTuningStim(2,4:7);
-            GrandPopNormBinContraStimContrast(chan_count, :) =  fliplr(SingleAnimalNormTuningStim(1,1:4));
+            GrandPopNormBinIpsiStim_Contrast(chan_count,: )  =  SingleAnimalNormTuningStim(2,4:7);
+            GrandPopNormBinContraStim_Contrast(chan_count, :) =  fliplr(SingleAnimalNormTuningStim(1,1:4));
             
             GrandPopNormBinContraStim_SmallReward(chan_count, : ) = fliplr(SingleAnimalNormTuningStim(2, 1:4));
             GrandPopNormBinContraStim_LargeReward(chan_count, :) = fliplr(SingleAnimalNormTuningStim(1,1:4));
@@ -121,7 +121,7 @@ for iAnimal = Animals
             
             
             GrandPopNormBinIpsiAction_Contrast(chan_count, :)   =  SingleAnimalNormTuningAction(2,4:7); % ipsi stimulus
-            GrandPopNormBinContraActionContrast(chan_count, :) =  fliplr(SingleAnimalNormTuningAction(1,1:4)); % contra stimulus 
+            GrandPopNormBinContraAction_Contrast(chan_count, :) =  fliplr(SingleAnimalNormTuningAction(1,1:4)); % contra stimulus 
             
             GrandPopNormBinContraAction_SmallReward(chan_count, : ) = fliplr(SingleAnimalNormTuningAction(2,1:4));
             GrandPopNormBinContraAction_LargeReward(chan_count, :) = fliplr(SingleAnimalNormTuningAction(1,1:4));
@@ -136,13 +136,13 @@ end
 
 %% section 2.1 : one-way ANOVA to test for ipsi stimulus responses 
 
-[p, tbl, ipsiStimStats] = anova1(GrandPopNormBinIpsiStimContrast);
+[p, tbl, ipsiStimStats] = anova1(GrandPopNormBinIpsiStim_Contrast);
 
 % continuous?
 
 %% section 2.2 : two way ANOVA to test for contrast on ipsi/contra stim responses
 
-stimResponsesContrast = [GrandPopNormBinIpsiStimContrast; GrandPopNormBinContraStimContrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
+stimResponsesContrast = [GrandPopNormBinIpsiStim_Contrast; GrandPopNormBinContraStim_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
 [~,~,stimContrastStats] = anova2(stimResponsesContrast,7);
 
 % columns are contrast levels
@@ -161,11 +161,11 @@ stimResponsesChoiceAccuracy = [GrandPopNormBinContraStim_LargeReward; GrandPopNo
 
 %% section 3.1 : one-way ANOVA to test for action responses in hemisphere ipsi to stimulus 
 
-[p, tbl, ipsiActionStats] = anova1(GrandPopNormBinIpsiActionContrast);
+[p, tbl, ipsiActionStats] = anova1(GrandPopNormBinIpsiAction_Contrast);
 
 %% section 3.2 : two-way ANOVA to test for contrast on action responses in ipsi/contra (excluding zero contrast) 
 
-actionResponsesContrast = [GrandPopNormBinIpsiActionContrast; GrandPopNormBinContraActionContrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
+actionResponsesContrast = [GrandPopNormBinIpsiAction_Contrast; GrandPopNormBinContraAction_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
 [~,~,actionContrastStats] = anova2(actionResponsesContrast,7);
 
 %% section 3.3 : 2-way ANOVA to test reward size 
