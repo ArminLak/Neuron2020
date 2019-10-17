@@ -74,12 +74,19 @@ for iAnimal = Animals
         
         SingleAnimalStimTraceLargeError         = BehPhotoM(iAnimal).GrandSummary.StimRasterLargeError;
         SingleAnimalStimTraceLargeError         = SingleAnimalStimTraceLargeError ./ max(max(SingleAnimalStimTraceLargeError));
+        
+                SingleAnimalNormStimDenom = max( [max(SingleAnimalStimTraceLargeCorrect), max(SingleAnimalStimTraceLargeError)] );
+                
+                
 
         SingleAnimalActionTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeCorrect;
         SingleAnimalActionTraceLargeCorrect     = SingleAnimalActionTraceLargeCorrect ./ max(max(SingleAnimalActionTraceLargeCorrect));
         
         SingleAnimalActionTraceLargeError       = BehPhotoM(iAnimal).GrandSummary.ActionRasterLargeError;
         SingleAnimalActionTraceLargeError       = SingleAnimalActionTraceLargeError ./ max(max(SingleAnimalActionTraceLargeError));
+        
+        
+
         
         if iChan == 1
             GrandPopStimLargeCorrect    = SingleAnimalStimTraceLargeCorrect + GrandPopStimLargeCorrect;

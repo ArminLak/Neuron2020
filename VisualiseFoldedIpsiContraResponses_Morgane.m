@@ -14,14 +14,14 @@ LargeSmallErrorOnSinglePlot = 0; %show large correct, small correct, and error  
 %  load('BehPhotoM_Exp23_VTA')
 
 % NAC
-%   region = 'NAC';
-%   Animals = [56 57 59 66]
-%   load('BehPhotoM_Exp23_NAc')
+  region = 'NAC';
+  Animals = [56 57 59 66]
+  load('BehPhotoM_Exp23_NAc')
 
 % %DMS
-  region = 'DMS';
-Animals = [53, 62, 63, 71,72];
-load('BehPhotoM_Exp23_DMS')
+%   region = 'DMS';
+% Animals = [53, 62, 63, 71,72];
+% load('BehPhotoM_Exp23_DMS')
 
 
 %%
@@ -97,15 +97,19 @@ for iAnimal = Animals
         
         % ---- subtract then divide ------
          SingleAnimalTunningStim= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimNoFold;
-       % SingleAnimalNormTunningStim = SingleAnimalTunningStim - min(min(SingleAnimalTunningStim));
-       SingleAnimalNormTunningStim =  SingleAnimalTunningStim;
-       SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
+         
+%        SingleAnimalNormTunningStim =  SingleAnimalTunningStim;
+%        SingleAnimalNormTunningStim = SingleAnimalNormTunningStim ./ max(max(SingleAnimalNormTunningStim));
 
         SingleAnimalTunningStimCorrError= BehPhotoM(iAnimal).GrandSummary.PopNormBinStimCorrectErrorNoFold;
+%         SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError;
         
-        %SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError - min(min(SingleAnimalTunningStimCorrError));
-        SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError;
-        SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError ./ max(max(SingleAnimalNormTunningStimCorrError));
+        SingleAnimalNormTuningStimDenom = max( [ max(SingleAnimalTunningStim), max(SingleAnimalTunningStimCorrError)]);
+        
+        SingleAnimalNormTunningStimCorrError = SingleAnimalTunningStimCorrError ./ SingleAnimalNormTuningStimDenom;
+        SingleAnimalNormTunningStim          = SingleAnimalTunningStim ./ SingleAnimalNormTuningStimDenom;
+        
+%         SingleAnimalNormTunningStimCorrError = SingleAnimalNormTunningStimCorrError ./ max(max(SingleAnimalNormTunningStimCorrError));
         
         SingleAnimalTuningAction = BehPhotoM(iAnimal).GrandSummary.PopNormBinActionNoFold;
         %SingleAnimalNomTuningAction = SingleAnimalTuningAction - min(min(SingleAnimalTuningAction));

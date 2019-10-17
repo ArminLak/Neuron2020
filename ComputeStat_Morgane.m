@@ -25,12 +25,12 @@ close all
 
 
 % select animal
-animal_ID = 48
+animal_ID = 53
 
 % select database
-load('BehPhotoM_Exp23')
+% load('BehPhotoM_Exp23')
 %load('BehPhotoM_Exp23_NAc')
-%load('BehPhotoM_Exp23_DMS')
+load('BehPhotoM_Exp23_DMS')
 
 sample_rate = 12000;                                        % photoM recording sampling rate
 downSample = 1200;                                       % factor downsampling the Ca responses

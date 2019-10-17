@@ -28,9 +28,9 @@ close all
 save2file = 1; % decide if you want to overwrite GrandSummary or not
 
 % select animal
-animal_ID = 63;
-BrainStrucutre = 'DMS'
-ExpID = '38'
+animal_ID = 66;
+BrainStrucutre = 'NAc'
+ExpID = '23'
 
 load(['BehPhotoM_Exp', ExpID, '_', BrainStrucutre]);
 
@@ -614,6 +614,8 @@ RewardData = RewardData ./ StimTimeDenom;
         ActionRasterZeroIpsi(2,:) = nanmean(ActionData(intersect(ipsiTrials, smallRewardTrials),:),1);
         ActionRasterZeroIpsi(3,:) = nanmean(ActionData(intersect(ipsiTrials, errorTrials),:),1);
         
+
+        
         
     PopNormBinActionZeroLargeSmallErrorNoFold(1,1)= nanmean(NormBinAction(intersect(ipsiTrials, largeRewardTrials),:)); % zero contrast, ipsi choices, large reward
     PopNormBinActionZeroLargeSmallErrorNoFold(1,2)= nanmean(NormBinAction(intersect(ipsiTrials, smallRewardTrials),:)); % zero contrast, ipsi choices, small reward
@@ -622,8 +624,20 @@ RewardData = RewardData ./ StimTimeDenom;
     PopNormBinActionZeroLargeSmallErrorNoFold(2,2)= nanmean(NormBinAction(intersect(contraTrials, smallRewardTrials),:)); % 0 contrast, contra + small
     PopNormBinActionZeroLargeSmallErrorNoFold(2,3)= nanmean(NormBinAction(intersect(contraTrials, errorTrials),:)); % 0 contrast, contra + error
     
+ if (iter == 2 && HemIter ==1) || (iter == 1 && isfield(BehPhotoM(animal_ID).Session, 'NeuronRewardL')) %left hem 
+        contraTrials = [intersect(find(BehData(:,9)==1), find(BehData(:,3)==1));intersect(find(BehData(:,9)==0), find(BehData(:,3)==-1))  ];
+        ipsiTrials = [intersect(find(BehData(:,9)==0), find(BehData(:,3)==1));intersect(find(BehData(:,9)==1), find(BehData(:,3)==-1))  ];
+    elseif (iter == 2 && HemIter ==2) || (iter == 1 && isfield(BehPhotoM(animal_ID).Session,'NeuronRewardR')) % right hem 
+        contraTrials = [intersect(find(BehData(:,9)==0), find(BehData(:,3)==1));intersect(find(BehData(:,9)==1), find(BehData(:,3)==-1))  ];
+        ipsiTrials = [intersect(find(BehData(:,9)==1), find(BehData(:,3)==1));intersect(find(BehData(:,9)==0), find(BehData(:,3)==-1))  ];
+end
     
-        
+        RewardRasterIpsiContraLargeCorr(1,:) = nanmean(RewardData(intersect(ipsiTrials, largeRewardTrials),:),1);   
+        RewardRasterIpsiContraLargeCorr(2,:) = nanmean(RewardData(intersect(contraTrials, largeRewardTrials),:),1); 
+        RewardRasterIpsiContraSmallCorr(1,:) = nanmean(RewardData(intersect(ipsiTrials, smallRewardTrials),:),1);   
+        RewardRasterIpsiContraSmallCorr(2,:) = nanmean(RewardData(intersect(contraTrials, smallRewardTrials),:),1);   
+        RewardRasterIpsiContraErr(1,:) = nanmean(RewardData(intersect(ipsiTrials, errorTrials),:),1);   
+        RewardRasterIpsiContraErr(2,:) = nanmean(RewardData(intersect(contraTrials, errorTrials),:),1); 
         
     c=1;
     for iStim = unique((BehData(:,2)))'
@@ -1282,6 +1296,9 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryL.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
         BehPhotoM(animal_ID).GrandSummaryL.PopNormBinActionZeroLargeSmallErrorNoFold = PopNormBinActionZeroLargeSmallErrorNoFold; %col = large, small, error. row = ipsi, contra.
         
+        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterIpsiContraLargeCorr = RewardRasterIpsiContraLargeCorr;
+        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterIpsiContraSmallCorr = RewardRasterIpsiContraSmallCorr;
+        BehPhotoM(animal_ID).GrandSummaryL.RewardRasterIpsiContraErr = RewardRasterIpsiContraErr;
         
     end
     
@@ -1344,6 +1361,11 @@ RewardData = RewardData ./ StimTimeDenom;
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroContra = ActionRasterZeroContra; % large, small, error
         BehPhotoM(animal_ID).GrandSummaryR.ActionRasterZeroIpsi = ActionRasterZeroIpsi; % large, small, error 
         BehPhotoM(animal_ID).GrandSummaryR.PopNormBinActionZeroLargeSmallErrorNoFold =     PopNormBinActionZeroLargeSmallErrorNoFold;
+        
+        BehPhotoM(animal_ID).GrandSummaryR.RewardRasterIpsiContraLargeCorr = RewardRasterIpsiContraLargeCorr;
+        BehPhotoM(animal_ID).GrandSummaryR.RewardRasterIpsiContraSmallCorr = RewardRasterIpsiContraSmallCorr;
+        BehPhotoM(animal_ID).GrandSummaryR.RewardRasterIpsiContraErr = RewardRasterIpsiContraErr;
+        
         
         
         

@@ -18,19 +18,19 @@ clear all
 %   if exist('BehPhotoM', 'var') && strcmp(brain_region, 'NAc')
 %       clearvars -except BehPhotoM
 %    else clear all
-      load('BehPhotoM_Exp23_NAc.mat')
+%       load('BehPhotoM_Exp23_NAc.mat')
+% 
+%  Animals = [56 57 59 66]
 
- Animals = [56 57 59 66]
 
-
-% brain_region = 'DMS';
-% load('BehPhotoM_Exp23_DMS.mat')
-% Animals = [53, 62, 63, 71,72]
+brain_region = 'DMS';
+load('BehPhotoM_Exp23_DMS.mat')
+Animals = [53, 62, 63, 71,72]
 
 % NAC
-brain_region = 'NAC'
-load('BehPhotoM_Exp23_NAc.mat')
-Animals = [56 57 59 66]
+% brain_region = 'NAC'
+% load('BehPhotoM_Exp23_NAc.mat')
+% Animals = [56 57 59 66]
 % 
 
 % VTA 
@@ -52,6 +52,7 @@ Animals = [56 57 59 66]
 isContra = [];
 NormBinStim = [];
 NormBinAction = [];
+NormBinReward = [];
 Contrast = [];
 CorrErr = [];
 RewardSize = [];
@@ -110,7 +111,7 @@ if isfield(BehPhotoM(animal).Session,'NeuronRewardL')
         
         
         isContra = [isContra; double((TempBehData(:,9)==1 & TempBehData(:,3)==1) | (TempBehData(:,9)==0 & TempBehData(:,3)==-1))];
-        [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, TempStimData, TempActionData); % see function at bottom
+        [NormBinStim, NormBinAction, NormBinReward] = getResponses(animal, NormBinStim, NormBinAction, NormBinReward, TempStimData, TempActionData, TempRewardData); % see function at bottom
         
         
     end
@@ -142,7 +143,7 @@ if isfield(BehPhotoM(animal).Session,'NeuronRewardR')
         
         isContra = [isContra; double((TempBehData(:,9)==1 & TempBehData(:,3)==-1) | (TempBehData(:,9)==0 & TempBehData(:,3)==1))];
         
-        [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, TempStimData, TempActionData); % see function at bottom
+        [NormBinStim, NormBinAction, NormBinReward] = getResponses(animal, NormBinStim, NormBinAction, NormBinReward, TempStimData, TempActionData, TempRewardData); % see function at bottom
         
     end
     
@@ -175,6 +176,7 @@ yticklabels({'Contralateral', 'Contrast', 'Reward size'})
 cvEvalFunc = @(pred, actual)1-mean(mean((pred-actual).^2))/mean(mean(actual.^2));
 cstim = cvpartition(NormBinStim, 'KFold', 5);
 cact = cvpartition(NormBinAction, 'Kfold', 5);
+crwd = cvpartition(NormBinReward, 'Kfold', 5);
 
 for i = 1:5
     
@@ -189,6 +191,12 @@ for i = 1:5
     actual = NormBinAction(test(cact,i));
     
     cvEvalAct(i) = cvEvalFunc(pred,actual);
+    
+    [cvbrwd, cvbintrwd]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),:), 0.01);
+    pred = cvbrwd(1)*RegTbl(test(crwd,i),1) + cvbrwd(2)*RegTbl(test(crwd,i),2) + cvbrwd(3)*RegTbl(test(crwd,i),3);
+    actual = NormBinReward(test(crwd,i));
+    
+    cvEvalRwd(i) = cvEvalFunc(pred,actual);
     
     
 end
@@ -257,9 +265,39 @@ for i = 1:5      % testing reduced models for action
     
 end
 
+for i = 1:5      % testing reduced models for reward
+    actual = NormBinReward(test(crwd,i));
+    
+    [cvbrwd, cvbintact]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),[2 3]), 0.01);
+    pred = cvbrwd(1)*RegTbl(test(crwd,i),2) + cvbrwd(2)*RegTbl(test(crwd,i),3);
+    cvEvalRwd_noIpsiContra(i) = cvEvalFunc(pred,actual);
+    
+    [cvbrwd, cvbintact]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),[1 3]), 0.01);
+    pred = cvbrwd(1)*RegTbl(test(crwd,i),1) + cvbrwd(2)*RegTbl(test(crwd,i),3);
+    cvEvalRwd_noContrast(i) = cvEvalFunc(pred,actual);
+    
+    [cvbrwd, cvbintact]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),[1 2]), 0.01);
+    pred = cvbrwd(1)*RegTbl(test(crwd,i),1) + cvbrwd(2)*RegTbl(test(crwd,i),2);
+    cvEvalRwd_noRewardSize(i) = cvEvalFunc(pred,actual);
+    
+    [cvbrwd, cvbintact]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),1), 0.01);
+    pred = cvbrwd*RegTbl(test(crwd,i),1);
+    cvEvalRwd_onlyIpsiContra(i) = cvEvalFunc(pred,actual);
+    
+    [cvbrwd, cvbintact]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),2), 0.01);
+    pred = cvbrwd*RegTbl(test(crwd,i),2);
+    cvEvalRwd_onlyContrast(i) = cvEvalFunc(pred,actual);
+    
+    [cvbrwd, cvbintact]= regress(NormBinReward(test(crwd,i)), RegTbl(test(crwd,i),3), 0.01);
+    pred = cvbrwd*RegTbl(test(crwd,i),3);
+    cvEvalRwd_onlyRewardSize(i) = cvEvalFunc(pred,actual);
+    
+    
+end
+
 
 figure; 
-subplot(1,2,1)
+subplot(1,3,1)
 title('Stimulus regrssions')
 barh([mean(cvEvalStim_noContrast), mean(cvEvalStim_noIpsiContra), mean(cvEvalStim_noRewardSize); mean(cvEvalStim_onlyContrast), mean(cvEvalStim_onlyIpsiContra), mean(cvEvalStim_onlyRewardSize)]); 
 hold on
@@ -276,7 +314,7 @@ line([mean(cvEvalStim) mean(cvEvalStim)], ylim, 'LineWidth', 2, 'LineStyle', '--
 legend({'Contrast', 'Ipsi/Contra', 'Reward size', 'Full model'})
 
 
-subplot(1,2,2)
+subplot(1,3,2)
 title('Action regressions')
 barh([mean(cvEvalAct_noContrast), mean(cvEvalAct_noIpsiContra), mean(cvEvalAct_noRewardSize); mean(cvEvalAct_onlyContrast), mean(cvEvalAct_onlyIpsiContra), mean(cvEvalAct_onlyRewardSize)]); 
 hold on
@@ -292,13 +330,33 @@ line([mean(cvEvalAct) mean(cvEvalAct)], ylim, 'LineWidth', 2, 'LineStyle', '--',
 legend({'Contrast', 'Ipsi/Contra', 'Reward size', 'Full model'})
 
 
+subplot(1,3,3)
+title('Reward regressions')
+barh([mean(cvEvalRwd_noContrast), mean(cvEvalRwd_noIpsiContra), mean(cvEvalRwd_noRewardSize); mean(cvEvalRwd_onlyContrast), mean(cvEvalRwd_onlyIpsiContra), mean(cvEvalRwd_onlyRewardSize)]); 
+hold on
+if strcmpi(brain_region, 'DMS')
+    xlim([0.04 round(mean(cvEvalRwd), 1)])
+elseif strcmpi(brain_region, 'NAC')
+    xlim([0 round(mean(cvEvalRwd), 1)])
+else 
+    xlim([0 round(mean(cvEvalRwd), 1)])
+end
+yticklabels({'without', 'only'})
+line([mean(cvEvalRwd) mean(cvEvalRwd)], ylim, 'LineWidth', 2, 'LineStyle', '--', 'color', [0.5 0.5 0.5])
+legend({'Contrast', 'Ipsi/Contra', 'Reward size', 'Full model'})
+
+
 
 
 
 
 %%
 
-function [NormBinStim, NormBinAction] = getResponses(animal, NormBinStim, NormBinAction, StimData, ActionData)
+function [NormBinStim, NormBinAction, NormBinReward] = getResponses(animal, NormBinStim, NormBinAction, NormBinReward, StimData, ActionData, RewardData)
+
+
+NormBinReward = [NormBinReward; mean(RewardData(:,4000:5300),2) - mean(RewardData(:,3400:3700),2)];
+
 
 if animal == 48
         NormBinStim = [NormBinStim; mean(StimData(:,4500:5000),2) - mean(StimData(:,4000:4200),2)- mean(StimData(:,3400:3800),2)];

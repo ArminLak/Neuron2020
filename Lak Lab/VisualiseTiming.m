@@ -23,10 +23,10 @@ ResponseToReward = block.events.feedbackTimes - block.events.responseMadeTimes;
 
 TrialStartTimes = block.events.newTrialTimes;
 
-for i = 1:length(TrialStartTimes)
-    
-WheelNewTrials(i) = find(block.inputs.wheelMMTimes==TrialStartTimes(i));
-end
+% for i = 1:length(TrialStartTimes)
+%     
+% WheelNewTrials(i) = find(block.inputs.wheelMMTimes==TrialStartTimes(i));
+% end
 
 figure; 
 plots(1) = subplot(1,3,1);
@@ -48,5 +48,5 @@ xlabel('Time(s)')
 
 % wheel traces
 
-set(gcf, 'Position', [100 300 1000 400]);
+% set(gcf, 'Position', [100 300 1000 400]);
 

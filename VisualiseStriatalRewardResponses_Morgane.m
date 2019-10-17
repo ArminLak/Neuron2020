@@ -30,30 +30,33 @@ StartTime = 3700; % saved in the database.
 [IpsiContraColor, IpsiContraColor2, ErrorCorrectColor, SmallLargeColor] = getColors();
 
 
+response_window_length = 13100; 
 
+%length(StartTime + (TimingVisualise(3,1)*sampleRate):StartTime + (TimingVisualise(3,2)*sampleRate));
 
 figure; 
 
 
 for brain_region = 1:2
     
-    GrandPopRewardLargeCorrect = zeros(7,13100);
-GrandPopRewardSmallCorrect = zeros(7,13100);
-GrandPopRewardError   = zeros(7,13100);
+    GrandPopRewardLargeCorrect = zeros(1,response_window_length);
+GrandPopRewardSmallCorrect = zeros(1, response_window_length);
+GrandPopRewardError   = zeros(1,response_window_length);
 
-
-    if brain_region == 1
+    if brain_region == 1        
         
         Animals = [53, 62, 63, 71,72];
+%         Animals = [63];
         load('BehPhotoM_Exp23_DMS')
         
     elseif brain_region == 2
+        
         Animals = [56 57 59 66];
         load('BehPhotoM_Exp23_NAc')
- 
     end
 
-
+L_chan_count = 0;
+R_chan_count = 0;
 chan_count = 0;
 for iAnimal = Animals
     
@@ -74,35 +77,40 @@ for iAnimal = Animals
 
         if iChan == 1
             BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryL;
+            L_chan_count = L_chan_count + 1;
         elseif iChan == 2
             BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
+            R_chan_count = R_chan_count + 1;
         end
         
         SingleAnimalRewardTraceLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.Rew2DACorr;
-        SingleAnimalRewardTraceLargeCorrect     = SingleAnimalRewardTraceLargeCorrect ./ max(max(SingleAnimalRewardTraceLargeCorrect));
-        
+        SingleAnimalRewardTraceLargeCorrect     = SingleAnimalRewardTraceLargeCorrect - min(min(SingleAnimalRewardTraceLargeCorrect));
         
         SingleAnimalRewardTraceSmallCorrect     = BehPhotoM(iAnimal).GrandSummary.RewAwayDACorr;
-        SingleAnimalRewardTraceSmallCorrect     = SingleAnimalRewardTraceSmallCorrect ./ max(max(SingleAnimalRewardTraceSmallCorrect));
+        SingleAnimalRewardTraceSmallCorrect     = SingleAnimalRewardTraceSmallCorrect - min(min(SingleAnimalRewardTraceSmallCorrect));
         
-        SingleAnimalRewardTraceError            = mean([BehPhotoM(iAnimal).GrandSummary.RewAwayDAErr; BehPhotoM(iAnimal).GrandSummary.RewAwayDACorr]);
-        SingleAnimalRewardTraceError            = SingleAnimalRewardTraceError ./ max(max(SingleAnimalRewardTraceError));
+        SingleAnimalRewardTraceError            = mean([BehPhotoM(iAnimal).GrandSummary.RewAwayDAErr; BehPhotoM(iAnimal).GrandSummary.Rew2DAErr]);
+        SingleAnimalRewardTraceError            = SingleAnimalRewardTraceError - min(min(SingleAnimalRewardTraceError));
+        
+        SingleAnimalNormDenom                   = max( [max(SingleAnimalRewardTraceLargeCorrect), max(SingleAnimalRewardTraceSmallCorrect), ...
+                                                max(SingleAnimalRewardTraceError)] );
+        
+        SingleAnimalRewardTraceLargeCorrect     = SingleAnimalRewardTraceLargeCorrect ./ SingleAnimalNormDenom;
+        SingleAnimalRewardTraceSmallCorrect     = SingleAnimalRewardTraceSmallCorrect ./ SingleAnimalNormDenom;
+        SingleAnimalRewardTraceError            = SingleAnimalRewardTraceError ./ SingleAnimalNormDenom;
         
         
         GrandPopRewardLargeCorrect(chan_count,:)    = SingleAnimalRewardTraceLargeCorrect;
         GrandPopRewardSmallCorrect(chan_count,:)    = SingleAnimalRewardTraceSmallCorrect;
-        GrandPopRewardError(chan_count,:)      = SingleAnimalRewardTraceError;
+        GrandPopRewardError(chan_count,:)           = SingleAnimalRewardTraceError;
+
         
     end
 end
 
-GrandPopRewardLargeCorrect  = mean(GrandPopRewardLargeCorrect);
+GrandPopRewardLargeCorrect  = mean(GrandPopRewardLargeCorrect, 1);
 GrandPopRewardSmallCorrect  = mean(GrandPopRewardSmallCorrect);
 GrandPopRewardError         = mean(GrandPopRewardError);
-
-
-
-
 
 %% plot
 
@@ -113,16 +121,14 @@ hold on;
 plot(smooth(GrandPopRewardSmallCorrect, smooth_factor), 'color', SmallLargeColor(1,:), 'LineWidth', 2)
 plot(smooth(GrandPopRewardLargeCorrect, smooth_factor), 'color', SmallLargeColor(2,:), 'LineWidth', 2)
 
-
-
-
-
-
 end
 
-set(plots, 'ylim', [-0.8 2.5], 'xlim', [StartTime + (TimingVisualise(3,1)*sampleRate) StartTime + (TimingVisualise(3,2)*sampleRate)], ...
-        'YTick', [-0.8 0 1 2], 'XTick', [StartTime,  StartTime + (TimingVisualise(1,2)*sampleRate)], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')   
+set(plots, 'ylim', [0 1], 'xlim', [TimingVisualise(3,1)*sampleRate+StartTime TimingVisualise(3,2)*sampleRate+StartTime], ...
+        'YTick', [0 1], 'XTick', [StartTime TimingVisualise(3,2)*sampleRate+StartTime], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')   
 
+    
+    
+    
 function [IpsiContraColor, IpsiContraColor2, ErrorCorrectColor, SmallLargeColor] = getColors()
 IpsiContraColor = [ 0 0 0
                     0.2 0.2 0.2

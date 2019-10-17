@@ -5,8 +5,8 @@ clear all
 
 computer_name = 'WIN-AL003';
 subject = 'exampleSubject';
-date = '2019-10-11';
-session = '1';
+date = '2019-10-14';
+session = '2';
 
 
 path2beh = ['\\', computer_name, '\b_server\Data\subjects\', subject, '\', date, '\', session];
@@ -47,13 +47,20 @@ LeftBlockHit(toRemove) = [];
 
 StimzAllowed = Stimz'
 
+[pleft, pcileft]=binofit(LeftBlockHit, LeftBlockTotal);
+errorleft = (pcileft(:,2)-pcileft(:,1)) ./ 2;
+
+[pright, pciright] = binofit(RightBlockHit, RightBlockTotal);
+errorright = (pciright(:,2) - pciright(:,1)) ./ 2;
+
 figure; 
-plot(StimzAllowed, LeftBlockHit./LeftBlockTotal, 'color', [0.5 0.2 0.1], 'LineWidth', 2)
+errorbar(StimzAllowed, pleft, errorleft', 'color', [0.5 0.2 0.1], 'LineWidth', 2)
 hold on; 
-plot(StimzAllowed, RightBlockHit./RightBlockTotal, 'color', [1 0.6 0.2], 'LineWidth', 2)
+errorbar(StimzAllowed, pright, errorright' ,'color', [1 0.6 0.2], 'LineWidth', 2)
 set(gca, 'YTick', [0 0.5 1], 'XTick', Stimz)
 ylabel('P(R)')
-xticklabel(abs(Stimz))
+xticklabels(Stimz)
+xlabel('Contrast')
 
 
 % end
