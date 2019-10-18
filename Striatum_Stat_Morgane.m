@@ -20,6 +20,14 @@ close all
 brain_region = 'DMS';
 Animals = [53, 62, 63, 71,72];
 load('BehPhotoM_Exp23_DMS')
+
+
+%  load('BehPhotoM_Exp23_NAc')
+%  Animals = [56 57 59 66];
+%  load('MiceExpInfoPhotoM.mat')
+
+
+
 sample_rate = 12000;   % photoM recording sampling rate
 downSample = 1200;     % factor downsampling the Ca responses
 eventOnset = 3700;     % in the saved matrix, the event time 
@@ -133,16 +141,22 @@ for iAnimal = Animals
     
 end
 
-%% section 2.1 : one-way ANOVA to test for ipsi stimulus responses 
+stimz = [0 0.12 0.25 0.5];
 
-[p, tbl, ipsiStimStats] = anova1(GrandPopNormBinIpsiStim_Contrast);
+%% section 2.1 : linear regression to test for ipsi stimulus responses 
 
-% continuous?
+for i = 1:4
+    contrasts(1:chan_count, i) = stimz(i);
+end
+
+contrasts = contrasts(:);
+responses = GrandPopNormBinIpsiStim_Contrast(:);
+ipsiStimResponseslm = fitlm(contrasts, responses);
 
 %% section 2.2 : two way ANOVA to test for contrast on ipsi/contra stim responses
 
 stimResponsesContrast = [GrandPopNormBinIpsiStim_Contrast; GrandPopNormBinContraStim_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
-[~,~,stimContrastStats] = anova2(stimResponsesContrast,7);
+[~,~,stimContrastStats] = anova2(stimResponsesContrast,chan_count);
 
 % columns are contrast levels
 % rows are ipsi / contra
@@ -150,12 +164,12 @@ stimResponsesContrast = [GrandPopNormBinIpsiStim_Contrast; GrandPopNormBinContra
 %% section 2.3 : 2-way ANOVA to test reward size on contra stim responses
 
 stimResponsesRewardSize = [GrandPopNormBinContraStim_LargeReward; GrandPopNormBinContraStim_SmallReward];
-[~,~,stimRewardSizeStats] = anova2(stimResponsesRewardSize,7);
+[~,~,stimRewardSizeStats] = anova2(stimResponsesRewardSize,chan_count);
         
 %% section 2.4 : 2-way ANOVA to test choice accuracy on contra stim responses
 
-stimResponsesChoiceAccuracy = [GrandPopNormBinContraStim_LargeReward; GrandPopNormBinContraStim_Error];
-[~,~,stimChoiceAccuracyStats] = anova2(stimResponsesChoiceAccuracy,7);
+stimResponsesChoiceAccuracy = [GrandPopNormBinContraStim_LargeReward(:, 1:3); GrandPopNormBinContraStim_Error(:, 1:3)];
+[~,~,stimChoiceAccuracyStats] = anova2(stimResponsesChoiceAccuracy,chan_count);
         
 
 %% section 3.1 : one-way ANOVA to test for action responses in hemisphere ipsi to stimulus 
@@ -164,19 +178,19 @@ stimResponsesChoiceAccuracy = [GrandPopNormBinContraStim_LargeReward; GrandPopNo
 
 %% section 3.2 : two-way ANOVA to test for contrast on action responses in ipsi/contra (excluding zero contrast) 
 
-actionResponsesContrast = [GrandPopNormBinIpsiAction_Contrast; GrandPopNormBinContraAction_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
-[~,~,actionContrastStats] = anova2(actionResponsesContrast,7);
+actionResponsesContrast = [GrandPopNormBinIpsiAction_Contrast; GrandPopNormBinContraAction_Contrast]; % first n rows = ipsi, next n = contra (n = no. channels)
+[~,~,actionContrastStats] = anova2(actionResponsesContrast,chan_count);
 
 %% section 3.3 : 2-way ANOVA to test action wrt reward size 
 
 actionResponsesRewardSize = [GrandPopNormBinContraAction_LargeReward(:,2:4); GrandPopNormBinContraAction_SmallReward(:,2:4)];
-[~,~,actionRewardSizeStats] = anova2(actionResponsesRewardSize,7);
+[~,~,actionRewardSizeStats] = anova2(actionResponsesRewardSize,chan_count);
 
 
 %% section 4.1 : 2-way ANOVA to test reward response wrt contrast and  ipsi vs contra 
 
-rewardResponsesContrast = [GrandPopNormBinIpsiReward_Contrast; GrandPopNormBinContraReward_Contrast]; % first 7 rows = ipsi, next 7 = contra (7 channels)
-[~,~,stimContrastStats] = anova2(rewardResponsesContrast,7);
+rewardResponsesContrast = [GrandPopNormBinIpsiReward_Contrast; GrandPopNormBinContraReward_Contrast]; % first n rows = ipsi, next n = contra (n = no. channels)
+[~,~,stimContrastStats] = anova2(rewardResponsesContrast,chan_count);
 
 
 

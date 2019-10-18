@@ -96,15 +96,14 @@ for brain_region = 1:2
 plots(brain_region) = subplot(1,2,brain_region); % left = DS, right = VS 
     iColor = 1;
     for i = 1:3
-       plot(smooth(GrandPopRewardIpsiLargeSmallError(i,:),200), 'LineWidth', 2, 'color', Colors(iColor,:)); 
+       plot(smooth(GrandPopRewardIpsiLargeSmallError(i,:),200), '--', 'LineWidth', 2, 'color', Colors(iColor,:)); 
        
        hold on; 
-       iColor = iColor + 1;
        plot(smooth(GrandPopRewardContraLargeSmallError(i,:),200), 'LineWidth', 2, 'color', Colors(iColor,:));  
        iColor = iColor + 1;
     end
     xlabel('Time (s)')
-    ylabel('\delta F/F')
+    ylabel('\Delta F/F')
     
 end
 
@@ -115,11 +114,8 @@ set(plots, 'ylim', [0 1], 'xlim', [TimingVisualise(3,1)*sampleRate+StartTime Tim
     
     
 function [Colors] = getColors()
-Colors = [  0 0.325 0.4  %ipsi large
-            0.15 0.4 0  %contra large
-            0 0.65 0.74 %ipsi small
+Colors = [  0.15 0.4 0  %contra large
             0.15 0.75 0 %contra small
-            1 0 1       %ipsi error
             1 0 0       %contra error
             ];
 
