@@ -1,18 +1,17 @@
 % Morgane October 2019
 
-close all 
+% close all 
 clear all
 
 %DMS
-%Animals = [53, 62, 63, 71,72];
- %Animals = [63];
-%load('BehPhotoM_Exp23_DMS')
-%load('MiceExpInfoPhotoM.mat')
+Animals = [53, 62, 63, 71,72];
+load('BehPhotoM_Exp23_DMS')
+load('MiceExpInfoPhotoM.mat')
 
 %NAC
- Animals = [56 57 59 66];
- load('BehPhotoM_Exp23_NAc')
- load('MiceExpInfoPhotoM.mat')
+%  Animals = [56 57 59 66];
+%  load('BehPhotoM_Exp23_NAc')
+%  load('MiceExpInfoPhotoM.mat')
 
 
 
