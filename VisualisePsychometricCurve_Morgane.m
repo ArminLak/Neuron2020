@@ -23,8 +23,9 @@ end
 
 
 
+%% figure - no fitted curve
 
-figure; % no fitted curve 
+figure;
 errorbar(StimAllowed,nanmean(PerBlock1), std(PerBlock1)./sqrt(length(PerBlock1)), '-o', 'Color', Block1Color, 'LineWidth', 2, 'MarkerFaceColor', Block1Color, 'CapSize', 4 )
 hold on;
 errorbar(StimAllowed,nanmean(PerBlock2), std(PerBlock2)./sqrt(length(PerBlock2)), '-o', 'Color', Block2Color, 'LineWidth', 2, 'MarkerFaceColor', Block2Color, 'CapSize', 4 )
@@ -37,9 +38,9 @@ title('Psychometric')
 
 
 
+%% figure - with fitted curve
 
-
-figure; % with fitted curve
+figure;
 PerBlock1 = PerBlock1 + 1;
 PerBlock2 = PerBlock2 +1;
 [paramsValues] = Fit_psych_fun_Armin(StimAllowed, nanmean(PerBlock1), [2 2 2 2 2 2 2],[1 1 1 1],1,Block1Color, 2)
@@ -57,6 +58,21 @@ errorbar(StimAllowed,nanmean(PerBlock1), std(PerBlock1)./sqrt(length(PerBlock1))
 errorbar(StimAllowed,nanmean(PerBlock2), std(PerBlock2)./sqrt(length(PerBlock2)), 'o', 'Color', Block2Color, 'LineWidth', 2, 'MarkerFaceColor', Block2Color, 'CapSize', 4 )
 yticks([])
 
+
+%% stats
+
+% 
+
+responses = [PerBlock1(:); PerBlock2(:)];
+block1 = zeros(size(PerBlock1(:)));
+block2 = ones(size(PerBlock2(:)));
+contrasts = repmat([-0.5 -0.25 -0.12 0 0.12 0.25 0.5], 12, 1);
+
+{~, ~, stats] = anovan(responses, {[block1; block2], [contrasts(:); contrasts(:)]}, 'continuous', 2)
+
+
+
+%% functions 
 function [Block1Color, Block2Color] = getColors()
 Block1Color = [0.5 0.2 0.1];
 Block2Color = [1 0.6 0.2];

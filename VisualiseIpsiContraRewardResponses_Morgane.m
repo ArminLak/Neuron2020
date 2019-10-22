@@ -17,7 +17,6 @@ TimingVisualise = [-0.2 0.8
 StartTime = 3700; % saved in the database.               
                
 
-
 % --- get and organise data -----------------------------------------------
 [Colors] = getColors();
 
@@ -63,6 +62,8 @@ for brain_region = 1:2
                 BehPhotoM(iAnimal).GrandSummary = BehPhotoM(iAnimal).GrandSummaryR;
             end
             
+            %rasters :
+            
             SingleAnimalIpsiContraRewardLargeCorrect     = BehPhotoM(iAnimal).GrandSummary.RewardRasterIpsiContraLargeCorr;
             SingleAnimalIpsiContraRewardLargeCorrect     = SingleAnimalIpsiContraRewardLargeCorrect - min(min(SingleAnimalIpsiContraRewardLargeCorrect));
             
@@ -86,31 +87,63 @@ for brain_region = 1:2
             GrandPopRewardContraLargeSmallError(1,:, chan_count)    = SingleAnimalIpsiContraRewardLargeCorrect(2,:);
             GrandPopRewardContraLargeSmallError(2,:, chan_count)    = SingleAnimalIpsiContraRewardSmallCorrect(2,:);
             GrandPopRewardContraLargeSmallError(3,:, chan_count)    = SingleAnimalIpsiContraRewardError(2,:);
+            
+            
+            %binned: 
+            
+            SingleAnimalNormBinReward = BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardCorrect;
+            SingleAnimalNormBinError = BehPhotoM(iAnimal).GrandSummary.PopNormBinRewardError;
+            SingleAnimalNormBinReward = SingleAnimalNormBinReward - min([min(min(SingleAnimalNormBinReward)), min(min(SingleAnimalNormBinError))]);
+            SingleAnimalNormBinError = SingleAnimalNormBinError - min([min(min(SingleAnimalNormBinError)), min(min(SingleAnimalNormBinError))]);
+            SingleAnimalNormBinReward = SingleAnimalNormBinReward ./max([max(max(SingleAnimalNormBinReward)), max(max(SingleAnimalNormBinError))]);
+            SingleAnimalNormBinError = SingleAnimalNormBinError ./ max([max(max(SingleAnimalNormBinReward)), max(max(SingleAnimalNormBinError))]);
+            
+
+            GrandPopNormBinRewardLargeSmallError(1,:, chan_count) = SingleAnimalNormBinReward(2,:); %contra large
+            GrandPopNormBinRewardLargeSmallError(2,:, chan_count) = SingleAnimalNormBinReward(1,:); % contra small
+            GrandPopNormBinRewardLargeSmallError(3,:, chan_count) = SingleAnimalNormBinError(2,:); % contra error (2largeRew) 
+            
+              
+            end
  
         end
-    end
+
+    
+%     GrandPopNormBinContraRewardLargeSmallError = GrandPopNormBinContraRewardLargeSmallError ./ chan_count;
  
     GrandPopRewardIpsiLargeSmallError   = mean(GrandPopRewardIpsiLargeSmallError, 3);
     GrandPopRewardContraLargeSmallError = mean(GrandPopRewardContraLargeSmallError, 3); 
     
-plots(brain_region) = subplot(1,2,brain_region); % left = DS, right = VS 
+    plots(brain_region) = subplot(2,2,brain_region); % left = DS, right = VS
     iColor = 1;
     for i = 1:3
-       plot(smooth(GrandPopRewardIpsiLargeSmallError(i,:),200), '--', 'LineWidth', 2, 'color', Colors(iColor,:)); 
-       
-       hold on; 
-       plot(smooth(GrandPopRewardContraLargeSmallError(i,:),200), 'LineWidth', 2, 'color', Colors(iColor,:));  
-       iColor = iColor + 1;
+        plot(smooth(GrandPopRewardIpsiLargeSmallError(i,:),200), '--', 'LineWidth', 2, 'color', Colors(iColor,:));
+        
+        hold on;
+        plot(smooth(GrandPopRewardContraLargeSmallError(i,:),200), 'LineWidth', 2, 'color', Colors(iColor,:));
+        iColor = iColor + 1;
     end
     xlabel('Time (s)')
     ylabel('\Delta F/F')
     
+    plots2(brain_region + 2) = subplot(2, 2, brain_region + 2);
+    iColor2 = 1;
+    for i = 1:3
+        
+%         tempForSTDipsi = squeeze(GrandPopNormBinIpsiRewardLargeSmallError(i,:,:));
+%         tempForSTDcontra = squeeze(GrandPopNormBinContraRewardLargeSmallError(i,:,:));
+        
+        errorbar(mean(GrandPopNormBinRewardLargeSmallError(i,:,:), 3), std(squeeze(GrandPopNormBinRewardLargeSmallError(i,:,:))')./sqrt(chan_count),'-', 'LineWidth', 2, 'color', Colors(iColor2,:));
+        hold on;
+        iColor2 = iColor2 + 1;
+        
+    end
 end
 
 set(plots, 'ylim', [0 1], 'xlim', [TimingVisualise(3,1)*sampleRate+StartTime TimingVisualise(3,2)*sampleRate+StartTime], ...
         'YTick', [0 1], 'XTick', [StartTime TimingVisualise(3,2)*sampleRate+StartTime], 'XTickLabel', {'0','0.8'},'TickDir','out','Box','off')   
-
-    legend({'Ipsi large reward', 'Contra large reward', 'Ipsi small reward', 'Contra small reward', 'Ipsi error', 'Contra error'})
+set(plots2, 'XTick', [1 2 3 4], 'XTickLabel', {'0', '0.12', '0.25', '0.5'}, 'TickDir', 'out', 'YTick', [0 1])
+    legend({'Large reward', 'Small reward', 'Error'})
     
     
 function [Colors] = getColors()

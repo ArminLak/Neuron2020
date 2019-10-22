@@ -4,11 +4,13 @@
 clear all
 
 %DMS
+brain_region = 'DMS';
 Animals = [53, 62, 63, 71,72];
 load('BehPhotoM_Exp23_DMS')
 load('MiceExpInfoPhotoM.mat')
 
 %NAC
+% brain_region = 'NAC';
 %  Animals = [56 57 59 66];
 %  load('BehPhotoM_Exp23_NAc')
 %  load('MiceExpInfoPhotoM.mat')
@@ -243,6 +245,28 @@ shadedErrorBar_Morgane(1:13100, smooth(nanmean(byIpsiStimActionResponses),smooth
 set(figs2, 'ylim', [-0.2 0.4], 'xlim', [StartTime + (TimingVisualise(2,1)*sampleRate) StartTime + (TimingVisualise(2,2)*sampleRate)], ...
     'YTick', [0 0.4], 'XTick', [StartTime + (TimingVisualise(2,1)*sampleRate), StartTime,  StartTime + (TimingVisualise(2,2)*sampleRate)], ...
     'XTickLabel', {'-0.7','0','0.7'},'TickDir','out','Box','off')
+
+%% stats 
+c = 1;
+
+if strcmp(brain_region, 'DMS')
+for iStim = [0.12 0.25 0.5]
+    earlyContra(c) = mean ( mean(earlyActionRasterContra(abs(earlyBehDataContra(:,2))==iStim, 3940:4270))) - mean ( mean(earlyActionRasterContra(abs(earlyBehDataContra(:,2))==iStim, 3600:3750)));
+    lateContra(c) = mean ( mean(lateActionRasterContra(abs(lateBehDataContra(:,2))==iStim, 3940:4270))) - mean ( mean(lateActionRasterContra(abs(lateBehDataContra(:,2))==iStim, 3600:3750)));
+    
+    c = c+1;
+end
+
+elseif strcmp(brain_region, 'NAC')
+    for iStim = [0.12 0.25 0.5]
+    earlyContra(c) = mean ( mean(earlyActionRasterContra(abs(earlyBehDataContra(:,2))==iStim, 4050:4450))) - mean ( mean(earlyActionRasterContra(abs(earlyBehDataContra(:,2))==iStim, 3600:3750)));
+    lateContra(c) = mean ( mean(lateActionRasterContra(abs(lateBehDataContra(:,2))==iStim, 4050:4450))) - mean ( mean(lateActionRasterContra(abs(lateBehDataContra(:,2))==iStim, 3600:3750)));
+    
+    c = c+1;
+    end
+end
+
+[~, ~, stats] = anovan([earlyContra'; lateContra'], {{'early'; 'early'; 'early'; 'late'; 'late'; 'late'}})
 
 
 %% functions
