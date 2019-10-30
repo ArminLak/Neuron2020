@@ -34,7 +34,7 @@ TimingVisualise = [-0.2 0.8
 StartTime = 3700; % saved in the database.
 
 
-if strcmp(getComputerName(), 'proxeddu')
+if strcmp(getComputerName(), 'proxeddu') % for morgane in new york 
    addpath(genpath('D:\Morgane')); 
 end
 
